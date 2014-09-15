@@ -33,11 +33,12 @@ class TestCentralMeteorologica(unittest.TestCase):
         periodo = Periodo(datetime.date.today(), datetime.date.today() + datetime.timedelta(days=1))
         pronostico = central.armarPronostico(periodo)
 
-        self.assertEqual(Porcentaje(50), pronostico.probabilidadDeLLuvia())
+        self.assertEqual(Porcentaje(50), pronostico.probabilidadDeLluvia())
         self.assertEqual(Porcentaje(10), pronostico.humedad())
         #TODO: comparar las temperaturas
         pronostico.temperatura()
         self.assertEqual(Lux(10), pronostico.luzAmbiente())
+        self.assertEqual(periodo, pronostico.periodo())
 
 
 
