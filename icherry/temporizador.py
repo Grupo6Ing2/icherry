@@ -41,9 +41,8 @@ import threading
 class Temporizador :
     """Un temporizador: se utiliza para ejecutar una tarea en forma
     repetida con un período dado. Primero debe definirse la tarea (una
-    función), finalmente se pone a ejecutar el temporizador, que
-    ejecuta en su propio thread (las tareas siempre se ejecutan en
-    forma serial). La tarea se ejecutará en su propio thread.
+    función), finalmente se pone a ejecutar el temporizador. La tarea
+    se ejecutará en su propio thread.
 
     """
 
