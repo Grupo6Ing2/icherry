@@ -1,8 +1,10 @@
 import unittest
 import datetime
 
-from icherry.app import *
-
+from icherry.magnitudes import Porcentaje,TemperaturaEnCelsius,HumedadRelativa,LuzEnLux
+from icherry.app import ProveedorDeDatosMeteorologicos
+from icherry.app import CentralMeteorologica
+from icherry.app import Periodo
 
 class ProveedorDeDatosMeteorologicosSimulado(ProveedorDeDatosMeteorologicos):
 
@@ -13,13 +15,13 @@ class ProveedorDeDatosMeteorologicosSimulado(ProveedorDeDatosMeteorologicos):
         return Porcentaje(50)
 
     def humedadPronosticada(self, periodo):
-        return Porcentaje(10)
+        return HumedadRelativa(Porcentaje(10))
 
     def temperaturaPronosticada(self, periodo):
-        return 1 #TODO: usar un objeto temperatura
+        return TemperaturaEnCelsius(18)
 
     def luzAmbientePronosticada(self, periodo):
-        return Lux(10)
+        return LuzEnLux(10)
 
 
 #TODO completar
@@ -34,10 +36,9 @@ class TestCentralMeteorologica(unittest.TestCase):
         pronostico = central.armarPronostico(periodo)
 
         self.assertEqual(Porcentaje(50), pronostico.probabilidadDeLluvia())
-        self.assertEqual(Porcentaje(10), pronostico.humedad())
-        #TODO: comparar las temperaturas
-        pronostico.temperatura()
-        self.assertEqual(Lux(10), pronostico.luzAmbiente())
+        self.assertEqual(HumedadRelativa(Porcentaje(10)), pronostico.humedad())
+        self.assertEqual(TemperaturaEnCelsius(18), pronostico.temperatura())
+        self.assertEqual(LuzEnLux(10), pronostico.luzAmbiente())
         self.assertEqual(periodo, pronostico.periodo())
 
 

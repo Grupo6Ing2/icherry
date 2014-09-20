@@ -2,7 +2,9 @@ import random
 import getopt
 import sys
 
-from app import *
+from app import ProveedorDeDatosMeteorologicos, CentralMeteorologica
+from app import Aplicacion
+from magnitudes import Porcentaje,TemperaturaEnCelsius,HumedadRelativa,LuzEnLux
 
 class ProveedorDeDatosMeteorologicosAleatorio(ProveedorDeDatosMeteorologicos):
     def __init__(self, rnd):
@@ -12,14 +14,13 @@ class ProveedorDeDatosMeteorologicosAleatorio(ProveedorDeDatosMeteorologicos):
         return Porcentaje(self.__rnd.randint(0, 100))
 
     def humedadPronosticada(self, periodo):
-        return Porcentaje(self.__rnd.randint(0, 100))
+        return HumedadRelativa(Porcentaje(self.__rnd.randint(0, 100)))
 
     def temperaturaPronosticada(self, periodo):
-        #TODO: devolver temperatura
-        return self.__rnd.randint(-5, 30)
+        return TemperaturaEnCelsius(self.__rnd.randint(-5, 30))
 
     def luzAmbientePronosticada(self, periodo):
-        return Lux(self.__rnd.randint(0, 1000))
+        return LuzEnLux(self.__rnd.randint(0, 1000))
 
 
 
@@ -51,16 +52,17 @@ def main(argv):
         sys.exit()
 
     central = CentralMeteorologica(ProveedorDeDatosMeteorologicosAleatorio(random.Random()))
-    app = Applicacion(central)
+    app = Aplicacion(central)
 
     if cmd == 'pronostico':
         pronostico = app.pronosticoSiguientes24Hs()
-        print(('El pronostico para las siguientes 24hs es: \nTemperatura: {0}, Humedad: {1}, '
+        print(('El pronóstico para las siguientes 24hs es: \nTemperatura: {0}, Humedad: {1}, '
               'Prob. de lluvia: {2}, Luz ambiente: {3}').format(pronostico.temperatura(),
                                                                 pronostico.humedad(),
                                                                 pronostico.probabilidadDeLluvia(),
                                                                 pronostico.luzAmbiente()))
-
+    #TODO poner el cmd 'sensores' cuando estén los sensores.
+    #por ahora no hay nada de código de sensores, así que habrá que esperar.
 
 
 if __name__ == "__main__":
