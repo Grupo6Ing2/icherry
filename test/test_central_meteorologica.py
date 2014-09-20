@@ -1,46 +1,51 @@
 import unittest
 import datetime
 
-from icherry.magnitudes import Porcentaje,TemperaturaEnCelsius,HumedadRelativa,LuzEnLux
-from icherry.app import ProveedorDeDatosMeteorologicos
-from icherry.app import CentralMeteorologica
-from icherry.app import Periodo
+from icherry.magnitudes import *
+from icherry.app import *
 
-class ProveedorDeDatosMeteorologicosSimulado(ProveedorDeDatosMeteorologicos):
+class AmbienteSimulado():
 
     def __init__(self):
         pass
 
-    def probabilidadDeLLuviaPronosticada(self, periodo):
-        return Porcentaje(50)
-
-    def humedadPronosticada(self, periodo):
-        return HumedadRelativa(Porcentaje(10))
-
-    def temperaturaPronosticada(self, periodo):
-        return TemperaturaEnCelsius(18)
-
-    def luzAmbientePronosticada(self, periodo):
-        return LuzEnLux(10)
+    def fechaYHora(self):
+        #TODO
+        return None
 
 
 #TODO completar
 class TestCentralMeteorologica(unittest.TestCase):
 
     def test_central_meteorologica_devuelve_pronostico(self):
-        proveedor = ProveedorDeDatosMeteorologicosSimulado()
-        central = CentralMeteorologica(proveedor)
-        #TODO: Tal vez conviene reemplazar las fechas por nuestras clases, ademas deberian
-        #incluir el tiempo
-        periodo = Periodo(datetime.date.today(), datetime.date.today() + datetime.timedelta(days=1))
-        pronostico = central.armarPronostico(periodo)
 
-        self.assertEqual(Porcentaje(50), pronostico.probabilidadDeLluvia())
-        self.assertEqual(HumedadRelativa(Porcentaje(10)), pronostico.humedad())
-        self.assertEqual(TemperaturaEnCelsius(18), pronostico.temperatura())
-        self.assertEqual(LuzEnLux(10), pronostico.luzAmbiente())
-        self.assertEqual(periodo, pronostico.periodo())
+        central = CentralMeteorologicaSimulada(AmbienteSimulado())
+        unPronosticoMeteorologico = central.obtenerPronostico(24)
 
+        #TODO completar cuando FechaYHora este lista
+
+        #self.assertEqual(..., pronostico.fechaInicio())
+        #self.assertEqual(..., pronostico.fechaFin())
+        #self.assertIsNotNone(pronostico.prediccionPara(unaFechaYHoraEnRango))
+
+
+
+    def test_central_meteorologica_devuelve_fechaYHora(self):
+
+        central = CentralMeteorologicaSimulada(AmbienteSimulado())
+        unaFechaYHora = central.obtenerFechaYHora()
+
+#        TODO: testear que fechaYHora este bien.
+#        self.assertEqual(...)
+
+
+class TestPronosticoMeteorologico(unittest.TestCase):
+
+    #TODO
+    def test_pronostico_devuelve_predicciones(self):
+        pass
+        #self.assertEqual(..., pronostico.prediccionPara(otraFechaYHoraEnRango))
+        #self.assertEqual(..., pronostico.prediccionPara(unaFechaYHoraFueraDelRango))
 
 
 if __name__ == '__main__':

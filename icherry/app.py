@@ -1,23 +1,44 @@
-#Un período temporal
-#TODO completar
-class Periodo():
+#coding=utf-8
 
-    def __init__(self, desde, hasta):
+#Un intervalo de tiempo
+class Intervalo():
+
+    def __init__(self, desdeFechaYHora, hastaFechaYHora):
+        self.__desde = desdeFechaYHora
+        self.__hasta = hastaFechaYHora
+
+    def desdeFechaYHora(self):
+        return self.__desde
+
+    def hastaFechaYHora(self):
+        return self.__hasta
+
+
+#TODO
+class PronosticoMeteorologico():
+
+    def __init__(self, listaDePredicciones):
+        self.__predicciones = listaDePredicciones
+
+    def fechaInicio(self):
+        pass
+
+    def fechaFin(self):
+        pass
+
+    def prediccionPara(self, unaFechaYHora):
         pass
 
 
-class Pronostico():
+#Indica las predicciones de distintos parametros para el intervalo de tiempo dado.
+class PrediccionMeteorologica():
 
-    def __init__(self, periodo, probabilidadDeLLuvia, humedad, temperatura,
-                 luzAmbiente):
-        self.__periodo = periodo
-        self.__probabilidadDeLLuvia = probabilidadDeLLuvia
-        self.__humedad = humedad
-        self.__temperatura = temperatura
-        self.__luzAmbiente = luzAmbiente
-
-    def periodo(self):
-        return self.__periodo
+    def __init__(self, intervalo, unaTemperatura, unaProbabilidadDeLluvia, unaHumedad, unaLuz):
+        self.__intervalo = intervalo
+        self.__probabilidadDeLLuvia = unaProbabilidadDeLluvia
+        self.__humedad = unaHumedad
+        self.__temperatura = unaTemperatura
+        self.__luzAmbiente = unaLuz
 
     def probabilidadDeLluvia(self):
         return self.__probabilidadDeLLuvia
@@ -33,33 +54,37 @@ class Pronostico():
 
 
 class CentralMeteorologica():
-    def __init__(self, proveedorDeDatosMeteorologicos):
-        self.__proveedor = proveedorDeDatosMeteorologicos
-
-    def armarPronostico(self, periodo):
-        return Pronostico(periodo,
-                          self.__proveedor.probabilidadDeLLuviaPronosticada(periodo),
-                          self.__proveedor.humedadPronosticada(periodo),
-                          self.__proveedor.temperaturaPronosticada(periodo),
-                          self.__proveedor.luzAmbientePronosticada(periodo))
-
-
-class ProveedorDeDatosMeteorologicos():
-
     def __init__(self):
         raise NotImplementedError("Clase abstracta")
 
-    def probabilidadDeLLuviaPronosticada(self, periodo):
+    def obtenerFechaYHora(self):
         raise NotImplementedError("Método abstracto")
 
-    def humedadPronosticada(self, periodo):
+    def obtenerPronostico(self, unaCantidadDeHoras):
         raise NotImplementedError("Método abstracto")
 
-    def temperaturaPronosticada(self, periodo):
-        raise NotImplementedError("Método abstracto")
 
-    def luzAmbientePronosticada(self, periodo):
-        raise NotImplementedError("Método abstracto")
+class CentralMeteorologicaSimulada(CentralMeteorologica):
+    def __init__(self, unAmbienteSimulado):
+        self.__ambiente = unAmbienteSimulado
+
+    def obtenerFechaYHora(self):
+        return self.__ambiente.fechaYHora()
+
+    def obtenerPronostico(self, unaCantidadDeHoras):
+        #TODO
+        return PronosticoMeteorologico(None)
+
+
+class CentralMeteorologicaUSB(CentralMeteorologica):
+    def __init__(self, unPuertoUSB):
+        pass
+
+    def obtenerFechaYHora(self):
+        pass
+
+    def obtenerPronostico(self, unaCantidadDeHoras):
+        pass
 
 
 class Aplicacion():
@@ -67,5 +92,6 @@ class Aplicacion():
         self.__centralMeteorologica = centralMeteorologica
 
     def pronosticoSiguientes24Hs(self):
+        pass
         #TODO: pasar parametros correctos a Periodo
-        return self.__centralMeteorologica.armarPronostico(Periodo(None, None))
+        #return self.__centralMeteorologica.armarPronostico(Periodo(None, None))
