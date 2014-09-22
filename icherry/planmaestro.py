@@ -5,38 +5,6 @@
 # Se definen los conceptos relacionados con el plan maestro : estadio
 # fenológico, umbral óptimo de cultivo y plan maestro.
 
-
-# ====================================================================
-# Rango
-
-# TODO: mover esto a otro lado, no debería ir en este archivo.
-
-# NOTICE: esto es _muy_ parecido al 'Intervalo' que aparece dando
-# vueltas en app.py, creo que se podría implementar/reemplazar el
-# intervalo usando esto.
-class Rango:
-    """Un rango de valores (intervalo en el sentido de teoría de
-    conjuntos), se construye a partir de un par de límites (inferior y
-    superior). Lo único que se requiere es que el límite inferior sea
-    menor o igual al superior (lo cual a su vez requiere que ambos
-    sean comparables con '<=').
-
-    """
-    def __init__(self, desde, hasta) :
-        """construye un rango a partir de límites inferior y superior"""
-        assert( desde <= hasta )
-        self._desde = desde
-        self._hasta = hasta
-    def desde(self):
-        """retorna el límite inferior"""
-        return self._desde
-    def hasta(self):
-        """retorna el límite superior"""
-        return self._hasta
-    def contiene(self, valor) :
-        """determina si un valor está contenido en el rango"""
-        return self.desde() <= valor <= self.hasta()
-
 # ====================================================================
 # EstadioFenologico
 
@@ -57,20 +25,21 @@ class EstadioFenologico:
         nombre. El identificador puede ser un número, el nombre
         debería ser un string (usado a modo de símbolo)
         """
-        self._id = id
-        self._nombre = nombre
+        self._tupla = (id,nombre)
         # la función 'id' en python existe, pero no conflictúa con
         # este uso. Si 'e0' es una instancia de 'EstadioFenologico',
         # id(e0) y e0.id() son dos cosas distintas.
     def id(self):
-        return self._id
+        return self._tupla[0]
     def nombre(self):
-        return self._nombre
-    #usamos la comparación por default, o sea, miembro a miembro (dos
-    #instancias serán iguales cuando tanto el identificador como el
-    #nombre sean iguales), esto sirve por ahora. A pesar de eso, en un
-    #plan maestro los estadios no deberían tener identificadores
-    #repetidos ni nombres repetidos.
+        return self._tupla[1]
+
+    def __eq__(self, otro) :
+        return self._tupla == otro._tupla
+    def __ne__(self, otro) :
+        return not self.__eq__(otro)
+    def __hash__(self) :
+        return self._tupla.__hash__()
 
 # por practicidad, generamos todos los estadios posibles acá
 estadios = {'GERMINACION' : EstadioFenologico(0,'GERMINACION'),
@@ -143,6 +112,7 @@ class PlanMaestro :
 # aceptados de T/H/PH por cada estadio).
 
 def demo():
+    from magnitudes import Rango
     from magnitudes import HumedadRelativa, Porcentaje
     from magnitudes import TemperaturaEnCelsius, AcidezEnPH
     def humedadRelativa(x) :

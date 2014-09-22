@@ -2,19 +2,34 @@
 #                             MAGNITUDES
 # ====================================================================
 
-# Definición de magnitudes de uso común (líquido, luz, temperatura,
-# acidez, porcentaje, humedad).
+# Definición de magnitud y algunas magnitudes de uso común (líquido,
+# luz, temperatura, acidez, porcentaje, humedad). Además, se define un
+# 'Rango' de valores. No todas las magnitudes se definen acá,
+# sólamente las relacionadas a T/H/PH (a modo de ejemplo), pero otros
+# archivos podrían definir sus propias magnitudes.
 
-# En general se cuenta con una clase abstracta para cada una, y una
-# implementación concreta (podría haber más de una), en general son
-# todas muy sencillas y más bien la idea es contar con un correlato
-# del diseño que con clases que implementen mucha funcionalidad.
-# Básicamente todas las magnitudes tienen un método 'valor' que
-# devuelve el valor con el que se construyeron, la unidad debería ser
-# conocida por el llamador.
+# En general se cuenta con una clase abstracta para cada magnitud, y
+# una implementación concreta (podría haber más de una), en general
+# son todas muy sencillas y más bien la idea es contar con un
+# correlato del diseño que con clases que implementen mucha
+# funcionalidad. Básicamente todas las magnitudes tienen un método
+# 'valor' que devuelve el valor con el que se construyeron, la unidad
+# debería ser conocida por el llamador.
+#
+# Dos instancias de magnitud son 'compatibles' si miden la misma
+# magnitud física, diferenciándose tal vez en las unidades implícitas
+# con las que fueron construidas, por ejemplo las magnitudes de
+# volumen líquido son compatibles, pero una magnitud de volumen
+# líquido es incompatible con una magnitud de temperatura.
+#
+# Las magnitudes compatibles pueden convertirse entre sí. Por ejemplo,
+# si una función espera una temperatura, no interesa si es en celsius
+# o fahrenheit, siempre puede convertirse a la unidad deseada y luego
+# extraer su valor numérico con el método 'valor'.
 #
 # Se implementan también operadores de comparación para tipos
-# compatibles.
+# compatibles, con lo cual 'LiquidoEnMililitros(1000)' es igual a
+# 'LiquidoEnLitros(1)' por ejemplo.
 
 # ====================================================================
 class Magnitud :
@@ -41,16 +56,13 @@ class Magnitud :
         return self.valor() >  self._compatibilizar(otro).valor()
     def __ge__(self, otro) :
         return self.valor() >= self._compatibilizar(otro).valor()
-    # WARNING : estos comparadores sólo permiten comparar tipos
-    # compatibles. Por ejemplo, si se compara una temperatura en
-    # fahrenheit contra una en celcius, funciona (pues son
-    # compatibles), pero falla por ejemplo al comparar litros con lux
-    # (incompatibles). Este esquema requiere que sólo el segundo
-    # operando se convierta, pero tiene la desventaja de que cada uno
-    # de N tipos compatibles debe saber convertirse a los N-1
-    # restantes, una alternativa sería hacer que haya un tipo canónico
-    # y que ambos operandos se conviertan a ése (cada uno de los N
-    # tipos sólo sabe convertirse al canónico).
+    # NOTICE : Este esquema requiere que sólo el segundo operando se
+    # convierta, pero tiene la desventaja de que cada uno de N tipos
+    # compatibles debe saber convertirse a los N-1 restantes, una
+    # alternativa sería hacer que haya un tipo canónico y que ambos
+    # operandos se conviertan a ése (cada uno de los N tipos sólo sabe
+    # convertirse al canónico). La desventaja es que se pierde la
+    # independencia de unidad.
 
 # ====================================================================
 # Líquido
@@ -245,3 +257,43 @@ class HumedadRelativa(Humedad) :
         return otraMagnitud.aHumedadRelativa()
     def __str__(self) :
         return str(self.valor())
+
+# ====================================================================
+# Rango
+
+# NOTICE: Un rango no es una magnitud ni necesariamente tiene límites
+# de tipo magnitud, pero en muchos casos vamos a usar rangos de
+# magnitudes, por ejemplo un rango de temperaturas o un rango de
+# humedades, y por eso esta clase se aloja en este archivo que define
+# a la 'Magnitud' y a otras magnitudes comunes. El concepto de
+# 'Lapso', que apareció varias veces en el diseño, no es otra cosa que
+# un rango de tiempos (fecha/hora). Ver el docstring de la clase para
+# más detalles.
+
+class Rango:
+    """Un rango de valores (intervalo en el sentido de teoría de
+    conjuntos), se construye a partir de un par de límites (inferior y
+    superior). Lo único que se requiere es que el límite inferior sea
+    menor o igual al superior (lo cual a su vez requiere que ambos
+    sean comparables con '<=').
+
+    """
+    def __init__(self, desde, hasta) :
+        """construye un rango a partir de límites inferior y superior"""
+        assert( desde <= hasta )
+        self._desde = desde
+        self._hasta = hasta
+    def desde(self):
+        """retorna el límite inferior"""
+        return self._desde
+    def hasta(self):
+        """retorna el límite superior"""
+        return self._hasta
+    def contiene(self, valor) :
+        """determina si un valor está contenido en el rango"""
+        return self.desde() <= valor <= self.hasta()
+    def __eq__(self, otroRango):
+        return self.desde() == otroRango.desde() and \
+            self.hasta() == otroRango.hasta()
+    def __ne__(self, otroRango):
+        return not self.__eq__( otroRango )

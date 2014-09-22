@@ -1,8 +1,8 @@
 import unittest
 import datetime
 
-from icherry.tiempo import *
-
+from icherry.magnitudes import Rango
+from icherry.tiempo import FechaYHora, DuracionEnSegundos
 
 class TestFechaYHora(unittest.TestCase):
 
@@ -16,79 +16,79 @@ class TestFechaYHora(unittest.TestCase):
         unaFecha = FechaYHora(datetime.date(2014, 9, 21), datetime.time(10, 45, 50))
         otraFecha = FechaYHora(datetime.date(2014, 9, 21), datetime.time(10, 45, 50))
 
-        self.assertTrue(unaFecha == otraFecha)
+        self.assertEqual(unaFecha, otraFecha)
 
     def test_dos_instancias_con_fechas_no_iguales_no_son_iguales(self):
         unaFecha = FechaYHora(datetime.date(2014, 9, 21), datetime.time(10, 45, 50))
         otraFecha = FechaYHora(datetime.date(2014, 9, 22), datetime.time(10, 45, 50))
 
-        self.assertFalse(unaFecha == otraFecha)
+        self.assertNotEqual(unaFecha, otraFecha)
 
     def test_dos_instancias_con_horas_no_iguales_no_son_iguales(self):
         unaFecha = FechaYHora(datetime.date(2014, 9, 22), datetime.time(10, 45, 55))
         otraFecha = FechaYHora(datetime.date(2014, 9, 22), datetime.time(10, 45, 50))
 
-        self.assertFalse(unaFecha == otraFecha)
+        self.assertNotEqual(unaFecha, otraFecha)
 
     def test_comparacion_por_menor_es_correcta(self):
         unaFecha = FechaYHora(datetime.date(2014, 9, 22), datetime.time(10, 45, 55))
         otraFecha = FechaYHora(datetime.date(2014, 9, 22), datetime.time(10, 45, 50))
-        self.assertTrue(otraFecha < unaFecha)
+        self.assertLess(otraFecha, unaFecha)
 
         unaFecha = FechaYHora(datetime.date(2014, 9, 22), datetime.time(10, 45, 50))
         otraFecha = FechaYHora(datetime.date(2014, 9, 20), datetime.time(10, 45, 50))
-        self.assertTrue(otraFecha < unaFecha)
+        self.assertLess(otraFecha, unaFecha)
 
         unaFecha = FechaYHora(datetime.date(2014, 9, 22), datetime.time(10, 45, 55))
         otraFecha = FechaYHora(datetime.date(2014, 9, 20), datetime.time(10, 45, 50))
-        self.assertTrue(otraFecha < unaFecha)
+        self.assertLess(otraFecha, unaFecha)
 
         unaFecha = FechaYHora(datetime.date(2014, 9, 22), datetime.time(10, 45, 55))
         otraFecha = FechaYHora(datetime.date(2014, 9, 20), datetime.time(13, 45, 55))
-        self.assertTrue(otraFecha < unaFecha)
+        self.assertLess(otraFecha, unaFecha)
 
 
 
-class TestIntervalo(unittest.TestCase):
+class TestLapso(unittest.TestCase):
 
-    def test_intervalo_se_instancia_bien(self):
+    def test_lapso_se_instancia_bien(self):
         desde = FechaYHora(datetime.date(2014, 9, 21), datetime.time(10, 45, 50))
         hasta = FechaYHora(datetime.date(2014, 9, 22), datetime.time(10, 45, 50))
-        intervalo = Intervalo(desde, hasta)
+        lapso = Rango(desde, hasta)
 
-        self.assertEqual(desde, intervalo.desdeFechaYHora())
-        self.assertEqual(hasta, intervalo.hastaFechaYHora())
+        self.assertEqual(desde, lapso.desde())
+        self.assertEqual(hasta, lapso.hasta())
 
-    def test_dos_instancias_iguales_son_iguales(self):
+    def test_dos_lapsos_iguales_son_iguales(self):
         desde1 = FechaYHora(datetime.date(2014, 9, 21), datetime.time(10, 45, 50))
         hasta1 = FechaYHora(datetime.date(2014, 9, 22), datetime.time(10, 45, 50))
-        intervalo1 = Intervalo(desde1, hasta1)
+        lapso1 = Rango(desde1, hasta1)
 
         desde2 = FechaYHora(datetime.date(2014, 9, 21), datetime.time(10, 45, 50))
         hasta2 = FechaYHora(datetime.date(2014, 9, 22), datetime.time(10, 45, 50))
-        intervalo2 = Intervalo(desde2, hasta2)
+        lapso2 = Rango(desde2, hasta2)
 
-        self.assertTrue(intervalo1 == intervalo2)
+        self.assertTrue(lapso1 == lapso2)
 
-    def test_intervalo_contiene_fechaYHora_contenida_en_el_intervalo(self):
+    def test_lapso_contiene_fechaYHora_contenida_en_el_lapso(self):
         desde = FechaYHora(datetime.date(2014, 9, 21), datetime.time(10, 45, 50))
         hasta = FechaYHora(datetime.date(2014, 9, 22), datetime.time(10, 45, 50))
-        intervalo = Intervalo(desde, hasta)
+        lapso = Rango(desde, hasta)
 
         unaFechaYHora = FechaYHora(datetime.date(2014, 9, 21), datetime.time(12, 45, 50))
 
-        self.assertTrue(intervalo.contieneFechaYHora(unaFechaYHora))
+        self.assertTrue(lapso.contiene(unaFechaYHora))
 
-    def test_intervalo_no_contiene_fechaYHora_no_contenida_en_el_intervalo(self):
+    def test_lapso_no_contiene_fechaYHora_no_contenida_en_el_lapso(self):
         desde = FechaYHora(datetime.date(2014, 9, 21), datetime.time(10, 45, 50))
         hasta = FechaYHora(datetime.date(2014, 9, 22), datetime.time(10, 45, 50))
-        intervalo = Intervalo(desde, hasta)
+        lapso = Rango(desde, hasta)
 
         unaFechaYHora = FechaYHora(datetime.date(2014, 9, 25), datetime.time(12, 45, 50))
-        self.assertFalse(intervalo.contieneFechaYHora(unaFechaYHora))
+        self.assertFalse(lapso.contiene(unaFechaYHora))
 
         unaFechaYHora = FechaYHora(datetime.date(2014, 9, 15), datetime.time(12, 45, 50))
-        self.assertFalse(intervalo.contieneFechaYHora(unaFechaYHora))
+        self.assertFalse(lapso.contiene(unaFechaYHora))
 
 
 class TestDuracionEnSegundos(unittest.TestCase):

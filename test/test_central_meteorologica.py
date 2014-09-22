@@ -19,17 +19,17 @@ class TestCentralMeteorologica(unittest.TestCase):
 class TestPronosticoMeteorologico(unittest.TestCase):
 
     def setUp(self):
-        self.desdeIntervalo1 = FechaYHora(datetime.date(2014, 9, 21), datetime.time(10, 45, 50))
-        self.hastaIntervalo1 = FechaYHora(datetime.date(2014, 9, 21), datetime.time(13, 45, 50))
-        self.desdeIntervalo2 = FechaYHora(datetime.date(2014, 9, 20), datetime.time(10, 45, 50))
-        self.hastaIntervalo2 = FechaYHora(datetime.date(2014, 9, 20), datetime.time(13, 45, 50))
+        self.desdeLapso1 = FechaYHora(datetime.date(2014, 9, 21), datetime.time(10, 45, 50))
+        self.hastaLapso1 = FechaYHora(datetime.date(2014, 9, 21), datetime.time(13, 45, 50))
+        self.desdeLapso2 = FechaYHora(datetime.date(2014, 9, 20), datetime.time(10, 45, 50))
+        self.hastaLapso2 = FechaYHora(datetime.date(2014, 9, 20), datetime.time(13, 45, 50))
 
-        self.prediccion1 = PrediccionMeteorologica(Intervalo(self.desdeIntervalo1, self.hastaIntervalo1),
+        self.prediccion1 = PrediccionMeteorologica(Rango(self.desdeLapso1, self.hastaLapso1),
                                              TemperaturaEnCelsius(20),
                                              Porcentaje(80),
                                              HumedadRelativa(Porcentaje(50)),
                                              LuzEnLux(1000))
-        self.prediccion2 = PrediccionMeteorologica(Intervalo(self.desdeIntervalo2, self.hastaIntervalo2),
+        self.prediccion2 = PrediccionMeteorologica(Rango(self.desdeLapso2, self.hastaLapso2),
                                              TemperaturaEnCelsius(25),
                                              Porcentaje(40),
                                              HumedadRelativa(Porcentaje(10)),
@@ -37,11 +37,11 @@ class TestPronosticoMeteorologico(unittest.TestCase):
 
     def test_fechaInicio_es_correcta(self):
         pronostico = PronosticoMeteorologico([self.prediccion1, self.prediccion2])
-        self.assertEqual(self.desdeIntervalo2, pronostico.fechaInicio())
+        self.assertEqual(self.desdeLapso2, pronostico.fechaInicio())
 
     def test_fechaFin_es_correcta(self):
         pronostico = PronosticoMeteorologico([self.prediccion1, self.prediccion2])
-        self.assertEqual(self.hastaIntervalo1, pronostico.fechaFin())
+        self.assertEqual(self.hastaLapso1, pronostico.fechaFin())
 
     def test_prediccion_para_una_fecha_existente(self):
         pronostico = PronosticoMeteorologico([self.prediccion1, self.prediccion2])
@@ -65,17 +65,16 @@ class TestPronosticoMeteorologico(unittest.TestCase):
 class TestPrediccionMeteorologica(unittest.TestCase):
 
     def test_prediccion_se_construye_correctamente(self):
-        desdeIntervalo = FechaYHora(datetime.date(2014, 9, 20), datetime.time(10, 45, 50))
-        hastaIntervalo = FechaYHora(datetime.date(2014, 9, 20), datetime.time(13, 45, 50))
-        prediccion = PrediccionMeteorologica(Intervalo(desdeIntervalo, hastaIntervalo),
+        desdeLapso = FechaYHora(datetime.date(2014, 9, 20), datetime.time(10, 45, 50))
+        hastaLapso = FechaYHora(datetime.date(2014, 9, 20), datetime.time(13, 45, 50))
+        prediccion = PrediccionMeteorologica(Rango(desdeLapso, hastaLapso),
                                              TemperaturaEnCelsius(25),
                                              Porcentaje(40),
                                              HumedadRelativa(Porcentaje(10)),
                                              LuzEnLux(800))
 
-        self.assertEqual(Intervalo(desdeIntervalo, hastaIntervalo), prediccion.intervalo())
+        self.assertEqual(Rango(desdeLapso, hastaLapso), prediccion.lapso())
         self.assertEqual(TemperaturaEnCelsius(25), prediccion.temperatura())
         self.assertEqual(Porcentaje(40), prediccion.probabilidadDeLluvia())
         self.assertEqual(HumedadRelativa(Porcentaje(10)), prediccion.humedad())
         self.assertEqual(LuzEnLux(800), prediccion.luzAmbiente())
-

@@ -47,7 +47,7 @@ class TestLuzEnLux(unittest.TestCase) :
         #debe tirar excepción
         LuzEnLux(20) == TemperaturaEnCelsius(16)
 
-def celcius(numero) :
+def celsius(numero) :
     #abreviatura
     return TemperaturaEnCelsius(numero)
 def fahrenheit(numero) :
@@ -57,15 +57,15 @@ def fahrenheit(numero) :
 
 class TestTemperatura(unittest.TestCase) :
     def test_conversion_celsius_fahrenheit(self) :
-        self.assertEqual(celcius(0), fahrenheit(32))
-        self.assertEqual(fahrenheit(68), celcius(20))
+        self.assertEqual(celsius(0), fahrenheit(32))
+        self.assertEqual(fahrenheit(68), celsius(20))
     def test_comparadores(self) :
-        self.assertLess         (celcius(10), celcius(11))
-        self.assertGreater      (celcius(20), celcius(10))
-        self.assertGreaterEqual (celcius(20), celcius(10))
-        self.assertGreaterEqual (celcius(20), celcius(20))
-        self.assertLessEqual    (celcius(20), celcius(20))
-        self.assertLessEqual    (celcius(10), celcius(20))
+        self.assertLess         (celsius(10), celsius(11))
+        self.assertGreater      (celsius(20), celsius(10))
+        self.assertGreaterEqual (celsius(20), celsius(10))
+        self.assertGreaterEqual (celsius(20), celsius(20))
+        self.assertLessEqual    (celsius(20), celsius(20))
+        self.assertLessEqual    (celsius(10), celsius(20))
         self.assertEqual        (fahrenheit(10), fahrenheit(10))
         self.assertNotEqual     (fahrenheit(10), fahrenheit(11))
     @unittest.expectedFailure

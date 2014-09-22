@@ -1,31 +1,5 @@
 #coding=utf-8
 
-import datetime
-
-#Un intervalo de tiempo
-class Intervalo():
-
-    def __init__(self, desdeFechaYHora, hastaFechaYHora):
-        if hastaFechaYHora < desdeFechaYHora:
-            raise ValueError("desdeFechaYHora tiene que ser anterior a hastaFechaYHora")
-
-        self.__desde = desdeFechaYHora
-        self.__hasta = hastaFechaYHora
-
-    def desdeFechaYHora(self):
-        return self.__desde
-
-    def hastaFechaYHora(self):
-        return self.__hasta
-
-    def contieneFechaYHora(self, unaFechaYHora):
-        return self.desdeFechaYHora() <= unaFechaYHora <= self.hastaFechaYHora()
-
-    def __eq__(self, otroIntervalo):
-        return self.desdeFechaYHora() == otroIntervalo.desdeFechaYHora() and \
-            self.hastaFechaYHora() == otroIntervalo.hastaFechaYHora()
-
-
 class FechaYHora():
 
     #unDate: instancia de timedate.date
@@ -53,8 +27,13 @@ class FechaYHora():
         return self.fecha() == otraFechaYHora.fecha() and\
                 self.hora() == otraFechaYHora.hora()
 
+    # WARNING: ojo con definir '__eq__' sin definir '__ne__', el "!="
+    # no hace lo que esperarías.
+    def __ne__(self, otraFechaYHora):
+        return not self.__eq__(otraFechaYHora)
+
     def __str__(self):
-        return "{0} {1}".format(fecha(), hora())
+        return "{0} {1}".format(self.fecha(), self.hora())
 
 
 #Representa una duracion de tiempo. Las subclases indican las unidades en las que se
