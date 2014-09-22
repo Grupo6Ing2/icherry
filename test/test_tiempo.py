@@ -2,7 +2,8 @@ import unittest
 import datetime
 
 from icherry.magnitudes import Rango
-from icherry.tiempo import FechaYHora, DuracionEnSegundos
+from icherry.tiempo import FechaYHora
+from icherry.tiempo import DuracionEnSegundos,DuracionEnMinutos,DuracionEnHoras
 
 class TestFechaYHora(unittest.TestCase):
 
@@ -50,6 +51,7 @@ class TestFechaYHora(unittest.TestCase):
 
 
 class TestLapso(unittest.TestCase):
+    #NOTICE: en este test ya queda testeada la funcionalidad del Rango.
 
     def test_lapso_se_instancia_bien(self):
         desde = FechaYHora(datetime.date(2014, 9, 21), datetime.time(10, 45, 50))
@@ -91,9 +93,39 @@ class TestLapso(unittest.TestCase):
         self.assertFalse(lapso.contiene(unaFechaYHora))
 
 
-class TestDuracionEnSegundos(unittest.TestCase):
+class TestDuracion(unittest.TestCase):
+    def setUp(self):
+        # las tres duraciones son equivalentes al convertir, todas
+        # equivalen a media hora. La idea es ver que los valores
+        # numéricos se obtengan bien y que las conversiones en todos
+        # los sentidos posibles estén bien.
+        self.segundos = 1800
+        self.minutos  = 30
+        self.horas    = 0.5
 
-    def test_duracion_representada_en_segundos_es_correcta(self):
-        duracion = DuracionEnSegundos(110)
+    def verificarIgualdades(self,segundos,minutos,horas):
+        #verifica que todas las duraciones sean iguales y que sus
+        #valores puedan obtenerse correctamente
+        self.assertEqual(segundos         , minutos)
+        self.assertEqual(segundos         , horas)
+        self.assertEqual(segundos.valor() , self.segundos)
+        self.assertEqual(minutos.valor()  , self.minutos)
+        self.assertEqual(horas.valor()    , self.horas)
 
-        self.assertEqual(110, duracion.enSegundos())
+    def test_segundos_se_convierten_correctamente(self) :
+        segundos = DuracionEnSegundos(self.segundos)
+        minutos  = segundos.aMinutos()
+        horas    = segundos.aHoras()
+        self.verificarIgualdades(segundos,minutos,horas)
+
+    def test_minutos_se_convierten_correctamente(self) :
+        minutos  = DuracionEnMinutos(self.minutos)
+        segundos = minutos.aSegundos()
+        horas    = minutos.aHoras()
+        self.verificarIgualdades(segundos,minutos,horas)
+
+    def test_horas_se_convierten_correctamente(self) :
+        horas    = DuracionEnHoras(self.horas)
+        segundos = horas.aSegundos()
+        minutos  = horas.aMinutos()
+        self.verificarIgualdades(segundos,minutos,horas)
