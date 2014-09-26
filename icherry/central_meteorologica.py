@@ -1,6 +1,7 @@
 #coding=utf-8
 
 from icherry.tiempo import *
+from icherry.magnitudes import Rango
 
 
 class PronosticoMeteorologico():
@@ -49,24 +50,41 @@ class PrediccionMeteorologica():
         return self.__luzAmbiente
 
 
-class CentralMeteorologica():
+class ProveedorDeTiempo():
     def __init__(self):
         raise NotImplementedError("Clase abstracta")
 
+    def fechaYHoraActual(self):
+        raise NotImplementedError("Metodo abstracto")
+
+
+class PredictorMeteorologico():
+    def __init__(self):
+        raise NotImplementedError("Clase abstracta")
+
+    #Devuelve una PrediccionMeteorologica para el lapso especificado.
+    def prediccionPara(self, unLapso):
+        raise NotImplementedError("Metodo abstracto")
+
+
+class CentralMeteorologica():
+    def __init__(self, predictorMeteorologico, proveedorDeTiempo):
+        self.__proveedorDeTiempo = proveedorDeTiempo
+        self.__predictorMeteorologico = predictorMeteorologico
+
     def obtenerFechaYHora(self):
-        raise NotImplementedError("Método abstracto")
+        return self.__proveedorDeTiempo.fechaYHoraActual()
 
-    def obtenerPronostico(self, unaCantidadDeHoras):
-        raise NotImplementedError("Método abstracto")
+    def obtenerPronostico(self, desdeFechaYHora, cantidadDeHs):
+        predicciones = []
+        desde = desdeFechaYHora
+        print(desde)
+
+        for i in range(cantidadDeHs):
+            desde = desde.agregarHoras(i)
+            hasta = desde.agregarHoras(1)
+            predicciones.append(self.__predictorMeteorologico.prediccionPara(Rango(desde, hasta)))
+
+        return PronosticoMeteorologico(predicciones)
 
 
-
-class CentralMeteorologicaUSB(CentralMeteorologica):
-    def __init__(self, unPuertoUSB):
-        pass
-
-    def obtenerFechaYHora(self):
-        pass
-
-    def obtenerPronostico(self, unaCantidadDeHoras):
-        pass

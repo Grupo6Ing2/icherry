@@ -9,11 +9,63 @@ from icherry.central_meteorologica import *
 #TODO completar
 class TestCentralMeteorologica(unittest.TestCase):
 
+
     def test_central_meteorologica_devuelve_pronostico(self):
-        pass
+        desde = FechaYHora(datetime.date(2014, 9, 21), datetime.time(10, 45, 50))
+        hasta = FechaYHora(datetime.date(2014, 9, 21), datetime.time(12, 45, 50))
+        predictor = PredictorMeteorologicoMock(TemperaturaEnCelsius(25),
+                                             Porcentaje(40),
+                                             HumedadRelativa(Porcentaje(10)),
+                                             LuzEnLux(800))
+
+        central = CentralMeteorologica(predictor, None)
+        pronostico = central.obtenerPronostico(desdeFechaYHora=desde, cantidadDeHs=2)
+
+        self.assertEqual(desde, pronostico.fechaInicio())
+        self.assertEqual(hasta, pronostico.fechaFin())
+
+        prediccion1 = pronostico.prediccionPara(
+            FechaYHora(datetime.date(2014, 9, 21), datetime.time(11, 40, 50)))
+        self.assertEqual(Rango(desde, desde.agregarHoras(1)), prediccion1.lapso())
+        self.assertEqual(TemperaturaEnCelsius(25), prediccion1.temperatura())
+        self.assertEqual(Porcentaje(40), prediccion1.probabilidadDeLluvia())
+        self.assertEqual(HumedadRelativa(Porcentaje(10)), prediccion1.humedad())
+        self.assertEqual(LuzEnLux(800), prediccion1.luzAmbiente())
+
+        prediccion2 = pronostico.prediccionPara(
+            FechaYHora(datetime.date(2014, 9, 21), datetime.time(12, 40, 50)))
+        self.assertEqual(Rango(desde.agregarHoras(1), hasta), prediccion2.lapso())
+        self.assertEqual(TemperaturaEnCelsius(25), prediccion2.temperatura())
+        self.assertEqual(Porcentaje(40), prediccion2.probabilidadDeLluvia())
+        self.assertEqual(HumedadRelativa(Porcentaje(10)), prediccion2.humedad())
+        self.assertEqual(LuzEnLux(800), prediccion2.luzAmbiente())
+
 
     def test_central_meteorologica_devuelve_fechaYHora(self):
-        pass
+        fechaYHora = FechaYHora(datetime.date(2014, 9, 21), datetime.time(10, 45, 50))
+        proveedorDeTiempo = ProveedorDeTiempoMock(fechaYHora)
+        central = CentralMeteorologica(None, proveedorDeTiempo)
+        self.assertEqual(fechaYHora, central.obtenerFechaYHora())
+
+
+class ProveedorDeTiempoMock(ProveedorDeTiempo):
+    def __init__(self, fechaYHora):
+        self.fechaYHora = fechaYHora
+
+    def fechaYHoraActual(self):
+        return self.fechaYHora
+
+
+class PredictorMeteorologicoMock(PredictorMeteorologico):
+    def __init__(self, temp, lluvia, humedad, luz):
+        self.__temp = temp
+        self.__lluvia = lluvia
+        self.__humedad = humedad
+        self.__luz = luz
+
+    def prediccionPara(self, unLapso):
+        return PrediccionMeteorologica(unLapso, self.__temp, self.__lluvia, self.__humedad, self.__luz)
+
 
 
 class TestPronosticoMeteorologico(unittest.TestCase):
@@ -65,15 +117,15 @@ class TestPronosticoMeteorologico(unittest.TestCase):
 class TestPrediccionMeteorologica(unittest.TestCase):
 
     def test_prediccion_se_construye_correctamente(self):
-        desdeLapso = FechaYHora(datetime.date(2014, 9, 20), datetime.time(10, 45, 50))
-        hastaLapso = FechaYHora(datetime.date(2014, 9, 20), datetime.time(13, 45, 50))
-        prediccion = PrediccionMeteorologica(Rango(desdeLapso, hastaLapso),
+        desde = FechaYHora(datetime.date(2014, 9, 20), datetime.time(10, 45, 50))
+        hasta = FechaYHora(datetime.date(2014, 9, 20), datetime.time(13, 45, 50))
+        prediccion = PrediccionMeteorologica(Rango(desde, hasta),
                                              TemperaturaEnCelsius(25),
                                              Porcentaje(40),
                                              HumedadRelativa(Porcentaje(10)),
                                              LuzEnLux(800))
 
-        self.assertEqual(Rango(desdeLapso, hastaLapso), prediccion.lapso())
+        self.assertEqual(Rango(desde, hasta), prediccion.lapso())
         self.assertEqual(TemperaturaEnCelsius(25), prediccion.temperatura())
         self.assertEqual(Porcentaje(40), prediccion.probabilidadDeLluvia())
         self.assertEqual(HumedadRelativa(Porcentaje(10)), prediccion.humedad())

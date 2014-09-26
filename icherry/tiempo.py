@@ -1,4 +1,5 @@
 #coding=utf-8
+import datetime
 
 from icherry.magnitudes import Magnitud
 
@@ -20,6 +21,11 @@ class FechaYHora():
     #Devuelve una instancia de timedate.time
     def hora(self):
         return self.__time
+
+    def agregarHoras(self, cantHoras):
+        delta = datetime.timedelta(hours=cantHoras)
+        newDateTime = datetime.datetime.combine(self.__date, self.__time) + delta
+        return FechaYHora(newDateTime.date(), newDateTime.time())
 
     def __lt__(self, otraFechaYHora):
         return self.fecha() < otraFechaYHora.fecha() or \
