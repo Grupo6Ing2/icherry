@@ -1,3 +1,7 @@
+#coding=utf-8
+import os
+
+
 class DispositivoDeLectura():
 
     def __init__(self):
@@ -10,11 +14,11 @@ class DispositivoDeLectura():
 class DispositivosDeLecturaArchivo(DispositivoDeLectura):
 
     def __init__(self, unNombreArchivo):
-        self.archivo = open(unNombreArchivo, 'r')
+        self._archivo = open(unNombreArchivo, 'r')
 
     def leer(self):
-        self.archivo.seek(0)
-        return self.archivo.read()
+        self._archivo.seek(0)
+        return self._archivo.read()
 
 
 class DispositivoDeEscritura():
@@ -29,7 +33,10 @@ class DispositivoDeEscritura():
 class DispositivoDeEscrituraArchivo(DispositivoDeEscritura):
 
     def __init__(self, unNombreArchivo):
-        self.archivo = open(unNombreArchivo, 'w')
+        self._archivo = open(unNombreArchivo, 'w')
 
     def escribir(self, unaCadena):
-        return self.archivo.write(unaCadena)
+        self._archivo.write(unaCadena)
+        self._archivo.flush()
+        os.fsync(self._archivo.fileno())
+        return self

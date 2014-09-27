@@ -113,8 +113,8 @@ class LiquidoEnMililitros(Liquido):
 
 class LiquidoEnLitros(Liquido):
 
-    def __init__(self, mililitros):
-        self._valor = mililitros
+    def __init__(self, litros):
+        self._valor = litros
 
     def valor(self):
         return self._valor

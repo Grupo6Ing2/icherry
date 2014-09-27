@@ -1,6 +1,7 @@
+#coding=utf-8
 from icherry.magnitudes import LiquidoEnLitros, LiquidoEnMililitros
 from icherry.magnitudes import LuzEnLux
-from icherry.magnitudes import TemperaturaEnCelsius,TemperaturaEnFahrenheit
+from icherry.magnitudes import TemperaturaEnCelsius, TemperaturaEnFahrenheit
 from icherry.magnitudes import AcidezEnPH
 from icherry.magnitudes import Porcentaje
 from icherry.magnitudes import HumedadRelativa
