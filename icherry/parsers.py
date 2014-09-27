@@ -8,10 +8,10 @@ import datetime
 class Parser():
 
     def __init__(self):
-        raise NotImplementedError
+        raise NotImplementedError("Clase abstracta")
 
     def parse(unObjeto):
-        raise NotImplementedError
+        raise NotImplementedError("Método abstracto")
 
 
 class CadenaANumero(Parser):

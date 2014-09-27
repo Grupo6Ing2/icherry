@@ -14,7 +14,7 @@ class Actuador():
 class ActuadorEnArchivo(Actuador):
 
     def __init__(self, unDispositivoDeEscritura, unParserACadena):
-        self.dispositivo = unParserACadena
+        self.dispositivo = unDispositivoDeEscritura
         self.parser = unParserACadena
 
     def aplicar(self, unaMagnitud):

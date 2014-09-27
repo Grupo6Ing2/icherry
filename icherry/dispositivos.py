@@ -1,10 +1,10 @@
 class DispositivoDeLectura():
 
     def __init__(self):
-        raise NotImplementedError
+        raise NotImplementedError("Clase abstracta")
 
     def leer(self):
-        raise NotImplementedError
+        raise NotImplementedError("Método abstracto")
 
 
 class DispositivosDeLecturaArchivo(DispositivoDeLectura):
@@ -20,10 +20,10 @@ class DispositivosDeLecturaArchivo(DispositivoDeLectura):
 class DispositivoDeEscritura():
 
     def __init__(self):
-        raise NotImplementedError
+        raise NotImplementedError("Clase abstracta")
 
-    def leer(self):
-        raise NotImplementedError
+    def escribir(self):
+        raise NotImplementedError("Método abstracto")
 
 
 class DispositivoDeEscrituraArchivo(DispositivoDeEscritura):
