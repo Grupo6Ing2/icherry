@@ -27,6 +27,10 @@ class FechaYHora():
         newDateTime = datetime.datetime.combine(self.__date, self.__time) + delta
         return FechaYHora(newDateTime.date(), newDateTime.time())
 
+    @staticmethod
+    def ahora():
+        return FechaYHora(datetime.datetime.now().date(), datetime.datetime.now().time())
+
     def __lt__(self, otraFechaYHora):
         return self.fecha() < otraFechaYHora.fecha() or \
             (self.fecha() == otraFechaYHora.fecha() and \

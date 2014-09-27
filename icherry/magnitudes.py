@@ -355,3 +355,6 @@ class Rango:
 
     def __ne__(self, otroRango):
         return not self.__eq__(otroRango)
+
+    def __str__(self):
+        return "[{0} - {1}]".format(self.desde(), self.hasta())

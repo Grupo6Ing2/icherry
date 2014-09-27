@@ -2,29 +2,33 @@ import random
 import getopt
 import sys
 
-from app import ProveedorDeDatosMeteorologicos, CentralMeteorologica
-from app import Aplicacion
-from magnitudes import Porcentaje,TemperaturaEnCelsius,HumedadRelativa,LuzEnLux
+from icherry.tiempo import FechaYHora
+from icherry.central_meteorologica import *
+from icherry.magnitudes import *
+from icherry.dispositivos import *
+from icherry.parsers import *
 
-class ProveedorDeDatosMeteorologicosAleatorio(ProveedorDeDatosMeteorologicos):
-    def __init__(self, rnd):
-        self.__rnd = rnd
+class PredictorMeteorologicoPorArchivo(PredictorMeteorologico):
+    def __init__(self, dispositivoDeLectura):
+        parser = ParserPronosticoMeteorologico()
+        pronostico = parser.parse(dispositivoDeLectura.leer())
+        self.__pronostico = pronostico
 
-    def probabilidadDeLLuviaPronosticada(self, periodo):
-        return Porcentaje(self.__rnd.randint(0, 100))
-
-    def humedadPronosticada(self, periodo):
-        return HumedadRelativa(Porcentaje(self.__rnd.randint(0, 100)))
-
-    def temperaturaPronosticada(self, periodo):
-        return TemperaturaEnCelsius(self.__rnd.randint(-5, 30))
-
-    def luzAmbientePronosticada(self, periodo):
-        return LuzEnLux(self.__rnd.randint(0, 1000))
+    def prediccionPara(self, unLapso):
+        return self.__pronostico.prediccionPara(unLapso.desde())
 
 
 
-comandosValidos = ['pronostico', 'sensores']
+class ProveedorDeTiempoPorArchivo(ProveedorDeTiempo):
+    def __init__(self, dispositivoDeLectura):
+        self.__dispositivoDeLectura = dispositivoDeLectura
+
+    def fechaYHoraActual(self):
+        return CadenaAFechaYHora().parse(self.__dispositivoDeLectura.leer())
+
+
+
+comandosValidos = ['pronostico', 'sensores', 'tiempo']
 
 def mensajeAyuda():
     print('ui_console.py -c <comando>')
@@ -51,18 +55,29 @@ def main(argv):
         mensajeAyuda()
         sys.exit()
 
-    central = CentralMeteorologica(ProveedorDeDatosMeteorologicosAleatorio(random.Random()))
-    app = Aplicacion(central)
+
+    predictor = PredictorMeteorologicoPorArchivo(DispositivosDeLecturaArchivo("devices/pronostico"))
+    reloj = ProveedorDeTiempoPorArchivo(DispositivosDeLecturaArchivo("devices/tiempo"))
+    central = CentralMeteorologica(predictor, reloj)
 
     if cmd == 'pronostico':
-        pronostico = app.pronosticoSiguientes24Hs()
-        print(('El pronóstico para las siguientes 24hs es: \nTemperatura: {0}, Humedad: {1}, '
-              'Prob. de lluvia: {2}, Luz ambiente: {3}').format(pronostico.temperatura(),
-                                                                pronostico.humedad(),
-                                                                pronostico.probabilidadDeLluvia(),
-                                                                pronostico.luzAmbiente()))
-    #TODO poner el cmd 'sensores' cuando estén los sensores.
-    #por ahora no hay nada de código de sensores, así que habrá que esperar.
+        horas = 24
+        desdeFechaYHora = FechaYHora(datetime.date(2014, 9, 27), datetime.time(11, 0, 0))
+        pronostico = central.obtenerPronostico(desdeFechaYHora, horas)
+        t = desdeFechaYHora
+        for _ in range(0, horas):
+            p = pronostico.prediccionPara(t)
+            print(('El pronóstico para {4} es: \nTemperatura: {0}, Humedad: {1}, '
+                  'Prob. de lluvia: {2}, Luz ambiente: {3}').format(p.temperatura(),
+                                                                    p.humedad(),
+                                                                    p.probabilidadDeLluvia(),
+                                                                    p.luzAmbiente(), p.lapso()))
+            t = t.agregarHoras(1)
+
+    if cmd == 'tiempo':
+        t = central.obtenerFechaYHora()
+        print(t)
+
 
 
 if __name__ == "__main__":

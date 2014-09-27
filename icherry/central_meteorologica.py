@@ -23,6 +23,9 @@ class PronosticoMeteorologico():
         raise ValueError("la fecha {0} no se encuentra en el rango de este pronóstico"
                          .format(unaFechaYHora))
 
+    def __eq__(self, otroPronostico):
+        return self.__predicciones == otroPronostico.__predicciones
+
 
 #Indica las predicciones de distintos parámetros para el lapso dado.
 class PrediccionMeteorologica():
@@ -48,6 +51,22 @@ class PrediccionMeteorologica():
 
     def luzAmbiente(self):
         return self.__luzAmbiente
+
+    def __eq__(self, otraPrediccion):
+        return self.__lapso == otraPrediccion.__lapso and \
+            self.__probabilidadDeLLuvia == otraPrediccion.__probabilidadDeLLuvia and \
+            self.__humedad == otraPrediccion.__humedad and \
+            self.__temperatura == otraPrediccion.__temperatura and \
+            self.__luzAmbiente == otraPrediccion.__luzAmbiente
+
+    def __str__(self):
+        return ('Prediccion para {4} es: \nTemperatura: {0}, Humedad: {1}, '
+                  'Prob. de lluvia: {2}, Luz ambiente: {3}').format(self.temperatura(),
+                                                                    self.humedad(),
+                                                                    self.probabilidadDeLluvia(),
+                                                                    self.luzAmbiente(),
+                                                                    self.lapso())
+
 
 
 class ProveedorDeTiempo():
@@ -78,12 +97,11 @@ class CentralMeteorologica():
     def obtenerPronostico(self, desdeFechaYHora, cantidadDeHs):
         predicciones = []
         desde = desdeFechaYHora
-        print(desde)
 
         for i in range(cantidadDeHs):
-            desde = desde.agregarHoras(i)
             hasta = desde.agregarHoras(1)
             predicciones.append(self.__predictorMeteorologico.prediccionPara(Rango(desde, hasta)))
+            desde = desde.agregarHoras(1)
 
         return PronosticoMeteorologico(predicciones)
 
