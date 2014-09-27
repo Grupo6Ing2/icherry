@@ -5,16 +5,16 @@ import parsers
 class Actuador():
 
     def __init__(self, unDispositivoDeEscritura, unParserACadena):
-        raise NotImplementedError
+        raise NotImplementedError("Clase abstracta")
 
     def aplicar(self, unaMagnitud):
-        raise NotImplementedError
+        raise NotImplementedError("Método abstracto")
 
 
 class ActuadorEnArchivo(Actuador):
 
     def __init__(self, unDispositivoDeEscritura, unParserACadena):
-        self._dispositivo = unParserACadena
+        self._dispositivo = unDispositivoDeEscritura
         self._parser = unParserACadena
 
     def aplicar(self, unaMagnitud):

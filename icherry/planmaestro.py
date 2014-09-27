@@ -42,14 +42,39 @@ class EstadioFenologico:
         return self._tupla.__hash__()
 
 # por practicidad, generamos todos los estadios posibles acá
-estadios = {'GERMINACION' : EstadioFenologico(0,'GERMINACION'),
-            'DESARROLLO'  : EstadioFenologico(1,'DESARROLLO'),
-            'BROTES'      : EstadioFenologico(2,'BROTES'),
-            'APARICION'   : EstadioFenologico(3,'APARICION'),
-            'FLORACION'   : EstadioFenologico(4,'FLORACION'),
-            'FRUTO'       : EstadioFenologico(5,'FRUTO'),
-            'MADURACION'  : EstadioFenologico(6,'MADURACION'),
-            'SENESCENCIA' : EstadioFenologico(7,'SENESCENCIA')}
+class EstadiosFenologicos:
+    estadios = {'GERMINACION' : EstadioFenologico(0,'GERMINACION'),
+                'DESARROLLO'  : EstadioFenologico(1,'DESARROLLO'),
+                'BROTES'      : EstadioFenologico(2,'BROTES'),
+                'APARICION'   : EstadioFenologico(3,'APARICION'),
+                'FLORACION'   : EstadioFenologico(4,'FLORACION'),
+                'FRUTO'       : EstadioFenologico(5,'FRUTO'),
+                'MADURACION'  : EstadioFenologico(6,'MADURACION'),
+                'SENESCENCIA' : EstadioFenologico(7,'SENESCENCIA')}
+
+    def germinacion() :
+        return EstadiosFenologicos.estadios['GERMINACION']
+
+    def desarrollo():
+        return EstadiosFenologicos.estadios['DESARROLLO']
+
+    def brotes():
+        return EstadiosFenologicos.estadios['BROTES']
+
+    def aparicion():
+        return EstadiosFenologicos.estadios['APARICION']
+
+    def floracion():
+        return EstadiosFenologicos.estadios['FLORACION']
+
+    def fruto():
+        return EstadiosFenologicos.estadios['FRUTO']
+
+    def maduracion():
+        return EstadiosFenologicos.estadios['MADURACION']
+
+    def senescencia():
+        return EstadiosFenologicos.estadios['SENESCENCIA']
 
 # ====================================================================
 # UmbralOptimoDeCultivo
@@ -112,14 +137,15 @@ class PlanMaestro :
 # aceptados de T/H/PH por cada estadio).
 
 def demo():
-    from magnitudes import Rango
-    from magnitudes import HumedadRelativa, Porcentaje
-    from magnitudes import TemperaturaEnCelsius, AcidezEnPH
+    from icherry.magnitudes import Rango
+    from icherry.magnitudes import HumedadRelativa, Porcentaje
+    from icherry.magnitudes import TemperaturaEnCelsius, AcidezEnPH
     def humedadRelativa(x) :
         return HumedadRelativa(Porcentaje(x))
 
-    e0 = estadios['GERMINACION']
-    e1 = estadios['DESARROLLO']
+
+    e0 = EstadiosFenologicos.germinacion()
+    e1 = EstadiosFenologicos.desarrollo()
 
     temperatura = Rango(TemperaturaEnCelsius(10),TemperaturaEnCelsius(30))
     humedad = Rango(humedadRelativa(40),humedadRelativa(50))

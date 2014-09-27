@@ -309,6 +309,30 @@ class HumedadRelativa(Humedad):
         return str(self.valor())
 
 # ====================================================================
+# Longitud
+class Longitud(Magnitud):
+
+    def aCentimetros(self):
+        raise NotImplementedError("Método abstracto")
+
+class LongitudEnCentimetros(Longitud):
+
+    def __init__(self, centimetros):
+        self._valor = centimetros
+
+    def valor(self):
+        return self._valor
+
+    def _compatibilizar(self, otraMagnitud):
+        return otraMagnitud.aCentimetros()
+
+    def aCentimetros(self):
+        return self
+
+    def __str__(self):
+        return str(self.valor()) + "cm"
+
+# ====================================================================
 # Rango
 
 # NOTICE: Un rango no es una magnitud ni necesariamente tiene límites
