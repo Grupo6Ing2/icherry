@@ -5,6 +5,7 @@ from icherry.magnitudes import TemperaturaEnCelsius, TemperaturaEnFahrenheit
 from icherry.magnitudes import AcidezEnPH
 from icherry.magnitudes import Porcentaje
 from icherry.magnitudes import HumedadRelativa
+from icherry.magnitudes import LongitudEnCentimetros
 
 import unittest
 
@@ -151,3 +152,13 @@ class TestHumedadRelativa(unittest.TestCase) :
         p = h.valor().aPorcentaje()  # extraemos el porcentaje
         v = p.valor()                # extraemos el número
         self.assertEqual(v, 66)
+
+class TestLongitudCentimetros(unittest.TestCase):
+    def test_valor_centimetros(self):
+        l = LongitudEnCentimetros( 100 )
+        self.assertEqual( l.valor(), 100 )
+
+    def test_igualdad_centimetros(self):
+        l1 = LongitudEnCentimetros( 100 )
+        l2 = LongitudEnCentimetros( 100 )
+        self.assertEqual(l1, l2)
