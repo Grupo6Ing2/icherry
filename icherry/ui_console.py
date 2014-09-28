@@ -3,29 +3,11 @@ import sys
 import datetime
 
 from icherry.tiempo import FechaYHora
-from icherry.central_meteorologica import CentralMeteorologica
+from icherry.central_meteorologica import CentralMeteorologica, PredictorMeteorologicoPorArchivo, ProveedorDeTiempoPorArchivo
 from icherry.central_meteorologica import ProveedorDeTiempo
 from icherry.central_meteorologica import PredictorMeteorologico
 from icherry.dispositivos import DispositivoDeLecturaArchivo
 from icherry.parsers import ParserPronosticoMeteorologico, CadenaAFechaYHora
-
-
-class PredictorMeteorologicoPorArchivo(PredictorMeteorologico):
-    def __init__(self, dispositivoDeLectura):
-        parser = ParserPronosticoMeteorologico()
-        pronostico = parser.parse(dispositivoDeLectura.leer())
-        self.__pronostico = pronostico
-
-    def prediccionPara(self, unLapso):
-        return self.__pronostico.prediccionPara(unLapso.desde())
-
-
-class ProveedorDeTiempoPorArchivo(ProveedorDeTiempo):
-    def __init__(self, dispositivoDeLectura):
-        self.__dispositivoDeLectura = dispositivoDeLectura
-
-    def fechaYHoraActual(self):
-        return CadenaAFechaYHora().parse(self.__dispositivoDeLectura.leer())
 
 
 comandosValidos = ['pronostico', 'sensores', 'tiempo']
