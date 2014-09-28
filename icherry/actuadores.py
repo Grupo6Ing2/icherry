@@ -1,5 +1,5 @@
-import dispositivos
-import parsers
+import icherry.dispositivos as dispositivos
+import icherry.parsers as parsers
 
 
 class Actuador():

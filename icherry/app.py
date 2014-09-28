@@ -1,10 +1,11 @@
 # coding=utf-8
-import sensores
-import magnitudes
-import dispositivos
-import parsers
-import actuadores
-import ui_ncurses
+import icherry.sensores as sensores
+import icherry.magnitudes as magnitudes
+import icherry.dispositivos as dispositivos
+import icherry.parsers as parsers
+import icherry.actuadores as actuadores
+import icherry.ui_ncurses as ui_ncurses
+
 import npyscreen
 
 # bootstrap
