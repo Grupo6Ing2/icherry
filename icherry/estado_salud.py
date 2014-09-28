@@ -16,9 +16,9 @@ class EstadoDeSalud:
     def estadoFenologico(self) :
         return self.estadoFenologico
 
-    # definimos ahora getters/setters para T/H/PH. Cada metodo puede
+    # definimos ahora getters/setters para T/H/PH. Cada método puede
     # usarse tanto como getter (sin argumentos) o setter (con
-    # argumento para modificar el valor actual). Los metodos retornan
+    # argumento para modificar el valor actual). Los método retornan
     # 'self' al usarse como setters.
 
     def temperatura(self, nuevoValor=None):
@@ -56,7 +56,7 @@ class EstadoFenologico:
         self._altura = LongitudEnCentimetros(0)
 
     # definimos ahora getters/setters para cada cantidad, con la misma
-    # convencion que en con EstadoDeSalud.
+    # convencion que en EstadoDeSalud.
 
     def cantidadBrotes(self, nuevoValor=None):
         if nuevoValor is not None:

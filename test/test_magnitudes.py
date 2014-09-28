@@ -6,6 +6,7 @@ from icherry.magnitudes import AcidezEnPH
 from icherry.magnitudes import Porcentaje
 from icherry.magnitudes import HumedadRelativa
 from icherry.magnitudes import LongitudEnCentimetros
+from icherry.magnitudes import Rango
 
 import unittest
 
@@ -26,7 +27,7 @@ class TestLiquido(unittest.TestCase) :
         self.assertGreaterEqual (mililitros(20), mililitros(10))
         self.assertGreaterEqual (mililitros(20), mililitros(20))
         self.assertLessEqual    (mililitros(20), mililitros(20))
-        self.assertLessEqual    (mililitros(10), mililitros(20)),
+        self.assertLessEqual    (mililitros(10), mililitros(20))
         self.assertEqual        (litros(10), litros(10))
         self.assertNotEqual     (litros(10), litros(11))
     @unittest.expectedFailure
@@ -162,3 +163,46 @@ class TestLongitudCentimetros(unittest.TestCase):
         l1 = LongitudEnCentimetros( 100 )
         l2 = LongitudEnCentimetros( 100 )
         self.assertEqual(l1, l2)
+
+class TestRango(unittest.TestCase):
+    def chk_eje(self,rx,ry):
+        self.assertTrue(rx.interseca(ry))
+    def chk_no_eje(self,rx,ry):
+        self.assertFalse(rx.interseca(ry))
+
+    def test_rango_interseccion(self):
+        #     0--1--2--3--4--5--6--7--8--9
+        # r1        |--------|
+        # r2     |-----|
+        # r3              |--------|
+        # r4  |-----------------------|
+        # r5                    |--------|
+        #
+        # dibujito del grafo:
+        #
+        # r1------------r3
+        # | -\       /- |
+        # |   -\   /-   |
+        # |     -\/     |
+        # |      r4-----r5
+        # |   /--
+        # | /-
+        # r2
+
+        # Armamos el grafo y verificamos todas las combinaciones
+        # posibles de cada par de vértices. Esto hace un test
+        # exhaustivo de todo el grafo (verifica tanto los pares
+        # adyacentes como los no adyacentes).
+        r1,r2,r3,r4,r5 = Rango(2,5),Rango(1,3),Rango(4,7),Rango(0,8),Rango(6,9)
+        vertices = {r1,r2,r3,r4,r5}
+        r1.__ady = {r2,r3,r4}
+        r2.__ady = {r1,r4}
+        r3.__ady = {r1,r4,r5}
+        r4.__ady = {r1,r2,r3,r5}
+        r5.__ady = {r3,r4}
+        for v in vertices:
+            self.chk_eje(v,v)   # reflexividad
+            for w in v.__ady:   # adyacencia dirigida
+                self.chk_eje(v,w)
+            for w in ((vertices - v.__ady) - {v}):  # no-adyacencia dirigida
+                self.chk_no_eje(v,w)

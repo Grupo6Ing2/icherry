@@ -1,4 +1,4 @@
-#coding=utf-8
+# coding=utf-8
 # ====================================================================
 #                             MAGNITUDES
 # ====================================================================
@@ -310,10 +310,13 @@ class HumedadRelativa(Humedad):
 
 # ====================================================================
 # Longitud
+
+
 class Longitud(Magnitud):
 
     def aCentimetros(self):
         raise NotImplementedError("Método abstracto")
+
 
 class LongitudEnCentimetros(Longitud):
 
@@ -358,20 +361,28 @@ class Rango:
     def __init__(self, desde, hasta):
         """construye un rango a partir de límites inferior y superior"""
         assert(desde <= hasta)
-        self._desde = desde
-        self._hasta = hasta
+        self._tupla = (desde,hasta)
 
     def desde(self):
         """retorna el límite inferior"""
-        return self._desde
+        return self._tupla[0]
 
     def hasta(self):
         """retorna el límite superior"""
-        return self._hasta
+        return self._tupla[1]
 
     def contiene(self, valor):
         """determina si un valor está contenido en el rango"""
         return self.desde() <= valor <= self.hasta()
+
+    def interseca(self, otro):
+        """determina si el rango se interseca con otro rango. Es una relación
+        reflexiva y simétrica (pero no necesariamente transitiva).
+
+        """
+        if otro.contiene(self.desde()): return True
+        if self.contiene(otro.desde()): return True
+        return False
 
     def __eq__(self, otroRango):
         return self.desde() == otroRango.desde() and \
@@ -379,6 +390,9 @@ class Rango:
 
     def __ne__(self, otroRango):
         return not self.__eq__(otroRango)
+
+    def __hash__(self):
+        return self._tupla.__hash__()
 
     def __str__(self):
         return "[{0} - {1}]".format(self.desde(), self.hasta())
