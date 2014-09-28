@@ -4,42 +4,64 @@ import magnitudes
 import dispositivos
 import parsers
 import actuadores
+import ui_ncurses
+import npyscreen
 
 # bootstrap
 
 # construccion de sensores
-sensor_de_temperatura = sensores.Sensor(
+sensorDeTemperatura = sensores.Sensor(
     dispositivos.DispositivosDeLecturaArchivo(
-        '../devices/sensor_temperatura'),
+        'devices/sensor_temperatura'),
     parsers.CadenaANumero(),
     magnitudes.TemperaturaEnCelsius
 )
 
-sensor_de_humedad = sensores.Sensor(
+sensorDeHumedad = sensores.Sensor(
     dispositivos.DispositivosDeLecturaArchivo(
-        '../devices/sensor_humedad'),
+        'devices/sensor_humedad'),
     parsers.CadenaAPorcentaje(),
     magnitudes.HumedadRelativa
 )
 
-sensor_de_acidez = sensores.Sensor(
+sensorDeAcidez = sensores.Sensor(
     dispositivos.DispositivosDeLecturaArchivo(
-        '../devices/sensor_acidez'),
+        'devices/sensor_acidez'),
     parsers.CadenaANumero(),
     magnitudes.AcidezEnPH
 )
 
-# construccion de actuadores
-constructor_de_actuador = actuadores.ConstructorDeActuadorEnArchivo()
+sensorDeAcidez.sensar()
 
-actuador_de_agua = constructor_de_actuador.crear(
-    '../devices/actuador_agua')
-actuador_de_luz = constructor_de_actuador.crear(
-    '../devices/actuador_lampara')
-actuador_de_fertilizante = constructor_de_actuador.crear(
-    '../devices/actuador_fertilizante')
-actuador_de_antibiotico = constructor_de_actuador.crear(
-    '../devices/actuador_antibiotico')
+# construccion de actuadores
+constructorDeActuador = actuadores.ConstructorDeActuadorEnArchivo()
+
+actuadorDeAgua = constructorDeActuador.crear(
+    'devices/actuador_agua')
+actuadorDeLuz = constructorDeActuador.crear(
+    'devices/actuador_lampara')
+actuadorDeFertilizante = constructorDeActuador.crear(
+    'devices/actuador_fertilizante')
+actuadorDeAntibiotico = constructorDeActuador.crear(
+    'devices/actuador_antibiotico')
 
 # construccion de pantallas
-# TODO
+# seguramente hay que generar un objeto que construya todo esto
+
+
+def main(*args):
+    app = ui_ncurses.ICherryCurses()
+
+    pantallaDeInicio = ui_ncurses.PantallaDeInicio()
+
+    pantallaDeSensores = ui_ncurses.PantallaDeSensores(
+        sensorDeTemperatura, sensorDeHumedad, sensorDeAcidez)
+
+    pantallaEnConstruccion = ui_ncurses.PantallaEnConstruccion()
+
+    app.registerForm('MAIN', pantallaDeInicio)
+    app.registerForm('SENSORES', pantallaDeSensores)
+    app.registerForm('EN_CONSTRUCCION', pantallaEnConstruccion)
+    app.run()
+
+npyscreen.wrapper_basic(main)

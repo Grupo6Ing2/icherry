@@ -1,3 +1,4 @@
+# coding=utf-8
 from icherry.magnitudes import Porcentaje, TemperaturaEnCelsius
 from icherry.magnitudes import HumedadRelativa, LuzEnLux, Rango
 from icherry.tiempo import FechaYHora
