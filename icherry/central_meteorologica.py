@@ -1,6 +1,5 @@
-#coding=utf-8
+# coding=utf-8
 
-from icherry.tiempo import *
 from icherry.magnitudes import Rango
 
 
@@ -25,6 +24,9 @@ class PronosticoMeteorologico():
 
     def __eq__(self, otroPronostico):
         return self.__predicciones == otroPronostico.__predicciones
+
+    def __ne__(self, otroPronostico):
+        return not self.__eq__(otroPronostico)
 
 
 #Indica las predicciones de distintos parámetros para el lapso dado.
@@ -59,6 +61,9 @@ class PrediccionMeteorologica():
             self.__temperatura == otraPrediccion.__temperatura and \
             self.__luzAmbiente == otraPrediccion.__luzAmbiente
 
+    def __ne__(self, otraPrediccion):
+        return not self.__eq__(otraPrediccion)
+
     def __str__(self):
         return ('Prediccion para {4} es: \nTemperatura: {0}, Humedad: {1}, '
                   'Prob. de lluvia: {2}, Luz ambiente: {3}').format(self.temperatura(),
@@ -66,7 +71,6 @@ class PrediccionMeteorologica():
                                                                     self.probabilidadDeLluvia(),
                                                                     self.luzAmbiente(),
                                                                     self.lapso())
-
 
 
 class ProveedorDeTiempo():
@@ -104,5 +108,3 @@ class CentralMeteorologica():
             desde = desde.agregarHoras(1)
 
         return PronosticoMeteorologico(predicciones)
-
-

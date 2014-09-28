@@ -1,6 +1,7 @@
-#coding=utf-8
+# coding=utf-8
 
-from icherry.central_meteorologica import CentralMeteorologica, PronosticoMeteorologico
+from icherry.central_meteorologica import CentralMeteorologica
+from icherry.central_meteorologica import PronosticoMeteorologico
 
 
 class AmbienteSimulado():
@@ -15,5 +16,5 @@ class CentralMeteorologicaSimulada(CentralMeteorologica):
         return self.__ambiente.fechaYHora()
 
     def obtenerPronostico(self, unaCantidadDeHoras):
-        #TODO
+        # TODO
         return PronosticoMeteorologico(None)

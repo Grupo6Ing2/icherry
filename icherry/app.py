@@ -9,23 +9,23 @@ import npyscreen
 
 # bootstrap
 
-# construccion de sensores
+# construcción de sensores
 sensorDeTemperatura = sensores.Sensor(
-    dispositivos.DispositivosDeLecturaArchivo(
+    dispositivos.DispositivoDeLecturaArchivo(
         'devices/sensor_temperatura'),
     parsers.CadenaANumero(),
     magnitudes.TemperaturaEnCelsius
 )
 
 sensorDeHumedad = sensores.Sensor(
-    dispositivos.DispositivosDeLecturaArchivo(
+    dispositivos.DispositivoDeLecturaArchivo(
         'devices/sensor_humedad'),
     parsers.CadenaAPorcentaje(),
     magnitudes.HumedadRelativa
 )
 
 sensorDeAcidez = sensores.Sensor(
-    dispositivos.DispositivosDeLecturaArchivo(
+    dispositivos.DispositivoDeLecturaArchivo(
         'devices/sensor_acidez'),
     parsers.CadenaANumero(),
     magnitudes.AcidezEnPH
@@ -33,7 +33,7 @@ sensorDeAcidez = sensores.Sensor(
 
 sensorDeAcidez.sensar()
 
-# construccion de actuadores
+# construcción de actuadores
 constructorDeActuador = actuadores.ConstructorDeActuadorEnArchivo()
 
 actuadorDeAgua = constructorDeActuador.crear(
@@ -45,7 +45,7 @@ actuadorDeFertilizante = constructorDeActuador.crear(
 actuadorDeAntibiotico = constructorDeActuador.crear(
     'devices/actuador_antibiotico')
 
-# construccion de pantallas
+# construcción de pantallas
 # seguramente hay que generar un objeto que construya todo esto
 
 

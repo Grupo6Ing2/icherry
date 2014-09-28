@@ -47,8 +47,6 @@ class FechaYHora():
         return self.fecha() == otraFechaYHora.fecha() and\
             self.hora() == otraFechaYHora.hora()
 
-    # WARNING: ojo con definir '__eq__' sin definir '__ne__', el "!="
-    # no hace lo que esperarías.
     def __ne__(self, otraFechaYHora):
         return not self.__eq__(otraFechaYHora)
 

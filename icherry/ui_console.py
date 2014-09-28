@@ -1,12 +1,14 @@
-import random
 import getopt
 import sys
+import datetime
 
 from icherry.tiempo import FechaYHora
-from icherry.central_meteorologica import *
-from icherry.magnitudes import *
-from icherry.dispositivos import *
-from icherry.parsers import *
+from icherry.central_meteorologica import CentralMeteorologica
+from icherry.central_meteorologica import ProveedorDeTiempo
+from icherry.central_meteorologica import PredictorMeteorologico
+from icherry.dispositivos import DispositivoDeLecturaArchivo
+from icherry.parsers import ParserPronosticoMeteorologico, CadenaAFechaYHora
+
 
 class PredictorMeteorologicoPorArchivo(PredictorMeteorologico):
     def __init__(self, dispositivoDeLectura):
@@ -18,7 +20,6 @@ class PredictorMeteorologicoPorArchivo(PredictorMeteorologico):
         return self.__pronostico.prediccionPara(unLapso.desde())
 
 
-
 class ProveedorDeTiempoPorArchivo(ProveedorDeTiempo):
     def __init__(self, dispositivoDeLectura):
         self.__dispositivoDeLectura = dispositivoDeLectura
@@ -27,8 +28,8 @@ class ProveedorDeTiempoPorArchivo(ProveedorDeTiempo):
         return CadenaAFechaYHora().parse(self.__dispositivoDeLectura.leer())
 
 
-
 comandosValidos = ['pronostico', 'sensores', 'tiempo']
+
 
 def mensajeAyuda():
     print('ui_console.py -c <comando>')
@@ -51,34 +52,37 @@ def main(argv):
             mensajeAyuda()
             sys.exit()
 
-    if cmd == None:
+    if cmd is None:
         mensajeAyuda()
         sys.exit()
 
-
-    predictor = PredictorMeteorologicoPorArchivo(DispositivosDeLecturaArchivo("devices/pronostico"))
-    reloj = ProveedorDeTiempoPorArchivo(DispositivosDeLecturaArchivo("devices/tiempo"))
+    predictor = PredictorMeteorologicoPorArchivo(
+        DispositivoDeLecturaArchivo("devices/pronostico"))
+    reloj = ProveedorDeTiempoPorArchivo(
+        DispositivoDeLecturaArchivo("devices/tiempo"))
     central = CentralMeteorologica(predictor, reloj)
 
     if cmd == 'pronostico':
         horas = 24
-        desdeFechaYHora = FechaYHora(datetime.date(2014, 9, 27), datetime.time(11, 0, 0))
+        desdeFechaYHora = FechaYHora(datetime.date(2014, 9, 27),
+                                     datetime.time(11, 0, 0))
         pronostico = central.obtenerPronostico(desdeFechaYHora, horas)
         t = desdeFechaYHora
         for _ in range(0, horas):
             p = pronostico.prediccionPara(t)
-            print(('El pronóstico para {4} es: \nTemperatura: {0}, Humedad: {1}, '
-                  'Prob. de lluvia: {2}, Luz ambiente: {3}').format(p.temperatura(),
-                                                                    p.humedad(),
-                                                                    p.probabilidadDeLluvia(),
-                                                                    p.luzAmbiente(), p.lapso()))
+            print(('El pronóstico para {4} es: \n'
+                   'Temperatura: {0}, Humedad: {1}, '
+                  'Prob. de lluvia: {2}, Luz ambiente: {3}')
+                  .format(p.temperatura(),
+                          p.humedad(),
+                          p.probabilidadDeLluvia(),
+                          p.luzAmbiente(), p.lapso()))
             t = t.agregarHoras(1)
-
-    if cmd == 'tiempo':
+    elif cmd == 'sensores':     # TODO
+        print("No implementado.")
+    elif cmd == 'tiempo':
         t = central.obtenerFechaYHora()
         print(t)
 
-
-
 if __name__ == "__main__":
-   main(sys.argv[1:])
+    main(sys.argv[1:])

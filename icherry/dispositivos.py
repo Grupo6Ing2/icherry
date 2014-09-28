@@ -1,4 +1,4 @@
-#coding=utf-8
+# coding=utf-8
 import os
 
 
@@ -11,7 +11,7 @@ class DispositivoDeLectura():
         raise NotImplementedError("Método abstracto")
 
 
-class DispositivosDeLecturaArchivo(DispositivoDeLectura):
+class DispositivoDeLecturaArchivo(DispositivoDeLectura):
 
     def __init__(self, unNombreArchivo):
         self._archivo = open(unNombreArchivo, 'r')
@@ -19,6 +19,9 @@ class DispositivosDeLecturaArchivo(DispositivoDeLectura):
     def leer(self):
         self._archivo.seek(0)
         return self._archivo.read()
+
+    def cerrar(self):
+        self._archivo.close()
 
 
 class DispositivoDeEscritura():
@@ -40,3 +43,6 @@ class DispositivoDeEscrituraArchivo(DispositivoDeEscritura):
         self._archivo.flush()
         os.fsync(self._archivo.fileno())
         return self
+
+    def cerrar(self):
+        self._archivo.close()

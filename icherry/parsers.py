@@ -62,7 +62,7 @@ class ParserPronosticoMeteorologico(Parser):
         # humedad
         # luz
         # desdeLapso
-        #...
+        # ...
         predicciones = []
 
         datosSerializados = unaCadena.split("\n")

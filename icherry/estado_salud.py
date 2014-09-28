@@ -1,4 +1,7 @@
-from icherry.planmaestro import EstadiosFenologicos
+# ====================================================================
+#                          ESTADO DE SALUD
+# ====================================================================
+from icherry.plan_maestro import EstadiosFenologicos
 from icherry.magnitudes import Porcentaje
 from icherry.magnitudes import LongitudEnCentimetros
 from icherry.magnitudes import TemperaturaEnCelsius
@@ -6,6 +9,8 @@ from icherry.magnitudes import HumedadRelativa
 from icherry.magnitudes import AcidezEnPH
 
 
+# ====================================================================
+# EstadoDeSalud
 class EstadoDeSalud:
     def __init__(self):
         self.estadoFenologico = EstadoFenologico()
@@ -13,7 +18,7 @@ class EstadoDeSalud:
         self._humedad = HumedadRelativa(Porcentaje(0))
         self._acidez = AcidezEnPH(0)
 
-    def estadoFenologico(self) :
+    def estadoFenologico(self):
         return self.estadoFenologico
 
     # definimos ahora getters/setters para T/H/PH. Cada método puede
@@ -42,6 +47,9 @@ class EstadoDeSalud:
         else:
             return self._acidez
 
+
+# ====================================================================
+# EstadoFenologico
 class EstadoFenologico:
     def __init__(self):
         """inicializa un estado fenologico a partir de valores por defecto
@@ -76,7 +84,8 @@ class EstadoFenologico:
         if nuevoValor is not None:
             self._cantidadFrutos = nuevoValor
             return self
-        else: return self._cantidadFrutos
+        else:
+            return self._cantidadFrutos
 
     def porcentajeFrutasMaduras(self, nuevoValor=None):
         if nuevoValor is not None:

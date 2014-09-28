@@ -1,5 +1,5 @@
 from icherry.estado_salud import EstadoDeSalud, EstadoFenologico
-from icherry.planmaestro import EstadiosFenologicos
+from icherry.plan_maestro import EstadiosFenologicos
 from icherry.magnitudes import Porcentaje, LongitudEnCentimetros, AcidezEnPH
 from icherry.magnitudes import TemperaturaEnCelsius, HumedadRelativa
 

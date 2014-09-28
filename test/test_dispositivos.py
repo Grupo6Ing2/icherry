@@ -1,5 +1,5 @@
 from icherry.dispositivos import DispositivoDeEscrituraArchivo
-from icherry.dispositivos import DispositivosDeLecturaArchivo
+from icherry.dispositivos import DispositivoDeLecturaArchivo
 
 import unittest
 from random import random
@@ -12,15 +12,13 @@ class TestDispositivoArchivo(unittest.TestCase):
 
     def escribirArchivo(self, texto):
         nombreArchivo = self.generarNombreArchivo()
-        archivo = open(nombreArchivo, 'w')
-        archivo.write(texto)
-        archivo.close()
+        with open(nombreArchivo, 'w') as archivo:
+            archivo.write(texto)
         return nombreArchivo
 
     def leerArchivo(self, nombreArchivo):
-        archivo = open(nombreArchivo, 'r')
-        texto = archivo.read()
-        archivo.close()
+        with open(nombreArchivo, 'r') as archivo:
+            texto = archivo.read()
         return texto
 
 
@@ -28,23 +26,24 @@ class TestDispositivoDeLecturaArchivo(TestDispositivoArchivo):
 
     def test_se_genera_una_excepcion_si_el_archivo_no_existe(self):
         with self.assertRaises(IOError):
-            DispositivosDeLecturaArchivo(
-                '/tmp/archivo_inexsitente' + str(random()))
+            DispositivoDeLecturaArchivo(
+                '/tmp/archivo_inexistente' + str(random()))
 
     def test_se_lee_correctamente_el_archivo(self):
         textoEsperado = '10'
         nombreArchivo = self.escribirArchivo(textoEsperado)
 
-        dispositivo = DispositivosDeLecturaArchivo(nombreArchivo)
+        dispositivo = DispositivoDeLecturaArchivo(nombreArchivo)
         self.assertEqual(textoEsperado, dispositivo.leer())
+        dispositivo.cerrar()
 
 
 class TestDispositivoDeEscrituraArchivo(TestDispositivoArchivo):
 
     def test_se_genera_una_excepcion_si_el_archivo_no_existe(self):
         with self.assertRaises(IOError):
-            DispositivosDeLecturaArchivo(
-                '/tmp/archivo_inexsitente' + str(random()))
+            DispositivoDeLecturaArchivo(
+                '/tmp/archivo_inexistente' + str(random()))
 
     def test_se_escribe_correctamente_el_archivo(self):
         texto = 'texto de ejemplo'
@@ -52,3 +51,4 @@ class TestDispositivoDeEscrituraArchivo(TestDispositivoArchivo):
         dispositivo = DispositivoDeEscrituraArchivo(nombreArchivo)
         dispositivo.escribir(texto)
         self.assertEqual(texto, self.leerArchivo(nombreArchivo))
+        dispositivo.cerrar()

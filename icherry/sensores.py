@@ -6,4 +6,5 @@ class Sensor():
         self._clase_de_magnitud = unaClaseDeMagnitud
 
     def sensar(self):
-        return self._clase_de_magnitud(self._parser.parse(self._dispositivo.leer()))
+        cantidadParseada = self._parser.parse(self._dispositivo.leer())
+        return self._clase_de_magnitud(cantidadParseada)

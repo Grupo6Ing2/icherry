@@ -3,7 +3,8 @@
 # ====================================================================
 
 # Se definen todas las clases relacionadas con el programa de
-# suministro: Accion, AccionProgramada y ProgramaDeSuministro.
+# suministro: Accion, AccionProgramada (y subclases) y
+# ProgramaDeSuministro.
 
 # ====================================================================
 # Accion
@@ -91,7 +92,7 @@ class AccionProgramada:
         """Crea una acción programada a partir de un horario y una acción.
 
         """
-        self._tupla = (fechaYHora,accion)
+        self._tupla = (fechaYHora, accion)
 
     def fechaYHora(self):
         return self._tupla[0]
@@ -116,9 +117,9 @@ class AccionProgramada:
     def __hash__(self):
         return self._tupla.__hash__()
 
+
 # ====================================================================
 # ProgramaDeSuministro
-
 
 # NOTICE: Esta versión de 'ProgramaDeSuministro' es en realidad mucho
 # más general que lo que el nombre indica, ya que lo único que
@@ -166,7 +167,7 @@ class ProgramaDeSuministro:
             for accionProgramada in lista:
                 self.programar(accionProgramada)
 
-    def programar(self,accionProgramada):
+    def programar(self, accionProgramada):
         """Agrega una acción programada a la lista de acciones programadas. La
         fecha y hora de la acción programada debe estar en el lapso
         del programa de suministros.
@@ -180,7 +181,7 @@ class ProgramaDeSuministro:
         argumentos separados.
 
         """
-        self.programar(AccionProgramada(fechaYHora,accion))
+        self.programar(AccionProgramada(fechaYHora, accion))
 
     def lapso(self):
         """Retorna el lapso de validez del programa de suministro"""
@@ -193,11 +194,12 @@ class ProgramaDeSuministro:
         """
         return self._accionesProgramadas
 
-    def accionesEnHorario(self,lapso):
+    def accionesEnHorario(self, lapso):
         """Determina qué acciones programadas caen en un lapso dado. El
         resultado es una lista (sin ningún orden particular).
 
         """
-        if not self.lapso().interseca(lapso): return []  # meh, optimización
+        if not self.lapso().interseca(lapso):
+            return []  # meh, optimización
         return [aP.accion() for aP in self.accionesProgramadas()
                 if lapso.contiene(aP.fechaYHora())]

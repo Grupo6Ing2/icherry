@@ -361,7 +361,7 @@ class Rango:
     def __init__(self, desde, hasta):
         """construye un rango a partir de límites inferior y superior"""
         assert(desde <= hasta)
-        self._tupla = (desde,hasta)
+        self._tupla = (desde, hasta)
 
     def desde(self):
         """retorna el límite inferior"""
@@ -380,8 +380,9 @@ class Rango:
         reflexiva y simétrica (pero no necesariamente transitiva).
 
         """
-        if otro.contiene(self.desde()): return True
-        if self.contiene(otro.desde()): return True
+        if otro.contiene(self.desde()) or\
+           self.contiene(otro.desde()):
+            return True
         return False
 
     def __eq__(self, otroRango):

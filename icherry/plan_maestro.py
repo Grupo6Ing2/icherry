@@ -12,6 +12,7 @@
 # http://www.fundeu.es/recomendacion/estadio-no-estadio-1265/
 # http://lema.rae.es/drae/?val=estad%C3%ADo
 
+
 class EstadioFenologico:
     """Un 'EstadioFenologico' es básicamente un mero identificador de
     estadio fenológico, no tiene demasiado interés per sé, sino más
@@ -20,39 +21,44 @@ class EstadioFenologico:
     valores sean únicos en el plan maestro en que aparezcan).
 
     """
-    def __init__(self, id, nombre) :
+    def __init__(self, id, nombre):
         """construye un estadio fenológico a partir de un identificador y un
         nombre. El identificador puede ser un número, el nombre
         debería ser un string (usado a modo de símbolo)
         """
-        self._tupla = (id,nombre)
+        self._tupla = (id, nombre)
         # la función 'id' en python existe, pero no conflictúa con
         # este uso. Si 'e0' es una instancia de 'EstadioFenologico',
         # id(e0) y e0.id() son dos cosas distintas.
+
     def id(self):
         return self._tupla[0]
+
     def nombre(self):
         return self._tupla[1]
 
-    def __eq__(self, otro) :
+    def __eq__(self, otro):
         return self._tupla == otro._tupla
-    def __ne__(self, otro) :
+
+    def __ne__(self, otro):
         return not self.__eq__(otro)
-    def __hash__(self) :
+
+    def __hash__(self):
         return self._tupla.__hash__()
+
 
 # por practicidad, generamos todos los estadios posibles acá
 class EstadiosFenologicos:
-    estadios = {'GERMINACION' : EstadioFenologico(0,'GERMINACION'),
-                'DESARROLLO'  : EstadioFenologico(1,'DESARROLLO'),
-                'BROTES'      : EstadioFenologico(2,'BROTES'),
-                'APARICION'   : EstadioFenologico(3,'APARICION'),
-                'FLORACION'   : EstadioFenologico(4,'FLORACION'),
-                'FRUTO'       : EstadioFenologico(5,'FRUTO'),
-                'MADURACION'  : EstadioFenologico(6,'MADURACION'),
-                'SENESCENCIA' : EstadioFenologico(7,'SENESCENCIA')}
+    estadios = {'GERMINACION': EstadioFenologico(0, 'GERMINACION'),
+                'DESARROLLO':  EstadioFenologico(1, 'DESARROLLO'),
+                'BROTES':      EstadioFenologico(2, 'BROTES'),
+                'APARICION':   EstadioFenologico(3, 'APARICION'),
+                'FLORACION':   EstadioFenologico(4, 'FLORACION'),
+                'FRUTO':       EstadioFenologico(5, 'FRUTO'),
+                'MADURACION':  EstadioFenologico(6, 'MADURACION'),
+                'SENESCENCIA': EstadioFenologico(7, 'SENESCENCIA')}
 
-    def germinacion() :
+    def germinacion():
         return EstadiosFenologicos.estadios['GERMINACION']
 
     def desarrollo():
@@ -76,6 +82,7 @@ class EstadiosFenologicos:
     def senescencia():
         return EstadiosFenologicos.estadios['SENESCENCIA']
 
+
 # ====================================================================
 # UmbralOptimoDeCultivo
 class UmbralOptimoDeCultivo:
@@ -89,24 +96,28 @@ class UmbralOptimoDeCultivo:
     temperatura(), humedad() y acidez().
 
     """
-    def __init__(self,estadio,rangoTemperatura,rangoHumedad,rangoAcidez) :
-        self._estadio     = estadio
+    def __init__(self, estadio, rangoTemperatura, rangoHumedad, rangoAcidez):
+        self._estadio = estadio
         self._temperatura = rangoTemperatura
-        self._humedad     = rangoHumedad
-        self._acidez      = rangoAcidez
+        self._humedad = rangoHumedad
+        self._acidez = rangoAcidez
 
     def estadio(self):
         return self._estadio
+
     def temperatura(self):
         return self._temperatura
+
     def humedad(self):
         return self._humedad
+
     def acidez(self):
         return self._acidez
 
+
 # ====================================================================
 # PlanMaestro
-class PlanMaestro :
+class PlanMaestro:
     """Un plan maestro es un diccionario de estado fenológico en umbral
     óptimo de cultivo. Con el plan maestro sabemos en qué parámetros
     de T/H/PH se debe mantener la planta en el estadio actual. Para
@@ -115,18 +126,20 @@ class PlanMaestro :
     estadio).
 
     """
-    def __init__(self, umbrales) :
+    def __init__(self, umbrales):
         """construye un plan maestro a partir de una colección de umbrales"""
-        self._umbrales = dict([(u.estadio(),u) for u in umbrales])
-        #si había umbrales distintos con el mismo estadio, sólo uno de ellos
-        #quedará asociado (pero no debería construirse con una lista así)
-    def umbralParaEstadio(self, estadio) :
+        self._umbrales = dict([(u.estadio(), u) for u in umbrales])
+        # si había umbrales distintos con el mismo estadio, sólo uno
+        # de ellos quedará asociado (pero no debería construirse con
+        # una lista así)
+
+    def umbralParaEstadio(self, estadio):
         """retorna el umbral asociado al estadio dado"""
-        return self._umbrales[ estadio ]
-    def umbrales(self) :
+        return self._umbrales[estadio]
+
+    def umbrales(self):
         """retorna la lista de todos los umbrales que planifica"""
         return [umbral for umbral in self._umbrales.values()]
-
 
 
 # ====================================================================
@@ -140,42 +153,43 @@ def demo():
     from icherry.magnitudes import Rango
     from icherry.magnitudes import HumedadRelativa, Porcentaje
     from icherry.magnitudes import TemperaturaEnCelsius, AcidezEnPH
-    def humedadRelativa(x) :
-        return HumedadRelativa(Porcentaje(x))
 
+    def humedadRelativa(x):
+        return HumedadRelativa(Porcentaje(x))
 
     e0 = EstadiosFenologicos.germinacion()
     e1 = EstadiosFenologicos.desarrollo()
 
-    temperatura = Rango(TemperaturaEnCelsius(10),TemperaturaEnCelsius(30))
-    humedad = Rango(humedadRelativa(40),humedadRelativa(50))
-    acidez = Rango(AcidezEnPH(6.5),AcidezEnPH(7.5))
+    temperatura = Rango(TemperaturaEnCelsius(10), TemperaturaEnCelsius(30))
+    humedad = Rango(humedadRelativa(40), humedadRelativa(50))
+    acidez = Rango(AcidezEnPH(6.5), AcidezEnPH(7.5))
 
-    umbral0 = UmbralOptimoDeCultivo(e0,temperatura,humedad,acidez)
+    umbral0 = UmbralOptimoDeCultivo(e0, temperatura, humedad, acidez)
 
-    temperatura = Rango(TemperaturaEnCelsius(12),TemperaturaEnCelsius(20))
-    humedad = Rango(humedadRelativa(40),humedadRelativa(70))
-    acidez = Rango(AcidezEnPH(6.0),AcidezEnPH(7.5))
+    temperatura = Rango(TemperaturaEnCelsius(12), TemperaturaEnCelsius(20))
+    humedad = Rango(humedadRelativa(40), humedadRelativa(70))
+    acidez = Rango(AcidezEnPH(6.0), AcidezEnPH(7.5))
 
-    umbral1 = UmbralOptimoDeCultivo(e1,temperatura,humedad,acidez)
+    umbral1 = UmbralOptimoDeCultivo(e1, temperatura, humedad, acidez)
 
-    plan = PlanMaestro([umbral0,umbral1])
+    plan = PlanMaestro([umbral0, umbral1])
 
     # verifiquemos que el diccionario ande bien
-    assert( plan.umbralParaEstadio(e0) == umbral0 )
-    assert( plan.umbralParaEstadio(e1) == umbral1 )
+    assert(plan.umbralParaEstadio(e0) == umbral0)
+    assert(plan.umbralParaEstadio(e1) == umbral1)
 
     # ahora hacemos un print de todo para ver bien los datos
-    print( "==== plan maestro ====")
-    for umbral in plan.umbrales() :
+    print("==== plan maestro ====")
+    for umbral in plan.umbrales():
         print("estadio : %s" % umbral.estadio().nombre())
         print("rango temperatura : %s~%s" %
-              (umbral.temperatura().desde(),umbral.temperatura().hasta()))
+              (umbral.temperatura().desde(), umbral.temperatura().hasta()))
         print("rango humedad     : %s~%s" %
               (umbral.humedad().desde(), umbral.humedad().hasta()))
         print("rango acidez (pH) : %s~%s" %
               (umbral.acidez().desde(), umbral.acidez().hasta()))
-    print( "======================" )
+    print("======================")
     return plan
 
-if __name__ == "__main__" : plan = demo() # usá 'plan' en la repl
+if __name__ == "__main__":
+    plan = demo()               # usá 'plan' en la repl
