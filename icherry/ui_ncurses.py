@@ -126,8 +126,8 @@ class PantallaDeCentral(npyscreen.Form):
             proveedorDeTexto.obtener("HEADER_FECHA"),
             proveedorDeTexto.obtener("HEADER_TEMPERATURA"),
             proveedorDeTexto.obtener("HEADER_HUMEDAD"),
-            proveedorDeTexto.obtener("HEADER_LUZ"),
             proveedorDeTexto.obtener("HEADER_LLUVIA"),
+            proveedorDeTexto.obtener("HEADER_LUZ"),
         ])
 
         for _ in range(0, 23):
