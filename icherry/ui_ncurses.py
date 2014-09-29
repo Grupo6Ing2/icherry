@@ -1,4 +1,5 @@
 import npyscreen
+import prettytable
 
 
 class ICherryCurses(npyscreen.NPSAppManaged):
@@ -7,121 +8,152 @@ class ICherryCurses(npyscreen.NPSAppManaged):
 
 class PantallaEnConstruccion(npyscreen.Form):
 
-    def __init__(self):
-        super(PantallaEnConstruccion, self).__init__(name='En construcción')
+    def __init__(self, proveedorDeTexto):
+        self.proveedorDeTexto = proveedorDeTexto
+        super(PantallaEnConstruccion, self).__init__(
+            name=proveedorDeTexto.obtener("EN_CONSTRUCCION"))
 
     def afterEditing(self):
         self.parentApp.setNextForm('MAIN')
 
     def create(self):
-        self.add(npyscreen.TitleText, name='En construcción', editable=False)
+        self.add(npyscreen.TitleText, name=self.proveedorDeTexto.obtener(
+            "EN_CONSTRUCCION"), editable=False)
 
 
 class PantallaDeInicio(npyscreen.FormWithMenus):
 
-    def __init__(self):
-        super(PantallaDeInicio, self).__init__(name='iCherry')
+    def __init__(self, proveedorDeTexto, archivoFondoAscii=''):
 
-    def asciiArt(self):
-        # FIXME: poner *bien* esto, en un constructor, etc.
-        with open("icherry/main_background_pic.txt") as f:
-            r = f.read()
-        return r
+        if (archivoFondoAscii):
+            with open(archivoFondoAscii, 'r') as archivo:
+                self.fondoAscii = archivo.read()
+        else:
+            self.fondoAscii = proveedorDeTexto.obtener("BIENVENIDO")
+
+        self.proveedorDeTexto = proveedorDeTexto
+        super(PantallaDeInicio, self).__init__(
+            name=proveedorDeTexto.obtener("NOMBRE_APLICACION"))
+
+    def _agregarEntradaDeMenu(self, menu, texto, pantallaObjetivo):
+        menu.addItem(
+            text=self.proveedorDeTexto.obtener(texto),
+            onSelect=lambda: self.parentApp.switchForm(pantallaObjetivo))
+
+    def _agregarSeparacionDeMenu(self, menu):
+        menu.addItem(text='')
+
+    def _crearMenu(self):
+        menu = self.new_menu(
+            name=self.proveedorDeTexto.obtener('MENU_OPCIONES'))
+
+        self._agregarEntradaDeMenu(
+            menu, 'MENU_SENSORES', 'SENSORES')
+        self._agregarEntradaDeMenu(
+            menu, 'MENU_ESTADO_SALUD', 'EN_CONSTRUCCION')
+        self._agregarEntradaDeMenu(
+            menu, 'MENU_CONFIGURAR_PLAN_MAESTRO', 'EN_CONSTRUCCION')
+        self._agregarEntradaDeMenu(
+            menu, 'MENU_PROGRAMA_SUMINISTROS', 'EN_CONSTRUCCION')
+        self._agregarEntradaDeMenu(
+            menu, 'MENU_CENTRAL_METEOROLOGICA', 'CENTRAL')
+        self._agregarEntradaDeMenu(
+            menu, 'MENU_HISTORIAL_SENSORES', 'EN_CONSTRUCCION')
+        self._agregarEntradaDeMenu(
+            menu, 'MENU_HISTORIAL_SUMINISTROS', 'EN_CONSTRUCCION')
+        self._agregarSeparacionDeMenu(menu)
+        self._agregarEntradaDeMenu(
+            menu, 'MENU_SALIR', None)
 
     def create(self):
 
-        self.add(
-            npyscreen.Pager, values=self.asciiArt().split("\n"),
-            editable=False)
-
-        menu = self.new_menu(name='Opciones')
-
-        menu.addItem(text='Sensores', onSelect=lambda:
-                     self.parentApp.switchForm('SENSORES'))
-
-        menu.addItem(text='Estado de salud', onSelect=lambda:
-                     self.parentApp.switchForm('EN_CONSTRUCCION'))
-
-        menu.addItem(text='Configurar Plan Maestro', onSelect=lambda:
-                     self.parentApp.switchForm('EN_CONSTRUCCION'))
-
-        menu.addItem(text='Programa de suministros', onSelect=lambda:
-                     self.parentApp.switchForm('EN_CONSTRUCCION'))
-
-        menu.addItem(text='Centrar Meteorologica', onSelect=lambda:
-                     self.parentApp.switchForm('CENTRAL'))
-
-        menu.addItem(text='Historial de sensores', onSelect=lambda:
-                     self.parentApp.switchForm('EN_CONSTRUCCION'))
-
-        menu.addItem(text='Historial de suministros', onSelect=lambda:
-                     self.parentApp.switchForm('EN_CONSTRUCCION'))
-
-        menu.addItem(text='')
-
-        menu.addItem(
-            text='Salir', onSelect=lambda: self.parentApp.switchForm(None))
+        self.add(npyscreen.Pager, values=self.fondoAscii.split("\n"))
+        self._crearMenu()
 
 
 class PantallaDeSensores(npyscreen.Form):
 
-    def __init__(self, sensorDeTemperatura, sensorDeHumedad, sensorDeAcidez):
+    def __init__(self,
+                 proveedorDeTexto,
+                 sensorDeTemperatura,
+                 sensorDeHumedad,
+                 sensorDeAcidez):
+
         self.sensorDeTemperatura = sensorDeTemperatura
         self.sensorDeHumedad = sensorDeHumedad
         self.sensorDeAcidez = sensorDeAcidez
-        super(PantallaDeSensores, self).__init__(name='Sensores')
+        self.proveedorDeTexto = proveedorDeTexto
+        super(PantallaDeSensores, self).__init__(
+            name=proveedorDeTexto.obtener("SCREEN_SENSORES"))
 
     def afterEditing(self):
         self.parentApp.setNextForm('MAIN')
 
     def create(self):
-        self.add(
-            npyscreen.TitleText, name="Temperatura:", editable=False,
-            value=str(self.sensorDeTemperatura.sensar()))
-        self.add(
-            npyscreen.TitleText, name="Humedad:", editable=False,
-            value=str(self.sensorDeHumedad.sensar()))
-        self.add(
-            npyscreen.TitleText, name="Acidez:", editable=False,
-            value=str(self.sensorDeAcidez.sensar()))
+        textos = [
+            self.proveedorDeTexto.obtener(
+                "SPAN_TEMPERATURA", self.sensorDeTemperatura.sensar().valor()),
+            self.proveedorDeTexto.obtener(
+                "SPAN_HUMEDAD", self.sensorDeHumedad.sensar().valor().valor()),
+            self.proveedorDeTexto.obtener(
+                "SPAN_ACIDEZ", self.sensorDeAcidez.sensar().valor()),
+        ]
+        self.add(npyscreen.Pager, values=textos)
 
 
 class PantallaDeCentral(npyscreen.Form):
 
-    def __init__(self, central):
+    def __init__(self, proveedorDeTexto, central):
+        self.proveedorDeTexto = proveedorDeTexto
         self.central = central
         super(PantallaDeCentral, self).__init__(name='Central')
 
     def afterEditing(self):
         self.parentApp.setNextForm('MAIN')
 
-    def create(self):
-        #TODO deberian ser 24hs, pero los detalles de las 24 no entran en la pantalla (tirra error).
-        #cambiar si alguien sabe como hacer scrollbars.
-        horas = 18
+    def _obtenerTextoFechaYHora(self, fechaYHora):
+        return self.proveedorDeTexto.obtener(
+            'FORMAT_FECHAYHORA', fechaYHora.fecha(), fechaYHora.hora())
+
+    def _crearTablaPronostico(self):
+
+        proveedorDeTexto = self.proveedorDeTexto
+
         fechaYHora = self.central.obtenerFechaYHora()
-        pronostico = self.central.obtenerPronostico(fechaYHora, horas)
+        pronostico = self.central.obtenerPronostico(fechaYHora, 24)
 
-        self.add(
-            npyscreen.TitleText, name="Tiempo:", editable=False,
-            value=str(fechaYHora))
-        self.add(npyscreen.TitleText, name="Pronostico para las siguientes 24hs:", editable=False)
+        tabla = prettytable.PrettyTable([
+            proveedorDeTexto.obtener("HEADER_FECHA"),
+            proveedorDeTexto.obtener("HEADER_TEMPERATURA"),
+            proveedorDeTexto.obtener("HEADER_HUMEDAD"),
+            proveedorDeTexto.obtener("HEADER_LUZ"),
+            proveedorDeTexto.obtener("HEADER_LLUVIA"),
+        ])
 
-        t = fechaYHora
-        for _ in range(0, horas):
-            p = pronostico.prediccionPara(t)
-            self.agregarDetallesPrediccion(p)
-            t = t.agregarHoras(1)
+        for _ in range(0, 23):
+            prediccion = pronostico.prediccionPara(fechaYHora)
+            tabla.add_row([
+                self._obtenerTextoFechaYHora(prediccion.lapso().desde()),
+                prediccion.temperatura().valor(),
+                prediccion.humedad().valor().valor(),
+                prediccion.probabilidadDeLluvia().valor(),
+                prediccion.luzAmbiente().valor()
+            ])
+            fechaYHora = fechaYHora.agregarHoras(1)
 
+        return tabla
 
-    def agregarDetallesPrediccion(self, prediccion):
-        detalles = "Temperatura: {0}, Humedad: {1}, Prob. Lluvia: {2}, Luz Ambiente: {3}".format(
-                prediccion.temperatura(),
-                prediccion.humedad(),
-                prediccion.probabilidadDeLluvia(),
-                prediccion.luzAmbiente())
+    def create(self):
 
-        self.add(npyscreen.TitleText, name="El pronóstico para {0} es:".format(prediccion.lapso()),
-                 editable=False, value=detalles)
+        proveedorDeTexto = self.proveedorDeTexto
+        textos = []
 
+        fechaYHora = self.central.obtenerFechaYHora()
+        textos.append(proveedorDeTexto.obtener(
+            'SPAN_FECHAYHORA_ACTUAL',
+            self._obtenerTextoFechaYHora(fechaYHora)))
 
+        textos.append(proveedorDeTexto.obtener('SPAN_PRONOSTICO_24_HORAS'))
+        textos = textos + self._crearTablaPronostico().get_string().split("\n")
+
+        self.add(npyscreen.Pager, values=textos)

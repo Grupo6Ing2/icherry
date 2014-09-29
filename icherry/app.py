@@ -7,6 +7,7 @@ import icherry.actuadores as actuadores
 import icherry.ui_ncurses as ui_ncurses
 import icherry.central_meteorologica as central_meteorologica
 import icherry.tipos_para_la_demo as demo
+import icherry.proveedor_texto as proveedor_texto
 
 import npyscreen
 
@@ -55,6 +56,9 @@ reloj = demo.ProveedorDeTiempoPorArchivo(
     dispositivos.DispositivoDeLecturaArchivo("devices/tiempo"))
 central = central_meteorologica.CentralMeteorologica(predictor, reloj)
 
+# proveedor de texto
+proveedorDeTexto = proveedor_texto.ProveedorDeTexto('resources/textos.es')
+
 # construcción de pantallas
 # seguramente hay que generar un objeto que construya todo esto
 
@@ -62,19 +66,25 @@ central = central_meteorologica.CentralMeteorologica(predictor, reloj)
 def main(*args):
     app = ui_ncurses.ICherryCurses()
 
-    pantallaDeInicio = ui_ncurses.PantallaDeInicio()
+    pantallaDeInicio = ui_ncurses.PantallaDeInicio(
+        proveedorDeTexto,
+        archivoFondoAscii='resources/main_background_pic.txt',
+    )
 
     pantallaDeSensores = ui_ncurses.PantallaDeSensores(
+        proveedorDeTexto,
         sensorDeTemperatura, sensorDeHumedad, sensorDeAcidez)
 
-    pantallaDeCentral = ui_ncurses.PantallaDeCentral(central)
+    pantallaDeCentral = ui_ncurses.PantallaDeCentral(proveedorDeTexto, central)
 
-    pantallaEnConstruccion = ui_ncurses.PantallaEnConstruccion()
+    pantallaEnConstruccion = \
+        ui_ncurses.PantallaEnConstruccion(proveedorDeTexto)
 
     app.registerForm('MAIN', pantallaDeInicio)
     app.registerForm('SENSORES', pantallaDeSensores)
     app.registerForm('CENTRAL', pantallaDeCentral)
     app.registerForm('EN_CONSTRUCCION', pantallaEnConstruccion)
+
     app.run()
 
 npyscreen.wrapper_basic(main)
