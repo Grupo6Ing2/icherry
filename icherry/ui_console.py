@@ -3,11 +3,10 @@ import sys
 import datetime
 
 from icherry.tiempo import FechaYHora
-from icherry.central_meteorologica import CentralMeteorologica, PredictorMeteorologicoPorArchivo, ProveedorDeTiempoPorArchivo
-from icherry.central_meteorologica import ProveedorDeTiempo
-from icherry.central_meteorologica import PredictorMeteorologico
+from icherry.central_meteorologica import CentralMeteorologica
+from icherry.central_meteorologica import PredictorMeteorologicoPorArchivo
+from icherry.central_meteorologica import ProveedorDeTiempoPorArchivo
 from icherry.dispositivos import DispositivoDeLecturaArchivo
-from icherry.parsers import ParserPronosticoMeteorologico, CadenaAFechaYHora
 
 
 comandosValidos = ['pronostico', 'sensores', 'tiempo']

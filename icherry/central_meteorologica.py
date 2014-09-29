@@ -6,8 +6,8 @@ from icherry.magnitudes import Rango
 class PronosticoMeteorologico():
 
     def __init__(self, listaDePredicciones):
-        self.__predicciones = list(listaDePredicciones)
-        self.__predicciones = sorted(self.__predicciones, key = lambda p: p.lapso().desde())
+        self.__predicciones = sorted(listaDePredicciones,
+                                     key=lambda p: p.lapso().desde())
 
     def fechaInicio(self):
         return self.__predicciones[0].lapso().desde()
@@ -19,7 +19,7 @@ class PronosticoMeteorologico():
         for p in self.__predicciones:
             if p.lapso().contiene(unaFechaYHora):
                 return p
-        raise ValueError("la fecha {0} no se encuentra en el rango de este pronóstico"
+        raise ValueError("la fecha {0} no está en el rango de este pronóstico"
                          .format(unaFechaYHora))
 
     def __eq__(self, otroPronostico):
@@ -29,10 +29,11 @@ class PronosticoMeteorologico():
         return not self.__eq__(otroPronostico)
 
 
-#Indica las predicciones de distintos parámetros para el lapso dado.
+# Indica las predicciones de distintos parámetros para el lapso dado.
 class PrediccionMeteorologica():
 
-    def __init__(self, lapso, unaTemperatura, unaProbabilidadDeLluvia, unaHumedad, unaLuz):
+    def __init__(self, lapso, unaTemperatura,
+                 unaProbabilidadDeLluvia, unaHumedad, unaLuz):
         self.__lapso = lapso
         self.__probabilidadDeLLuvia = unaProbabilidadDeLluvia
         self.__humedad = unaHumedad
@@ -56,7 +57,8 @@ class PrediccionMeteorologica():
 
     def __eq__(self, otraPrediccion):
         return self.__lapso == otraPrediccion.__lapso and \
-            self.__probabilidadDeLLuvia == otraPrediccion.__probabilidadDeLLuvia and \
+            self.__probabilidadDeLLuvia == \
+            otraPrediccion.__probabilidadDeLLuvia and \
             self.__humedad == otraPrediccion.__humedad and \
             self.__temperatura == otraPrediccion.__temperatura and \
             self.__luzAmbiente == otraPrediccion.__luzAmbiente
@@ -66,11 +68,12 @@ class PrediccionMeteorologica():
 
     def __str__(self):
         return ('Prediccion para {4} es: \nTemperatura: {0}, Humedad: {1}, '
-                  'Prob. de lluvia: {2}, Luz ambiente: {3}').format(self.temperatura(),
-                                                                    self.humedad(),
-                                                                    self.probabilidadDeLluvia(),
-                                                                    self.luzAmbiente(),
-                                                                    self.lapso())
+                'Prob. de lluvia: {2}, Luz ambiente: {3}').format(
+                    self.temperatura(),
+                    self.humedad(),
+                    self.probabilidadDeLluvia(),
+                    self.luzAmbiente(),
+                    self.lapso())
 
 
 class ProveedorDeTiempo():
@@ -78,16 +81,16 @@ class ProveedorDeTiempo():
         raise NotImplementedError("Clase abstracta")
 
     def fechaYHoraActual(self):
-        raise NotImplementedError("Metodo abstracto")
+        raise NotImplementedError("Método abstracto")
 
 
 class PredictorMeteorologico():
     def __init__(self):
         raise NotImplementedError("Clase abstracta")
 
-    #Devuelve una PrediccionMeteorologica para el lapso especificado.
+    # Devuelve una PrediccionMeteorologica para el lapso especificado.
     def prediccionPara(self, unLapso):
-        raise NotImplementedError("Metodo abstracto")
+        raise NotImplementedError("Método abstracto")
 
 
 class CentralMeteorologica():
@@ -104,7 +107,8 @@ class CentralMeteorologica():
 
         for i in range(cantidadDeHs):
             hasta = desde.agregarHoras(1)
-            predicciones.append(self.__predictorMeteorologico.prediccionPara(Rango(desde, hasta)))
+            predicciones.append(self.__predictorMeteorologico.prediccionPara(
+                Rango(desde, hasta)))
             desde = desde.agregarHoras(1)
 
         return PronosticoMeteorologico(predicciones)

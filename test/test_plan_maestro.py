@@ -9,95 +9,60 @@ from icherry.plan_maestro import UmbralOptimoDeCultivo, PlanMaestro
 
 class TestPlanMaestro(unittest.TestCase):
 
-    def test_chequea_que_esten_todos_los_estadios_fenologicos_definidos(self):
-        self.assertEqual(EstadiosFenologicos.germinacion().nombre(), 'GERMINACION')
-        self.assertEqual(EstadiosFenologicos.desarrollo().nombre(), 'DESARROLLO')
-        self.assertEqual(EstadiosFenologicos.brotes().nombre(), 'BROTES')
-        self.assertEqual(EstadiosFenologicos.aparicion().nombre(), 'APARICION')
-        self.assertEqual(EstadiosFenologicos.floracion().nombre(), 'FLORACION')
-        self.assertEqual(EstadiosFenologicos.fruto().nombre(), 'FRUTO')
-        self.assertEqual(EstadiosFenologicos.maduracion().nombre(), 'MADURACION')
-        self.assertEqual(EstadiosFenologicos.senescencia().nombre(), 'SENESCENCIA')
-
     def setUp(self):
         def humedadRelativa(x):
             return HumedadRelativa(Porcentaje(x))
 
-        e0 = EstadiosFenologicos.germinacion()
-        e1 = EstadiosFenologicos.desarrollo()
-        e2 = EstadiosFenologicos.brotes()
-        e3 = EstadiosFenologicos.aparicion()
-        e4 = EstadiosFenologicos.floracion()
-        e5 = EstadiosFenologicos.fruto()
-        e6 = EstadiosFenologicos.maduracion()
-        e7 = EstadiosFenologicos.senescencia()
+        self.e0 = EstadiosFenologicos.germinacion()
+        self.e1 = EstadiosFenologicos.desarrollo()
+        self.e2 = EstadiosFenologicos.brotes()
+        self.e3 = EstadiosFenologicos.aparicion()
+        self.e4 = EstadiosFenologicos.floracion()
+        self.e5 = EstadiosFenologicos.fruto()
+        self.e6 = EstadiosFenologicos.maduracion()
+        self.e7 = EstadiosFenologicos.senescencia()
 
-        self.estadios = [e0, e1, e2, e3, e4, e5, e6, e7]
+        self.estadios = [self.e0, self.e1, self.e2, self.e3,
+                         self.e4, self.e5, self.e6, self.e7]
 
-        temperatura = Rango(TemperaturaEnCelsius(10), TemperaturaEnCelsius(30))
-        humedad = Rango(humedadRelativa(40), humedadRelativa(50))
-        acidez = Rango(AcidezEnPH(6.5), AcidezEnPH(7.5))
-        self.umbral0 = UmbralOptimoDeCultivo(e0, temperatura, humedad, acidez)
+        # argumentos para ensamblar los umbrales. Modificar a gusto.
+        args = [[10, 30, 40, 50, 6.5, 7.5]] + [[12, 20, 40, 70, 6.0, 7.5]]*7
+        x = [10, 30, 40, 50, 6.5, 7.5]
 
-        temperatura = Rango(TemperaturaEnCelsius(12), TemperaturaEnCelsius(20))
-        humedad = Rango(humedadRelativa(40), humedadRelativa(70))
-        acidez = Rango(AcidezEnPH(6.0), AcidezEnPH(7.5))
-        self.umbral1 = UmbralOptimoDeCultivo(e1, temperatura, humedad, acidez)
+        # armamos los umbrales para cada estadio a partir de las
+        # listas de argumentos
+        self.umbrales = []
+        for i in range(len(self.estadios)):
+            x = args[i]
+            temperatura = Rango(TemperaturaEnCelsius(x[0]),
+                                TemperaturaEnCelsius(x[1]))
+            humedad = Rango(humedadRelativa(x[2]),
+                            humedadRelativa(x[3]))
+            acidez = Rango(AcidezEnPH(x[4]), AcidezEnPH(x[5]))
+            self.umbrales.append(UmbralOptimoDeCultivo(
+                self.estadios[i], temperatura, humedad, acidez))
 
-        temperatura = Rango(TemperaturaEnCelsius(12), TemperaturaEnCelsius(20))
-        humedad = Rango(humedadRelativa(40), humedadRelativa(70))
-        acidez = Rango(AcidezEnPH(6.0), AcidezEnPH(7.5))
-        self.umbral2 = UmbralOptimoDeCultivo(e2, temperatura, humedad, acidez)
+        # la lista de los nombres esperados para los estadios
+        self.nombres = ['GERMINACION', 'DESARROLLO', 'BROTES', 'APARICION',
+                        'FLORACION', 'FRUTO', 'MADURACION', 'SENESCENCIA']
 
-        temperatura = Rango(TemperaturaEnCelsius(12), TemperaturaEnCelsius(20))
-        humedad = Rango(humedadRelativa(40), humedadRelativa(70))
-        acidez = Rango(AcidezEnPH(6.0), AcidezEnPH(7.5))
-        self.umbral3 = UmbralOptimoDeCultivo(e3, temperatura, humedad, acidez)
-
-        temperatura = Rango(TemperaturaEnCelsius(12), TemperaturaEnCelsius(20))
-        humedad = Rango(humedadRelativa(40), humedadRelativa(70))
-        acidez = Rango(AcidezEnPH(6.0), AcidezEnPH(7.5))
-        self.umbral4 = UmbralOptimoDeCultivo(e4, temperatura, humedad, acidez)
-
-        temperatura = Rango(TemperaturaEnCelsius(12), TemperaturaEnCelsius(20))
-        humedad = Rango(humedadRelativa(40), humedadRelativa(70))
-        acidez = Rango(AcidezEnPH(6.0), AcidezEnPH(7.5))
-        self.umbral5 = UmbralOptimoDeCultivo(e5, temperatura, humedad, acidez)
-
-        temperatura = Rango(TemperaturaEnCelsius(12), TemperaturaEnCelsius(20))
-        humedad = Rango(humedadRelativa(40), humedadRelativa(70))
-        acidez = Rango(AcidezEnPH(6.0), AcidezEnPH(7.5))
-        self.umbral6 = UmbralOptimoDeCultivo(e6, temperatura, humedad, acidez)
-
-        temperatura = Rango(TemperaturaEnCelsius(12), TemperaturaEnCelsius(20))
-        humedad = Rango(humedadRelativa(40), humedadRelativa(70))
-        acidez = Rango(AcidezEnPH(6.0), AcidezEnPH(7.5))
-        self.umbral7 = UmbralOptimoDeCultivo(e7, temperatura, humedad, acidez)
-
-        self.umbrales = [self.umbral0, self.umbral1, self.umbral2,
-                         self.umbral3, self.umbral4, self.umbral5,
-                         self.umbral6, self.umbral7]
-
-        self.plan = PlanMaestro(self.umbrales)
+    def test_chequea_que_esten_todos_los_estadios_fenologicos_definidos(self):
+        for i in range(len(self.nombres)):
+            self.assertEqual(self.estadios[i].nombre(), self.nombres[i])
 
     def aux_chequea_un_plan_maestro_que_tenga_todo_definido(self, planMaestro):
-        self.assertEqual(planMaestro.umbralParaEstadio(self.estadios[0]), self.umbral0)
-        self.assertEqual(planMaestro.umbralParaEstadio(self.estadios[1]), self.umbral1)
-        self.assertEqual(planMaestro.umbralParaEstadio(self.estadios[2]), self.umbral2)
-        self.assertEqual(planMaestro.umbralParaEstadio(self.estadios[3]), self.umbral3)
-        self.assertEqual(planMaestro.umbralParaEstadio(self.estadios[4]), self.umbral4)
-        self.assertEqual(planMaestro.umbralParaEstadio(self.estadios[5]), self.umbral5)
-        self.assertEqual(planMaestro.umbralParaEstadio(self.estadios[6]), self.umbral6)
-        self.assertEqual(planMaestro.umbralParaEstadio(self.estadios[7]), self.umbral7)
+        for i in range(len(self.estadios)):
+            self.assertEqual(planMaestro.umbralParaEstadio(self.estadios[i]),
+                             self.umbrales[i])
 
     def test_chequea_un_plan_maestro_que_tenga_todo_definido(self):
-        self.aux_chequea_un_plan_maestro_que_tenga_todo_definido(self.plan)
+        umbrales = self.umbrales
+        plan = PlanMaestro(umbrales)
+        self.aux_chequea_un_plan_maestro_que_tenga_todo_definido(plan)
 
     @unittest.expectedFailure
     def test_debe_fallar_ante_un_plan_maestro_con_menos_items(self):
-        umbrales2 = [self.umbral0, self.umbral1, self.umbral2, self.umbral3,
-                     self.umbral4, self.umbral5, self.umbral6]
-
-        plan2 = PlanMaestro(umbrales2)
+        umbrales = [self.umbral4, self.umbral5, self.umbral6]  # no están todos
+        plan = PlanMaestro(umbrales)
         # debe tirar excepción
-        self.aux_chequea_un_plan_maestro_que_tenga_todo_definido(self.plan)
+        self.aux_chequea_un_plan_maestro_que_tenga_todo_definido(plan)
