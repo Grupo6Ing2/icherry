@@ -41,7 +41,7 @@ class TestEstadoFenologico(unittest.TestCase):
 
 class TestEstadoSalud(unittest.TestCase):
     def test_estadoDeSalud_puede_modificarse_correctamente(self):
-        x = EstadoDeSalud()
+        x = EstadoDeSalud(EstadoFenologico())
         x.temperatura(TemperaturaEnCelsius(15))
         self.assertEqual(x.temperatura(), TemperaturaEnCelsius(15))
         x.humedad(HumedadRelativa(Porcentaje(30)))
