@@ -116,11 +116,11 @@ class PantallaDeCentral(npyscreen.Form):
             'FORMAT_FECHAYHORA', fechaYHora.fecha(), fechaYHora.hora())
 
     def _crearTablaPronostico(self):
-
+        cantHoras = 24
         proveedorDeTexto = self.proveedorDeTexto
 
         fechaYHora = self.central.obtenerFechaYHora()
-        pronostico = self.central.obtenerPronostico(fechaYHora, 24)
+        pronostico = self.central.obtenerPronostico(fechaYHora, cantHoras)
 
         tabla = prettytable.PrettyTable([
             proveedorDeTexto.obtener("HEADER_FECHA"),
@@ -130,7 +130,7 @@ class PantallaDeCentral(npyscreen.Form):
             proveedorDeTexto.obtener("HEADER_LUZ"),
         ])
 
-        for _ in range(0, 23):
+        for _ in range(cantHoras):
             prediccion = pronostico.prediccionPara(fechaYHora)
             tabla.add_row([
                 self._obtenerTextoFechaYHora(prediccion.lapso().desde()),
@@ -145,6 +145,19 @@ class PantallaDeCentral(npyscreen.Form):
 
     def create(self):
 
+        textos = self.render()
+        self.__tabla = self.add(npyscreen.Pager, values=textos)
+
+        #TODO El boton no se ve al principio :(
+        refreshButton = self.add(npyscreen.ButtonPress, name='Refresh', relx=2, rely=40)
+        refreshButton.whenPressed = self.onRefreshClick
+
+
+    def onRefreshClick(self):
+        self.__tabla.values = self.render()
+
+
+    def render(self):
         proveedorDeTexto = self.proveedorDeTexto
         textos = []
 
@@ -155,5 +168,4 @@ class PantallaDeCentral(npyscreen.Form):
 
         textos.append(proveedorDeTexto.obtener('SPAN_PRONOSTICO_24_HORAS'))
         textos = textos + self._crearTablaPronostico().get_string().split("\n")
-
-        self.add(npyscreen.Pager, values=textos)
+        return textos
