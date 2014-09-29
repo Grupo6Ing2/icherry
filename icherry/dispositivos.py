@@ -14,15 +14,14 @@ class DispositivoDeLectura():
 class DispositivoDeLecturaArchivo(DispositivoDeLectura):
 
     def __init__(self, unNombreArchivo):
-        self._archivo = open(unNombreArchivo, 'r')
+        if not os.path.exists(unNombreArchivo):
+            raise IOError("El archivo {0} no existe".format(unNombreArchivo))
+        self._nombreArchivo = unNombreArchivo
 
     def leer(self):
-        self._archivo.seek(0)
-        return self._archivo.read()
-
-    def cerrar(self):
-        self._archivo.close()
-
+        with open(self._nombreArchivo, 'r') as archivo:
+            lectura = archivo.read()
+        return lectura
 
 class DispositivoDeEscritura():
 

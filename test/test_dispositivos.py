@@ -35,8 +35,6 @@ class TestDispositivoDeLecturaArchivo(TestDispositivoArchivo):
 
         dispositivo = DispositivoDeLecturaArchivo(nombreArchivo)
         self.assertEqual(textoEsperado, dispositivo.leer())
-        dispositivo.cerrar()
-
 
 class TestDispositivoDeEscrituraArchivo(TestDispositivoArchivo):
 

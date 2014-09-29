@@ -58,7 +58,7 @@ reloj = demo.ProveedorDeTiempoPorArchivo(
 central = central_meteorologica.CentralMeteorologica(predictor, reloj)
 
 
-#Estado de salud dummy, se usa para la demo:
+# Estado de salud dummy, se usa para la demo:
 estadoFenologicoDummy = estado_salud.EstadoFenologico()
 estadoFenologicoDummy.cantidadBrotes(2)
 estadoFenologicoDummy.cantidadFlores(10)
@@ -79,26 +79,19 @@ proveedorDeTexto = proveedor_texto.ProveedorDeTexto('resources/textos.es')
 def main(*args):
     app = ui_ncurses.ICherryCurses()
 
-    pantallaDeInicio = ui_ncurses.PantallaDeInicio(
-        proveedorDeTexto,
-        archivoFondoAscii='resources/main_background_pic.txt',
-    )
+    app.addFormClass('MAIN', ui_ncurses.PantallaDeInicio, proveedorDeTexto,
+                     archivoFondoAscii='resources/main_background_pic.txt')
 
-    pantallaDeSensores = ui_ncurses.PantallaDeSensores(
-        proveedorDeTexto,
-        sensorDeTemperatura, sensorDeHumedad, sensorDeAcidez)
+    app.addFormClass('SENSORES', ui_ncurses.PantallaDeSensores,
+                     proveedorDeTexto, sensorDeTemperatura,
+                     sensorDeHumedad, sensorDeAcidez)
 
-    pantallaDeCentral = ui_ncurses.PantallaDeCentral(proveedorDeTexto, central)
-    pantallaDeEstadoDeSalud = ui_ncurses.PantallaDeEstadoDeSalud(proveedorDeTexto, estado)
+    app.addFormClass(
+        'CENTRAL', ui_ncurses.PantallaDeCentral, proveedorDeTexto, central)
+    app.addFormClass(
+        'SALUD', ui_ncurses.PantallaDeEstadoDeSalud, proveedorDeTexto, estado)
 
-    pantallaEnConstruccion = \
-        ui_ncurses.PantallaEnConstruccion(proveedorDeTexto)
-
-    app.registerForm('MAIN', pantallaDeInicio)
-    app.registerForm('SENSORES', pantallaDeSensores)
-    app.registerForm('CENTRAL', pantallaDeCentral)
-    app.registerForm('SALUD', pantallaDeEstadoDeSalud)
-    app.registerForm('EN_CONSTRUCCION', pantallaEnConstruccion)
+    app.addFormClass('EN_CONSTRUCCION', ui_ncurses.PantallaEnConstruccion, proveedorDeTexto)
 
     app.run()
 

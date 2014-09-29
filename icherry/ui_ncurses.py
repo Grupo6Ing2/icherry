@@ -8,22 +8,22 @@ class ICherryCurses(npyscreen.NPSAppManaged):
 
 class PantallaEnConstruccion(npyscreen.Form):
 
-    def __init__(self, proveedorDeTexto):
+    def __init__(self, proveedorDeTexto, **kargs):
         self.proveedorDeTexto = proveedorDeTexto
         super(PantallaEnConstruccion, self).__init__(
-            name=proveedorDeTexto.obtener("EN_CONSTRUCCION"))
+            name=proveedorDeTexto.obtener("EN_CONSTRUCCION"), **kargs)
 
     def afterEditing(self):
         self.parentApp.setNextForm('MAIN')
 
     def create(self):
-        self.add(npyscreen.TitleText, name=self.proveedorDeTexto.obtener(
-            "EN_CONSTRUCCION"), editable=False)
+        self.add(npyscreen.Pager, values=[self.proveedorDeTexto.obtener(
+            "EN_CONSTRUCCION")])
 
 
 class PantallaDeInicio(npyscreen.FormWithMenus):
 
-    def __init__(self, proveedorDeTexto, archivoFondoAscii=''):
+    def __init__(self, proveedorDeTexto, archivoFondoAscii='', **kargs):
 
         if (archivoFondoAscii):
             with open(archivoFondoAscii, 'r') as archivo:
@@ -33,7 +33,7 @@ class PantallaDeInicio(npyscreen.FormWithMenus):
 
         self.proveedorDeTexto = proveedorDeTexto
         super(PantallaDeInicio, self).__init__(
-            name=proveedorDeTexto.obtener("NOMBRE_APLICACION"))
+            name=proveedorDeTexto.obtener("NOMBRE_APLICACION"), **kargs)
 
     def _agregarEntradaDeMenu(self, menu, texto, pantallaObjetivo):
         menu.addItem(
@@ -51,6 +51,8 @@ class PantallaDeInicio(npyscreen.FormWithMenus):
             menu, 'MENU_SENSORES', 'SENSORES')
         self._agregarEntradaDeMenu(
             menu, 'MENU_ESTADO_SALUD', 'SALUD')
+        self._agregarEntradaDeMenu(
+            menu, 'MENU_EDITAR_ESTADO_FENOLOGICO', 'EN_CONSTRUCCION')
         self._agregarEntradaDeMenu(
             menu, 'MENU_CONFIGURAR_PLAN_MAESTRO', 'EN_CONSTRUCCION')
         self._agregarEntradaDeMenu(
@@ -72,40 +74,45 @@ class PantallaDeInicio(npyscreen.FormWithMenus):
 
 
 class PantallaDeEstadoDeSalud(npyscreen.Form):
-    def __init__(self, proveedorDeTexto, estadoDeSalud):
+    def __init__(self, proveedorDeTexto, estadoDeSalud, **kargs):
         self.estadoDeSalud = estadoDeSalud
         self.proveedorDeTexto = proveedorDeTexto
 
         super(PantallaDeEstadoDeSalud, self).__init__(
-            name=proveedorDeTexto.obtener("SALUD"))
+            name=proveedorDeTexto.obtener("SALUD"), **kargs)
 
     def afterEditing(self):
         self.parentApp.setNextForm('MAIN')
 
     def create(self):
-        textos = [
+        self.add(npyscreen.Pager, values=self.render())
+
+    def render(self):
+        return [
+            self.proveedorDeTexto.obtener('SENSORES') + ':',
+            '',
             self.proveedorDeTexto.obtener(
                 "SPAN_TEMPERATURA", self.estadoDeSalud.temperatura().valor()),
             self.proveedorDeTexto.obtener(
                 "SPAN_HUMEDAD", self.estadoDeSalud.humedad().valor()),
             self.proveedorDeTexto.obtener(
                 "SPAN_ACIDEZ", self.estadoDeSalud.acidez().valor()),
+            '',
             self.proveedorDeTexto.obtener("HEADER_ESTADO_FENOLOGICO"),
+            '',
             self.proveedorDeTexto.obtener("SPAN_ESTADIO",
-                  self.estadoDeSalud.estadoFenologico().estadioDeCultivo().nombre()),
+                self.estadoDeSalud.estadoFenologico().estadioDeCultivo().nombre()),
             self.proveedorDeTexto.obtener("SPAN_ALTURA",
-                  self.estadoDeSalud.estadoFenologico().altura()),
+                self.estadoDeSalud.estadoFenologico().altura()),
             self.proveedorDeTexto.obtener("SPAN_CANT_BROTES",
-                  self.estadoDeSalud.estadoFenologico().cantidadBrotes()),
+                self.estadoDeSalud.estadoFenologico().cantidadBrotes()),
             self.proveedorDeTexto.obtener("SPAN_CANT_FLORES",
-                  self.estadoDeSalud.estadoFenologico().cantidadFlores()),
+                self.estadoDeSalud.estadoFenologico().cantidadFlores()),
             self.proveedorDeTexto.obtener("SPAN_CANT_FRUTOS",
-                  self.estadoDeSalud.estadoFenologico().cantidadFrutos()),
+                self.estadoDeSalud.estadoFenologico().cantidadFrutos()),
             self.proveedorDeTexto.obtener("SPAN_PORCENTAJE_FRUTAS_MADURAS",
-                  self.estadoDeSalud.estadoFenologico().porcentajeFrutasMaduras().valor()),
-
+                self.estadoDeSalud.estadoFenologico().porcentajeFrutasMaduras().valor()),
         ]
-        self.add(npyscreen.Pager, values=textos)
 
 
 class PantallaDeSensores(npyscreen.Form):
@@ -114,20 +121,23 @@ class PantallaDeSensores(npyscreen.Form):
                  proveedorDeTexto,
                  sensorDeTemperatura,
                  sensorDeHumedad,
-                 sensorDeAcidez):
+                 sensorDeAcidez, **kargs):
 
         self.sensorDeTemperatura = sensorDeTemperatura
         self.sensorDeHumedad = sensorDeHumedad
         self.sensorDeAcidez = sensorDeAcidez
         self.proveedorDeTexto = proveedorDeTexto
         super(PantallaDeSensores, self).__init__(
-            name=proveedorDeTexto.obtener("SCREEN_SENSORES"))
+            name=proveedorDeTexto.obtener("SCREEN_SENSORES"), **kargs)
 
     def afterEditing(self):
         self.parentApp.setNextForm('MAIN')
 
     def create(self):
-        textos = [
+        self.add(npyscreen.Pager, values=self.render())
+
+    def render(self):
+        return [
             self.proveedorDeTexto.obtener(
                 "SPAN_TEMPERATURA", self.sensorDeTemperatura.sensar().valor()),
             self.proveedorDeTexto.obtener(
@@ -135,15 +145,14 @@ class PantallaDeSensores(npyscreen.Form):
             self.proveedorDeTexto.obtener(
                 "SPAN_ACIDEZ", self.sensorDeAcidez.sensar().valor()),
         ]
-        self.add(npyscreen.Pager, values=textos)
 
 
 class PantallaDeCentral(npyscreen.Form):
 
-    def __init__(self, proveedorDeTexto, central):
+    def __init__(self, proveedorDeTexto, central, **kargs):
         self.proveedorDeTexto = proveedorDeTexto
         self.central = central
-        super(PantallaDeCentral, self).__init__(name='Central')
+        super(PantallaDeCentral, self).__init__(name='Central', **kargs)
 
     def afterEditing(self):
         self.parentApp.setNextForm('MAIN')
@@ -181,18 +190,7 @@ class PantallaDeCentral(npyscreen.Form):
         return tabla
 
     def create(self):
-
-        textos = self.render()
-        self.__tabla = self.add(npyscreen.Pager, values=textos)
-
-        #TODO El boton no se ve al principio :(
-        refreshButton = self.add(npyscreen.ButtonPress, name='Refresh', relx=2, rely=40)
-        refreshButton.whenPressed = self.onRefreshClick
-
-
-    def onRefreshClick(self):
-        self.__tabla.values = self.render()
-
+        self.add(npyscreen.Pager, values=self.render())
 
     def render(self):
         proveedorDeTexto = self.proveedorDeTexto
@@ -203,6 +201,7 @@ class PantallaDeCentral(npyscreen.Form):
             'SPAN_FECHAYHORA_ACTUAL',
             self._obtenerTextoFechaYHora(fechaYHora)))
 
+        textos.append('')
         textos.append(proveedorDeTexto.obtener('SPAN_PRONOSTICO_24_HORAS'))
         textos = textos + self._crearTablaPronostico().get_string().split("\n")
         return textos
