@@ -26,7 +26,8 @@ class TestCentralMeteorologica(unittest.TestCase):
 
         prediccion1 = pronostico.prediccionPara(
             FechaYHora(datetime.date(2014, 9, 21), datetime.time(11, 40, 50)))
-        self.assertEqual(Rango(desde, desde.agregarHoras(1)), prediccion1.lapso())
+        self.assertEqual(Rango(desde, desde.agregarDuracion(DuracionEnHoras(1))),
+                         prediccion1.lapso())
         self.assertEqual(TemperaturaEnCelsius(25), prediccion1.temperatura())
         self.assertEqual(Porcentaje(40), prediccion1.probabilidadDeLluvia())
         self.assertEqual(HumedadRelativa(Porcentaje(10)), prediccion1.humedad())
@@ -34,7 +35,8 @@ class TestCentralMeteorologica(unittest.TestCase):
 
         prediccion2 = pronostico.prediccionPara(
             FechaYHora(datetime.date(2014, 9, 21), datetime.time(12, 40, 50)))
-        self.assertEqual(Rango(desde.agregarHoras(1), hasta), prediccion2.lapso())
+        self.assertEqual(Rango(desde.agregarDuracion(DuracionEnHoras(1)), hasta),
+                         prediccion2.lapso())
         self.assertEqual(TemperaturaEnCelsius(25), prediccion2.temperatura())
         self.assertEqual(Porcentaje(40), prediccion2.probabilidadDeLluvia())
         self.assertEqual(HumedadRelativa(Porcentaje(10)), prediccion2.humedad())

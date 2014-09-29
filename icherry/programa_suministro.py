@@ -12,11 +12,12 @@
 
 class Accion:
     """Una acción es aquello que puede ejecutarse en el contexto de un
-    Ejecutor. Todas las acciones se definen con una cantidad de
-    suministro, la magnitud empleada dependerá de qué tipo de acción
-    se trata (una acción de regado requerirá una magnitud líquida,
-    mientras que una acción de luz requerirá una magnitud de luz,
-    etc).
+    Ejecutor, o sea, ser ejecutador por un Ejecutor. Todas las
+    acciones se definen con una cantidad de suministro, la magnitud
+    empleada dependerá de qué tipo de acción se trata (una acción de
+    regado requerirá una magnitud líquida, mientras que una acción de
+    luz requerirá una magnitud de luz, etc). Cada tipo de acción es
+    una subclase de Accion.
 
     """
     def __init__(self):
@@ -82,6 +83,7 @@ class AccionLuz(Accion):
 
     def ejecutarEn(self, ejecutor):
         ejecutor.ejecutarAntibiotico(self.cantidad())
+
 
 # ====================================================================
 # Accion programada
@@ -186,7 +188,9 @@ class ProgramaDeSuministro:
 
     def programarAccion(self, fechaYHora, accion):
         """Alternativa a programar(), toma el horario y la acción como
-        argumentos separados.
+        argumentos separados. Si es posible, preferir esto a
+        programar(), así el llamador se evita la necesidad de
+        pasar una AccionProgramada.
 
         """
         self.programar(AccionProgramada(fechaYHora, accion))

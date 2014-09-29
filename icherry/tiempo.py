@@ -29,6 +29,9 @@ class FechaYHora():
             self.__date, self.__time) + delta
         return FechaYHora(newDateTime.date(), newDateTime.time())
 
+    def agregarDuracion(self, duracion):
+        return self.agregarHoras(duracion.aHoras().valor())
+
     @staticmethod
     def ahora():
         return FechaYHora(

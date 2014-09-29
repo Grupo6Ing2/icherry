@@ -49,7 +49,7 @@ actuadorDeFertilizante = constructorDeActuador.crear(
 actuadorDeAntibiotico = constructorDeActuador.crear(
     'devices/actuador_antibiotico')
 
-# construccion de la central meteorologica que lee los datos de los archivos.
+# construcción de la central meteorologica que lee los datos de los archivos.
 predictor = demo.PredictorMeteorologicoPorArchivo(
     dispositivos.DispositivoDeLecturaArchivo("devices/pronostico"))
 reloj = demo.ProveedorDeTiempoPorArchivo(
