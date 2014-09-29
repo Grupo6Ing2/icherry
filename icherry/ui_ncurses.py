@@ -50,7 +50,7 @@ class PantallaDeInicio(npyscreen.FormWithMenus):
         self._agregarEntradaDeMenu(
             menu, 'MENU_SENSORES', 'SENSORES')
         self._agregarEntradaDeMenu(
-            menu, 'MENU_ESTADO_SALUD', 'EN_CONSTRUCCION')
+            menu, 'MENU_ESTADO_SALUD', 'SALUD')
         self._agregarEntradaDeMenu(
             menu, 'MENU_CONFIGURAR_PLAN_MAESTRO', 'EN_CONSTRUCCION')
         self._agregarEntradaDeMenu(
@@ -69,6 +69,43 @@ class PantallaDeInicio(npyscreen.FormWithMenus):
 
         self.add(npyscreen.Pager, values=self.fondoAscii.split("\n"))
         self._crearMenu()
+
+
+class PantallaDeEstadoDeSalud(npyscreen.Form):
+    def __init__(self, proveedorDeTexto, estadoDeSalud):
+        self.estadoDeSalud = estadoDeSalud
+        self.proveedorDeTexto = proveedorDeTexto
+
+        super(PantallaDeEstadoDeSalud, self).__init__(
+            name=proveedorDeTexto.obtener("SALUD"))
+
+    def afterEditing(self):
+        self.parentApp.setNextForm('MAIN')
+
+    def create(self):
+        textos = [
+            self.proveedorDeTexto.obtener(
+                "SPAN_TEMPERATURA", self.estadoDeSalud.temperatura().valor()),
+            self.proveedorDeTexto.obtener(
+                "SPAN_HUMEDAD", self.estadoDeSalud.humedad().valor()),
+            self.proveedorDeTexto.obtener(
+                "SPAN_ACIDEZ", self.estadoDeSalud.acidez().valor()),
+            self.proveedorDeTexto.obtener("HEADER_ESTADO_FENOLOGICO"),
+            self.proveedorDeTexto.obtener("SPAN_ESTADIO",
+                  self.estadoDeSalud.estadoFenologico().estadioDeCultivo().nombre()),
+            self.proveedorDeTexto.obtener("SPAN_ALTURA",
+                  self.estadoDeSalud.estadoFenologico().altura()),
+            self.proveedorDeTexto.obtener("SPAN_CANT_BROTES",
+                  self.estadoDeSalud.estadoFenologico().cantidadBrotes()),
+            self.proveedorDeTexto.obtener("SPAN_CANT_FLORES",
+                  self.estadoDeSalud.estadoFenologico().cantidadFlores()),
+            self.proveedorDeTexto.obtener("SPAN_CANT_FRUTOS",
+                  self.estadoDeSalud.estadoFenologico().cantidadFrutos()),
+            self.proveedorDeTexto.obtener("SPAN_PORCENTAJE_FRUTAS_MADURAS",
+                  self.estadoDeSalud.estadoFenologico().porcentajeFrutasMaduras().valor()),
+
+        ]
+        self.add(npyscreen.Pager, values=textos)
 
 
 class PantallaDeSensores(npyscreen.Form):

@@ -23,5 +23,12 @@
 "HEADER_HUMEDAD" : "Humedad (%)",
 "HEADER_LUZ" : "Luz (Lux)",
 "HEADER_LLUVIA" : "Probabilidad de lluvia (%)",
-"HEADER_FECHA" : "Fecha"
+"HEADER_FECHA" : "Fecha",
+"HEADER_ESTADO_FENOLOGICO": "Estado fenologico:",
+"SPAN_CANT_BROTES": "Cantidad de brotes: {0}",
+"SPAN_CANT_FLORES": "Cantidad de flores: {0}",
+"SPAN_CANT_FRUTOS": "Cantidad de frutos: {0}",
+"SPAN_PORCENTAJE_FRUTAS_MADURAS": "Porcentaje frutas maduras: {0}%",
+"SPAN_ALTURA": "Altura: {0}",
+"SPAN_ESTADIO": "Estadio: {0}"
 }

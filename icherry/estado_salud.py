@@ -12,14 +12,14 @@ from icherry.magnitudes import AcidezEnPH
 # ====================================================================
 # EstadoDeSalud
 class EstadoDeSalud:
-    def __init__(self):
-        self.estadoFenologico = EstadoFenologico()
+    def __init__(self, estadoFenologico):
+        self._estadoFenologico = estadoFenologico
         self._temperatura = TemperaturaEnCelsius(0)
         self._humedad = HumedadRelativa(Porcentaje(0))
         self._acidez = AcidezEnPH(0)
 
     def estadoFenologico(self):
-        return self.estadoFenologico
+        return self._estadoFenologico
 
     # definimos ahora getters/setters para T/H/PH. Cada método puede
     # usarse tanto como getter (sin argumentos) o setter (con
