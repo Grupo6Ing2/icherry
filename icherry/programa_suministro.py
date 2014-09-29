@@ -86,6 +86,14 @@ class AccionLuz(Accion):
 # ====================================================================
 # Accion programada
 
+# NOTICE: Esta clase es más bien de uso interno del programa de
+# suministro. En esta versión se expone bastante de esto hacia afuera,
+# pero lo ideal tal vez sería que el usuario no cree instancias de
+# esta clase y que simplemente se limite a usar 'accionProgramada()'
+# de ProgramaDeSuministro, proyevendo el horario y la acción (el
+# programa de suministro se encargará de ensamblarlas internamente).
+# Si se sigue este consejo, tampoco debería usarse el constructor de
+# lista. Por ahora queda a discresión del usuario.
 
 class AccionProgramada:
     def __init__(self, fechaYHora, accion):
@@ -194,12 +202,25 @@ class ProgramaDeSuministro:
         """
         return self._accionesProgramadas
 
-    def accionesEnHorario(self, lapso):
+    def accionesEnHorario(self, lapso, remover=False):
         """Determina qué acciones programadas caen en un lapso dado. El
-        resultado es una lista (sin ningún orden particular).
+        resultado es una lista (sin ningún orden particular). Se puede
+        especificar si se desea o no remover las acciones programadas
+        (por ejemplo porque van a ser ejecutadas y por lo tanto no
+        tiene sentido que permanezcan en el cronograma).
 
         """
+        # un while sería más eficiente. sigh.
         if not self.lapso().interseca(lapso):
             return []  # meh, optimización
-        return [aP.accion() for aP in self.accionesProgramadas()
-                if lapso.contiene(aP.fechaYHora())]
+        acciones = [aP.accion() for aP in self.accionesProgramadas()
+                    if lapso.contiene(aP.fechaYHora())]
+
+        if remover:
+            r = [aP for aP in self._accionesProgramadas
+                 if aP.accion() not in acciones]
+            self._accionesProgramadas = r
+            # contamos con la comparación por default para las
+            # acciones programadas, es decir la que utiliza 'id',
+            # eso alcanza.
+        return acciones

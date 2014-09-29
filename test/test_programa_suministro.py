@@ -103,3 +103,41 @@ class TestProgramaDeSuministros(unittest.TestCase):
         chk_acciones(p,4,20)
         chk_acciones(p,-1,2)
         chk_acciones(p,-2,-1)
+
+    def test_acciones_removidas(self):
+        # en este test verificamos que las acciones sean correctamente
+        # removidas del programa de suministro. Vamos a usar cualquier
+        # fruta como los datos del programa de suministro porque no
+        # interesa ya demasiado el tema de las fechas y hora (eso ya
+        # lo probamos antes).
+        p = ProgramaDeSuministro(Rango(1,10))
+        for i in range(1,7):
+            p.programarAccion(i,str(i))
+
+        # pequeño sanity check antes de empezar
+        self.assertEqual(set(p.accionesEnHorario(p.lapso())),
+                         {'1', '2', '3', '4', '5', '6'})
+
+        def chk_remove(rango,accionesRemovidas,accionesFinales):
+            """verifica que dado un rango, el programa de suministro encuentre las
+            acciones removidas, las remueva y finalmente se quede sólo
+            con las acciones finales (ambos argumentos son
+            conjuntos)
+
+            """
+            self.assertEqual(set(p.accionesEnHorario(rango, remover=True)),
+                             accionesRemovidas)
+            self.assertEqual(set(p.accionesEnHorario(p.lapso())),
+                             accionesFinales)
+
+        # removemos '3' y '4'
+        chk_remove(Rango(3,4), {'3','4'}, {'1', '2', '5', '6'})
+
+        # removemos '6,'
+        chk_remove(Rango(5.5,100), {'6'}, {'1', '2', '5'})
+
+        # removemos '1' y '2,'
+        chk_remove(Rango(-10,2.8), {'1','2'}, {'5'})
+
+        # removemos '5', queda vacío
+        chk_remove(Rango(-10,10), {'5'}, set())
