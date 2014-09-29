@@ -38,19 +38,19 @@ _lista = [(diaN(0), 'primera'),
 _lapso = Rango(diaN(-2),diaN(8))
 
 class TestProgramaDeSuministros(unittest.TestCase):
-    def sortAccionesProgramadas(self, lista):
-        return sorted(lista, key=(lambda aP: aP.fechaYHora()))
+    # def sortAccionesProgramadas(self, lista):
+    #     return sorted(lista)
 
     def accionesProgramadas2tuplas(self, lista):
         return [(aP.fechaYHora(),aP.accion()) for aP in lista]
 
     def chk_accionesProgramadas(self, programa, lista1):
         """verifica que la lista de acciones programadas, ordenadas por
-        horario, es igual que la lista pasada como argumento
+        horario, es igual que la lista pasada como argumento.
 
         """
         lista2 = [(aP.fechaYHora(),aP.accion()) for aP in
-             self.sortAccionesProgramadas(programa.accionesProgramadas())]
+             programa.accionesProgramadas()]
         self.assertEqual(lista1, lista2)
 
     def test_inicializacion(self):

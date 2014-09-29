@@ -1,3 +1,4 @@
+# encoding: utf-8
 # ====================================================================
 #                            PLAN MAESTRO
 # ====================================================================
@@ -57,6 +58,18 @@ class EstadiosFenologicos:
                 'FRUTO':       EstadioFenologico(5, 'FRUTO'),
                 'MADURACION':  EstadioFenologico(6, 'MADURACION'),
                 'SENESCENCIA': EstadioFenologico(7, 'SENESCENCIA')}
+
+    def listaDeEstadiosOrdenados() :
+        return [
+            EstadiosFenologicos.germinacion(),
+            EstadiosFenologicos.desarrollo(),
+            EstadiosFenologicos.brotes(),
+            EstadiosFenologicos.aparicion(),
+            EstadiosFenologicos.floracion(),
+            EstadiosFenologicos.fruto(),
+            EstadiosFenologicos.maduracion(),
+            EstadiosFenologicos.senescencia()
+        ]
 
     def germinacion():
         return EstadiosFenologicos.estadios['GERMINACION']
@@ -177,6 +190,10 @@ def demo():
     # verifiquemos que el diccionario ande bien
     assert(plan.umbralParaEstadio(e0) == umbral0)
     assert(plan.umbralParaEstadio(e1) == umbral1)
+
+    print("los estadios fenologicos definidos son:")
+    for estadio in EstadiosFenologicos.listaDeEstadiosOrdenados():
+        print("{}".format(estadio.nombre()))
 
     # ahora hacemos un print de todo para ver bien los datos
     print("==== plan maestro ====")

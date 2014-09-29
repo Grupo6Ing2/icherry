@@ -200,11 +200,11 @@ class ProgramaDeSuministro:
         return self._lapso
 
     def accionesProgramadas(self):
-        """Retorna la lista de acciones programadas. La lista no tiene ningún
-        orden particular.
+        """Retorna la lista de acciones programadas. La lista está ordenada de
+        menor a mayor según el horario de las acciones programadas.
 
         """
-        return self._accionesProgramadas
+        return sorted(self._accionesProgramadas)
 
     def accionesEnHorario(self, lapso, remover=False):
         """Determina qué acciones programadas caen en un lapso dado. El

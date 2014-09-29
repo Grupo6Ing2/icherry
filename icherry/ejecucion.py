@@ -30,7 +30,7 @@ from icherry.magnitudes import Rango
 # con cuidado y tener una relación razonable con el período de
 # heartbeat del generador del plan de suministro.
 
-class Planificador:
+class PlanificadordeEjecucion:
     # NOTICE: hay muchas combinaciones posibles para armar el
     # planificador. Al planificador lo despierta un temporizador
     # externo, o el temporizador es interno? Requiere realmente
