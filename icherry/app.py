@@ -12,10 +12,60 @@ import icherry.estado_salud as estado_salud
 import icherry.temporizador as temporizador
 import icherry.tiempo as tiempo
 import icherry.logging as logging
+import icherry.plan_maestro as plan_maestro
+import icherry.programa_suministro as programa_suministro
+import icherry.constructor_programa as constructor_programa
+import icherry.recomendaciones as recomendaciones
+
 
 import npyscreen
-
 # bootstrap
+
+def actualizarLosDatos(central, sensorDeAcidez, sensorDeHumedad, sensorDeTemperatura):
+    central.obtenerPronostico(central.obtenerFechaYHora(), 24)
+    sensorDeAcidez.sensar()
+    sensorDeHumedad.sensar()
+    sensorDeTemperatura.sensar()
+
+def armarPlanMaestro():
+    e0 =  plan_maestro.EstadiosFenologicos.germinacion()
+    e1 = plan_maestro.EstadiosFenologicos.desarrollo()
+
+    temperatura = magnitudes.Rango(magnitudes.TemperaturaEnCelsius(10),
+                                   magnitudes.TemperaturaEnCelsius(30))
+    humedad = magnitudes.Rango(magnitudes.HumedadRelativa(magnitudes.Porcentaje(40)),
+                               magnitudes.HumedadRelativa(magnitudes.Porcentaje(50)))
+    acidez = magnitudes.Rango(magnitudes.AcidezEnPH(6.5), magnitudes.AcidezEnPH(7.5))
+    umbral0 = plan_maestro.UmbralOptimoDeCultivo(e0, temperatura, humedad, acidez)
+
+    temperatura = magnitudes.Rango(magnitudes.TemperaturaEnCelsius(12),
+                                   magnitudes.TemperaturaEnCelsius(20))
+    humedad = magnitudes.Rango(magnitudes.HumedadRelativa(magnitudes.Porcentaje(40)),
+                               magnitudes.HumedadRelativa(magnitudes.Porcentaje(70)))
+    acidez = magnitudes.Rango(magnitudes.AcidezEnPH(6.0), magnitudes.AcidezEnPH(7.5))
+
+    umbral1 = plan_maestro.UmbralOptimoDeCultivo(e1, temperatura, humedad, acidez)
+
+    plan = plan_maestro.PlanMaestro([umbral0, umbral1])
+    return plan
+
+def armarProgramaDeSuministro(central):
+    ahora = central.obtenerFechaYHora()
+    programaDeSuministro = programa_suministro.ProgramaDeSuministro(
+        magnitudes.Rango(ahora, ahora.agregarHoras(24)))
+    return programaDeSuministro
+
+def armarActualizadorDePrograma(planMaestro, planta, central, programa):
+    constructorDePrograma = constructor_programa.ConstructorDeProgramaDeSuministro(planMaestro)
+
+    actualizador = constructor_programa.ActualizadorDeProgramaDeSuministro(
+        programa, constructorDePrograma, planta, central,
+        [recomendaciones.RecomendacionNoDebeHaberAltaAmplitudTermica(),
+         recomendaciones.RecomendacionDeCultivoRiegosConstantes(),
+         recomendaciones.RecomendacionDeCultivoSePrefierenTemperaturasModeradas()])
+    return actualizador
+
+
 
 # construcción de sensores
 sensorDeTemperatura = sensores.Sensor(
@@ -99,14 +149,15 @@ logSensorAcidez = logging.LogSensor('Sensor de Acidez',
             dispositivos.DispositivoDeEscrituraArchivo('logs/log_sensor_acidez'))
 sensorDeAcidez.registrarObserver(logSensorAcidez)
 
+planta = None
+planMaestro = armarPlanMaestro()
+programaDeSuministro = armarProgramaDeSuministro(central)
+actualizador = armarActualizadorDePrograma(planMaestro, planta, central, programaDeSuministro)
 
+temporizadorDeActualizacionDePrograma = temporizador.Temporizador()
+temporizadorDeActualizacionDePrograma.ejecutarCada(tiempo.DuracionEnSegundos(5),
+          lambda: actualizador.actualizarProgramaDeSuministro())
 
-
-def actualizarLosDatos(central, sensorDeAcidez, sensorDeHumedad, sensorDeTemperatura):
-    central.obtenerPronostico(central.obtenerFechaYHora(), 24)
-    sensorDeAcidez.sensar()
-    sensorDeHumedad.sensar()
-    sensorDeTemperatura.sensar()
 
 
 def main(*args):
@@ -127,10 +178,13 @@ def main(*args):
     app.addFormClass('EN_CONSTRUCCION', ui_ncurses.PantallaEnConstruccion, proveedorDeTexto)
 
     temporizadorDatos.iniciarEjecucion()
+#TODO: habilitar cuando este definida la clase Planta.
+#    temporizadorDeActualizacionDePrograma.iniciarEjecucion()
 
     app.run()
 
     # Detener los temporizadores
     temporizadorDatos.detener()
+    temporizadorDeActualizacionDePrograma.detener()
 
 npyscreen.wrapper_basic(main)
