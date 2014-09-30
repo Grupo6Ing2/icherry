@@ -4,7 +4,12 @@ class Sensor():
         self._dispositivo = unDispositivoDeLectura
         self._parser = unParser
         self._clase_de_magnitud = unaClaseDeMagnitud
+        self._valor = None
 
     def sensar(self):
         cantidadParseada = self._parser.parse(self._dispositivo.leer())
-        return self._clase_de_magnitud(cantidadParseada)
+        self._valor = self._clase_de_magnitud(cantidadParseada)
+        return self._valor
+
+    def ultimoValorSensado(self):
+        return self._valor
