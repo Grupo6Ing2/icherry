@@ -1,6 +1,7 @@
 # coding=utf-8
 
 from icherry.magnitudes import Rango
+from icherry.observer import Observable
 
 
 class PronosticoMeteorologico():
@@ -93,8 +94,10 @@ class PredictorMeteorologico():
         raise NotImplementedError("Método abstracto")
 
 
-class CentralMeteorologica():
+class CentralMeteorologica(Observable):
     def __init__(self, predictorMeteorologico, proveedorDeTiempo):
+        super().__init__()
+
         self.__proveedorDeTiempo = proveedorDeTiempo
         self.__predictorMeteorologico = predictorMeteorologico
 
@@ -111,4 +114,9 @@ class CentralMeteorologica():
                 Rango(desde, hasta)))
             desde = desde.agregarHoras(1)
 
-        return PronosticoMeteorologico(predicciones)
+        self.__ultimoPronostico = PronosticoMeteorologico(predicciones)
+        self.notificarCambios()
+        return self.__ultimoPronostico
+
+    def ultimoPronostico(self):
+        return self.__ultimoPronostico

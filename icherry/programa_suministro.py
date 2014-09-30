@@ -9,6 +9,8 @@
 # ====================================================================
 # Accion
 
+from icherry.observer import Observable
+
 
 class Accion:
     """Una acción es aquello que puede ejecutarse en el contexto de un
@@ -149,7 +151,7 @@ class AccionProgramada:
 #
 # -- xol (28/09/2014)
 
-class ProgramaDeSuministro:
+class ProgramaDeSuministro(Observable):
     """Un programa de suministro es un cronograma de acciones programadas.
     Sabe responder qué acciones caen en un lapso de tiempo dado. Se
     construye con un lapso dado, y opcionalmente una lista de acciones
@@ -170,6 +172,8 @@ class ProgramaDeSuministro:
         se omite, la lista interna de tareas programadas será vacía)
 
         """
+        super().__init__()
+
         self._lapso = lapso
         self._accionesProgramadas = []
 
@@ -185,6 +189,7 @@ class ProgramaDeSuministro:
         """
         assert(self.lapso().contiene(accionProgramada.fechaYHora()))
         self._accionesProgramadas.append(accionProgramada)
+        self.notificarCambios()
 
     def programarAccion(self, fechaYHora, accion):
         """Alternativa a programar(), toma el horario y la acción como
