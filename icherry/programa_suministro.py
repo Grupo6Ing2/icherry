@@ -232,4 +232,7 @@ class ProgramaDeSuministro(Observable):
             # contamos con la comparación por default para las
             # acciones programadas, es decir la que utiliza 'id',
             # eso alcanza.
+
+            self.notificarCambios()
+
         return acciones
