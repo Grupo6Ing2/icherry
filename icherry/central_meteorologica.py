@@ -29,6 +29,9 @@ class PronosticoMeteorologico():
     def __ne__(self, otroPronostico):
         return not self.__eq__(otroPronostico)
 
+    def __str__(self):
+        return str(self.__predicciones)
+
 
 # Indica las predicciones de distintos parámetros para el lapso dado.
 class PrediccionMeteorologica():
@@ -75,6 +78,9 @@ class PrediccionMeteorologica():
                     self.probabilidadDeLluvia(),
                     self.luzAmbiente(),
                     self.lapso())
+
+    def __repr__(self):
+        return self.__str__()
 
 
 class ProveedorDeTiempo():

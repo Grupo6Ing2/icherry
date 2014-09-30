@@ -9,6 +9,9 @@ import icherry.central_meteorologica as central_meteorologica
 import icherry.tipos_para_la_demo as demo
 import icherry.proveedor_texto as proveedor_texto
 import icherry.estado_salud as estado_salud
+import icherry.temporizador as temporizador
+import icherry.tiempo as tiempo
+import icherry.logging as logging
 
 import npyscreen
 
@@ -75,6 +78,36 @@ proveedorDeTexto = proveedor_texto.ProveedorDeTexto('resources/textos.es')
 # construcción de pantallas
 # seguramente hay que generar un objeto que construya todo esto
 
+temporizadorDatos = temporizador.Temporizador()
+temporizadorDatos.ejecutarCada(tiempo.DuracionEnSegundos(5),
+       lambda: actualizarLosDatos(central, sensorDeAcidez, sensorDeHumedad, sensorDeTemperatura))
+
+
+logCentral = logging.LogCentralMeteorologica(
+    dispositivos.DispositivoDeEscrituraArchivo('logs/log_central'))
+central.registrarObserver(logCentral)
+
+logSensorTemperatura = logging.LogSensor('Sensor de Temperatura',
+            dispositivos.DispositivoDeEscrituraArchivo('logs/log_sensor_temperatura'))
+sensorDeTemperatura.registrarObserver(logSensorTemperatura)
+
+logSensorHumedad = logging.LogSensor('Sensor de Humedad',
+            dispositivos.DispositivoDeEscrituraArchivo('logs/log_sensor_humedad'))
+sensorDeHumedad.registrarObserver(logSensorHumedad)
+
+logSensorAcidez = logging.LogSensor('Sensor de Acidez',
+            dispositivos.DispositivoDeEscrituraArchivo('logs/log_sensor_acidez'))
+sensorDeAcidez.registrarObserver(logSensorAcidez)
+
+
+
+
+def actualizarLosDatos(central, sensorDeAcidez, sensorDeHumedad, sensorDeTemperatura):
+    central.obtenerPronostico(central.obtenerFechaYHora(), 24)
+    sensorDeAcidez.sensar()
+    sensorDeHumedad.sensar()
+    sensorDeTemperatura.sensar()
+
 
 def main(*args):
     app = ui_ncurses.ICherryCurses()
@@ -93,6 +126,11 @@ def main(*args):
 
     app.addFormClass('EN_CONSTRUCCION', ui_ncurses.PantallaEnConstruccion, proveedorDeTexto)
 
+    temporizadorDatos.iniciarEjecucion()
+
     app.run()
+
+    # Detener los temporizadores
+    temporizadorDatos.detener()
 
 npyscreen.wrapper_basic(main)
