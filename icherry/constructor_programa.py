@@ -3,57 +3,40 @@ from icherry.observer import Observable
 
 class ConstructorDeProgramaDeSuministro():
 
-    def __init__(self, unPlanMaestro):
+    def __init__(self, unPlanMaestro, recomendacionesDeCultivo):
         self.__planMaestro = unPlanMaestro
-
+        self.__recomendaciones = recomendacionesDeCultivo
 
     # Modifica el ProgramaDeSuministro
-    def construir(self, unProgramaDeSuministro, unaPlanta, unaCentralMeteorologica,
-                  recomendacionesDeCultivo):
-        self.__construirUnProgramaInicial(
-            unProgramaDeSuministro,
-            unaPlanta.estadioFenologico(),
-            unaCentralMeteorologica.obtenerFechaYHora(),
-            unaCentralMeteorologica.ultimoPronostico(),
-            unaPlanta.sensorDeTemperatura().ultimoValorSensado(),
-            unaPlanta.sensorDeHumedad().ultimoValorSensado(),
-            unaPlanta.sensorDeAcidez().ultimoValorSensado(),
-            self.__planMaestro)
+    def construir(self, unaPlanta, unaCentralMeteorologica):
+        programaDeSuministro = self.__construirUnProgramaInicial(unaPlanta, unaCentralMeteorologica)
+        self.__aplicarRecomendacionesDeCultivo(programaDeSuministro, unaPlanta, unaCentralMeteorologica)
 
-        self.__aplicarReglasDeCultivo(unProgramaDeSuministro, reglasDeCultivo)
+        return programaDeSuministro
 
-        return programa
-
-    # Modifica unProgramaDeSuministro en base a todos los parametros:
-    def __construirUnProgramaInicial(self, unProgramaDeSuministro, estadioFenologico,
-            fechaYHoraActual, unPronostico, temperatura, humedad, acidez, unPlanMaestro):
+    # Modifica unProgramaDeSuministros en base a todos los parametros:
+    def __construirUnProgramaInicial(self, unaPlanta, unaCentralMeteorologica):
         #TODO: aca es donde se produce la magia de generacion de un programa.
         pass
 
-
-    def __aplicarRecomendacionesDeCultivo(self, unProgramaDeSuministro, recomendacionesDeCultivo):
-        for recomendacion in recomendacionesDeCultivo:
-            recomendacion.realiza1rAjustes(unProgramaDeSuministro)
+    def __aplicarRecomendacionesDeCultivo(self, unProgramaDeSuministros, unaPlanta, unaCentralMeteorologica):
+        for recomendacion in self.__recomendaciones:
+            recomendacion.realizarAjustes(
+                self.__planMaestro, unaPlanta, unaCentralMeteorologica, unProgramaDeSuministros)
 
 
 class ActualizadorDeProgramaDeSuministro(Observable):
-    def __init__(self, unProgramaDeSuministro, unConstructorDePrograma, unaPlanta,
-                 unaCentralMeteorologica, recomendacionesDeCultivo):
+    def __init__(self, unProgramaDeSuministros, unConstructorDePrograma, unaPlanta,
+                 unaCentralMeteorologica):
         super().__init__()
 
-        self.__programa = unProgramaDeSuministro
+        self.__programa = unProgramaDeSuministros
         self.__constructorDePrograma = unConstructorDePrograma
         self.__planta = unaPlanta
         self.__central = unaCentralMeteorologica
-        self.__recomendaciones = recomendacionesDeCultivo
-
 
     def actualizarProgramaDeSuministro(self):
-        self.__constructorDePrograma.construir(self.__programa, self.__planta,
-                      self.__central, self.__recomendaciones)
-        self.notificarCambios()
-
-
-
-
-
+        nuevoPrograma = self.__constructorDePrograma.construir(
+            self.__programa, self.__planta, self.__central)
+        self.__programa.copiar(nuevoPrograma)
+        self.__programa.notificarCambios()

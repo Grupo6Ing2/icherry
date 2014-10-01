@@ -12,7 +12,7 @@ class RecomendacionDeCultivoRiegosConstantes(RecomendacionDeCultivo):
     def __init__(self):
         pass
 
-    def realizarAjustes(self, unProgramaDeSuministro):
+    def realizarAjustes(self, unPlanMaestro, unaPlanta, unaCentralMeteorologica, unProgramaDeSuministros):
         #TODO ver que haya riego constantes.
         pass
 
@@ -21,7 +21,7 @@ class RecomendacionDeCultivoSePrefierenTemperaturasModeradas(RecomendacionDeCult
     def __init__(self):
         pass
 
-    def realizarAjustes(self, unProgramaDeSuministro):
+    def realizarAjustes(self, unPlanMaestro, unaPlanta, unaCentralMeteorologica, unProgramaDeSuministros):
         #TODO ver que la temperatura establecida por el programa sea moderada.
         pass
 
@@ -30,6 +30,6 @@ class RecomendacionNoDebeHaberAltaAmplitudTermica(RecomendacionDeCultivo):
     def __init__(self):
         pass
 
-    def realizarAjustes(self, unProgramaDeSuministro):
+    def realizarAjustes(self, unPlanMaestro, unaPlanta, unaCentralMeteorologica, unProgramaDeSuministros):
         #TODO ajustar las temperaturas para que no haya mucha amplitud.
         pass

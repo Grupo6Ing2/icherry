@@ -48,13 +48,9 @@ class PlanificadordeEjecucion:
         desde = fechaYHora
         hasta = fechaYHora.agregarDuracion(self._delta)
         lapso = Rango(desde, hasta)
-        acciones = self._programaDeSuministro.accionesEnHorario(
-            lapso, remover=True)
-        for accion in acciones:
+        accionesAEjecutar = self._programaDeSuministro.retirarAccionesEnHorario(lapso)
+        for accion in accionesAEjecutar:
             Ejecutor.ejecutarAccion(accion)
-
-    # TODO: decidir bien cómo se va a definir esto.
-
 
 # ====================================================================
 # Ejecutor
@@ -68,6 +64,7 @@ class PlanificadordeEjecucion:
 # 'ejecutarEn()' de las acciones se engancha en doble dispatch con los
 # métodos ejecutarAccion, ejecutarRegado, etc, para finalmente poner
 # en acción al actuador correspondiente.
+
 
 class Ejecutor:
 

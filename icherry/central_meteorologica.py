@@ -2,6 +2,7 @@
 
 from icherry.magnitudes import Rango
 from icherry.observer import Observable
+import icherry.parsers
 
 
 class PronosticoMeteorologico():
@@ -108,6 +109,7 @@ class CentralMeteorologica(Observable):
         self.__predictorMeteorologico = predictorMeteorologico
 
     def obtenerFechaYHora(self):
+        self.notificarCambios()
         return self.__proveedorDeTiempo.fechaYHoraActual()
 
     def obtenerPronostico(self, desdeFechaYHora, cantidadDeHs):
@@ -126,3 +128,24 @@ class CentralMeteorologica(Observable):
 
     def ultimoPronostico(self):
         return self.__ultimoPronostico
+
+
+# Clases usadas para la demo. Leen los datos de los archivos.
+class PredictorMeteorologicoPorArchivo(PredictorMeteorologico):
+
+    def __init__(self, dispositivoDeLectura):
+        parser = icherry.parsers.ParserPronosticoMeteorologico()
+        pronostico = parser.parse(dispositivoDeLectura.leer())
+        self.__pronostico = pronostico
+
+    def prediccionPara(self, unLapso):
+        return self.__pronostico.prediccionPara(unLapso.desde())
+
+
+class ProveedorDeTiempoPorArchivo(ProveedorDeTiempo):
+    def __init__(self, dispositivoDeLectura):
+        self.__dispositivoDeLectura = dispositivoDeLectura
+
+    def fechaYHoraActual(self):
+        return icherry.parsers.CadenaAFechaYHora().parse(
+            self.__dispositivoDeLectura.leer())

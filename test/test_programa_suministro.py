@@ -71,11 +71,6 @@ class TestProgramaDeSuministros(unittest.TestCase):
             p.programarAccion(*x)
         self.chk_accionesProgramadas(p,l)
 
-        # tercera (por constructor)
-        p = ProgramaDeSuministro(_lapso,
-                                 [AccionProgramada(*x) for x in l])
-        self.chk_accionesProgramadas(p,l)
-
     def test_acciones_en_horario(self):
         def lapso(desde, hasta):
             return Rango(diaN(desde),diaN(hasta))
@@ -93,8 +88,10 @@ class TestProgramaDeSuministros(unittest.TestCase):
             self.assertEqual(s, acciones(desde,hasta))
 
         # ahora sí, iniciamos una pequeña batería de tests
-        p = ProgramaDeSuministro(_lapso,
-                                 [AccionProgramada(*x) for x in _lista])
+        p = ProgramaDeSuministro(_lapso)
+
+        for fecha_accion in _lista:
+            p.programarAccion(*fecha_accion)
 
         s = set(p.accionesEnHorario(p.lapso()))
         self.assertEqual(s, acciones(0, len(_lista)-1))
@@ -118,17 +115,20 @@ class TestProgramaDeSuministros(unittest.TestCase):
         self.assertEqual(set(p.accionesEnHorario(p.lapso())),
                          {'1', '2', '3', '4', '5', '6'})
 
-        def chk_remove(rango,accionesRemovidas,accionesFinales):
+        def chk_remove(rango, accionesRemovidas, accionesRestantes):
             """verifica que dado un rango, el programa de suministro encuentre las
             acciones removidas, las remueva y finalmente se quede sólo
             con las acciones finales (ambos argumentos son
             conjuntos)
 
             """
-            self.assertEqual(set(p.accionesEnHorario(rango, remover=True)),
+            self.assertEqual(set(p.retirarAccionesEnHorario(rango)),
                              accionesRemovidas)
-            self.assertEqual(set(p.accionesEnHorario(p.lapso())),
-                             accionesFinales)
+
+            self.assertEqual(
+                set([ aP.accion() for aP in p.accionesProgramadas() ]),
+                accionesRestantes
+            )
 
         # removemos '3' y '4'
         chk_remove(Rango(3,4), {'3','4'}, {'1', '2', '5', '6'})

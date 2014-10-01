@@ -1,5 +1,6 @@
 from icherry.observer import Observable
 
+
 class Sensor(Observable):
 
     def __init__(self, unDispositivoDeLectura, unParser, unaClaseDeMagnitud):

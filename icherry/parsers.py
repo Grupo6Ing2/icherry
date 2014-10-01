@@ -2,8 +2,7 @@
 from icherry.magnitudes import Porcentaje, TemperaturaEnCelsius
 from icherry.magnitudes import HumedadRelativa, LuzEnLux, Rango
 from icherry.tiempo import FechaYHora
-from icherry.central_meteorologica import PronosticoMeteorologico
-from icherry.central_meteorologica import PrediccionMeteorologica
+import icherry.central_meteorologica
 import datetime
 
 
@@ -76,10 +75,10 @@ class ParserPronosticoMeteorologico(Parser):
                 CadenaAPorcentaje().parse(datosSerializados[i + 4]))
             luz = LuzEnLux(CadenaANumero().parse(datosSerializados[i + 5]))
 
-            predicciones.append(PrediccionMeteorologica(
+            predicciones.append(icherry.central_meteorologica.PrediccionMeteorologica(
                 Rango(desde, hasta), temp, lluvia, humedad, luz))
 
-        return PronosticoMeteorologico(predicciones)
+        return icherry.central_meteorologica.PronosticoMeteorologico(predicciones)
 
 
 class MagnitudACadena(Parser):

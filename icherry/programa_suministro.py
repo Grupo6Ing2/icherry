@@ -166,7 +166,7 @@ class ProgramaDeSuministro(Observable):
 
     """
 
-    def __init__(self, lapso, lista=None):
+    def __init__(self, lapso):
         """Crea un programa de suministros abarcando el lapso dado, puede
         opcionalmente proveerse una lista de acciones programadas (si
         se omite, la lista interna de tareas programadas será vacía)
@@ -177,9 +177,12 @@ class ProgramaDeSuministro(Observable):
         self._lapso = lapso
         self._accionesProgramadas = []
 
-        if lista is not None:
-            for accionProgramada in lista:
-                self.programar(accionProgramada)
+    def vaciar(self):
+        self._accionesProgramadas = []
+
+    def copiar(self, otroPrograma):
+        self._lapso = otroPrograma._lapso
+        self._accionesProgramadas = otroPrograma._accionesProgramadas
 
     def programar(self, accionProgramada):
         """Agrega una acción programada a la lista de acciones programadas. La
@@ -189,7 +192,6 @@ class ProgramaDeSuministro(Observable):
         """
         assert(self.lapso().contiene(accionProgramada.fechaYHora()))
         self._accionesProgramadas.append(accionProgramada)
-        self.notificarCambios()
 
     def programarAccion(self, fechaYHora, accion):
         """Alternativa a programar(), toma el horario y la acción como
@@ -211,7 +213,13 @@ class ProgramaDeSuministro(Observable):
         """
         return sorted(self._accionesProgramadas)
 
-    def accionesEnHorario(self, lapso, remover=False):
+    def accionesEnHorario(self, lapso):
+        acciones = [aP.accion() for aP in self.accionesProgramadas()
+            if lapso.contiene(aP.fechaYHora())]
+
+        return acciones
+
+    def retirarAccionesEnHorario(self, lapso):
         """Determina qué acciones programadas caen en un lapso dado. El
         resultado es una lista (sin ningún orden particular). Se puede
         especificar si se desea o no remover las acciones programadas
@@ -219,20 +227,8 @@ class ProgramaDeSuministro(Observable):
         tiene sentido que permanezcan en el cronograma).
 
         """
-        # un while sería más eficiente. sigh.
-        if not self.lapso().interseca(lapso):
-            return []  # meh, optimización
-        acciones = [aP.accion() for aP in self.accionesProgramadas()
-                    if lapso.contiene(aP.fechaYHora())]
+        accionesEnHorario = self.accionesEnHorario(lapso)
+        self._accionesProgramadas = [aP for aP in self._accionesProgramadas
+             if aP.accion() not in accionesEnHorario]
 
-        if remover:
-            r = [aP for aP in self._accionesProgramadas
-                 if aP.accion() not in acciones]
-            self._accionesProgramadas = r
-            # contamos con la comparación por default para las
-            # acciones programadas, es decir la que utiliza 'id',
-            # eso alcanza.
-
-            self.notificarCambios()
-
-        return acciones
+        return accionesEnHorario

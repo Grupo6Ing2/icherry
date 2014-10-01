@@ -1,8 +1,9 @@
 import icherry.dispositivos as dispositivos
 import icherry.parsers as parsers
+from icherry.observer import Observable
 
 
-class Actuador():
+class Actuador(Observable):
 
     def __init__(self, unDispositivoDeEscritura, unParserACadena):
         raise NotImplementedError("Clase abstracta")
@@ -22,9 +23,6 @@ class ActuadorEnArchivo(Actuador):
 
 
 class ConstructorDeActuadorEnArchivo():
-
-    def __init__(self):
-        pass
 
     def crear(self, unNombreArchivo):
         return ActuadorEnArchivo(
