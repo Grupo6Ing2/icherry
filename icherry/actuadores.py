@@ -5,7 +5,7 @@ from icherry.observer import Observable
 
 class Actuador(Observable):
 
-    def __init__(self, unDispositivoDeEscritura, unParserACadena):
+    def __init__(self):
         raise NotImplementedError("Clase abstracta")
 
     def aplicar(self, unaMagnitud):
