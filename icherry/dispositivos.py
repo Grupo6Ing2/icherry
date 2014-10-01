@@ -28,7 +28,7 @@ class DispositivoDeEscritura():
     def __init__(self):
         raise NotImplementedError("Clase abstracta")
 
-    def escribir(self):
+    def escribir(self, unaCadena):
         raise NotImplementedError("Método abstracto")
 
 
