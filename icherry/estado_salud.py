@@ -1,7 +1,7 @@
 # ====================================================================
 #                          ESTADO DE SALUD
 # ====================================================================
-from icherry.plan_maestro import EstadiosFenologicos
+from icherry.plan_maestro import EstadioGerminacion
 from icherry.magnitudes import Porcentaje
 from icherry.magnitudes import LongitudEnCentimetros
 from icherry.magnitudes import TemperaturaEnCelsius
@@ -60,7 +60,7 @@ class EstadoFenologico:
         self._cantidadFlores = 0
         self._cantidadFrutos = 0
         self._porcentajeFrutasMaduras = Porcentaje(0)
-        self._estadioDeCultivo = EstadiosFenologicos.germinacion()
+        self._estadioDeCultivo = EstadioGerminacion
         self._altura = LongitudEnCentimetros(0)
 
     # definimos ahora getters/setters para cada cantidad, con la misma

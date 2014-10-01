@@ -1,5 +1,5 @@
 from icherry.estado_salud import EstadoDeSalud, EstadoFenologico
-from icherry.plan_maestro import EstadiosFenologicos
+from icherry.plan_maestro import EstadioGerminacion, EstadioFloracion
 from icherry.magnitudes import Porcentaje, LongitudEnCentimetros, AcidezEnPH
 from icherry.magnitudes import TemperaturaEnCelsius, HumedadRelativa
 
@@ -18,7 +18,7 @@ class TestEstadoFenologico(unittest.TestCase):
         self.assertEqual(x.cantidadFlores(), 0)
         self.assertEqual(x.cantidadFrutos(), 0)
         self.assertEqual(x.porcentajeFrutasMaduras(), Porcentaje(0))
-        self.assertEqual(x.estadioDeCultivo(), EstadiosFenologicos.germinacion())
+        self.assertEqual(x.estadioDeCultivo(), EstadioGerminacion)
         self.assertEqual(x.altura(), LongitudEnCentimetros(0))
 
     def test_estadoFenologico_puede_modificarse_correctamente(self):
@@ -34,8 +34,8 @@ class TestEstadoFenologico(unittest.TestCase):
         self.assertEqual(x.cantidadFlores(), 2)
         x.porcentajeFrutasMaduras(20)
         self.assertEqual(x.porcentajeFrutasMaduras(), 20)
-        x.estadioDeCultivo(EstadiosFenologicos.floracion())
-        self.assertEqual(x.estadioDeCultivo(), EstadiosFenologicos.floracion())
+        x.estadioDeCultivo(EstadioFloracion)
+        self.assertEqual(x.estadioDeCultivo(), EstadioFloracion)
         x.altura(LongitudEnCentimetros(20))
         self.assertEqual(x.altura(), LongitudEnCentimetros(20))
 

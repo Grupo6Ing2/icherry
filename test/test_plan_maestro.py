@@ -3,7 +3,7 @@ import unittest
 from icherry.magnitudes import Rango
 from icherry.magnitudes import HumedadRelativa, Porcentaje
 from icherry.magnitudes import TemperaturaEnCelsius, AcidezEnPH
-from icherry.plan_maestro import EstadiosFenologicos
+from icherry.plan_maestro import CicloDeVida
 from icherry.plan_maestro import UmbralOptimoDeCultivo, PlanMaestro
 
 
@@ -13,17 +13,7 @@ class TestPlanMaestro(unittest.TestCase):
         def humedadRelativa(x):
             return HumedadRelativa(Porcentaje(x))
 
-        self.e0 = EstadiosFenologicos.germinacion()
-        self.e1 = EstadiosFenologicos.desarrollo()
-        self.e2 = EstadiosFenologicos.brotes()
-        self.e3 = EstadiosFenologicos.aparicion()
-        self.e4 = EstadiosFenologicos.floracion()
-        self.e5 = EstadiosFenologicos.fruto()
-        self.e6 = EstadiosFenologicos.maduracion()
-        self.e7 = EstadiosFenologicos.senescencia()
-
-        self.estadios = [self.e0, self.e1, self.e2, self.e3,
-                         self.e4, self.e5, self.e6, self.e7]
+        self.estadios = CicloDeVida.estadios()
 
         # argumentos para ensamblar los umbrales. Modificar a gusto.
         args = [[10, 30, 40, 50, 6.5, 7.5]] + [[12, 20, 40, 70, 6.0, 7.5]]*7
@@ -62,7 +52,7 @@ class TestPlanMaestro(unittest.TestCase):
 
     @unittest.expectedFailure
     def test_debe_fallar_ante_un_plan_maestro_con_menos_items(self):
-        umbrales = [self.umbral4, self.umbral5, self.umbral6]  # no están todos
+        umbrales = [self.umbrales[4], self.umbrales[5], self.umbrales[6]]
         plan = PlanMaestro(umbrales)
         # debe tirar excepción
         self.aux_chequea_un_plan_maestro_que_tenga_todo_definido(plan)

@@ -3,101 +3,242 @@
 #                            PLAN MAESTRO
 # ====================================================================
 
-# Se definen los conceptos relacionados con el plan maestro : estadio
-# fenológico, umbral óptimo de cultivo y plan maestro.
+# Se definen los conceptos relacionados con el plan maestro : estadios
+# de cultivo, umbral óptimo de cultivo y plan maestro.
+
 
 # ====================================================================
-# EstadioFenologico
-
-# niñooos : se dice "estadio", no "estadío" (no existe esa palabra).
-# http://www.fundeu.es/recomendacion/estadio-no-estadio-1265/
-# http://lema.rae.es/drae/?val=estad%C3%ADo
-
-
-class EstadioFenologico:
-    """Un 'EstadioFenologico' es básicamente un mero identificador de
-    estadio fenológico, no tiene demasiado interés per sé, sino más
-    bien para usarse como índice en un plan maestro. En esta versión
-    cuenta con un identificador y un nombre (la idea es que estos
-    valores sean únicos en el plan maestro en que aparezcan).
+# plan maestro
+class PlanMaestro():
+    """Un plan maestro es un diccionario de estado fenológico en umbral
+    óptimo de cultivo. Con el plan maestro sabemos en qué parámetros
+    de T/H/PH se debe mantener la planta en el estadio actual. Para
+    construirse, requiere una lista de umbrales óptimos de cultivo
+    (que no se solapen, es decir no haya dos que correspondan al mismo
+    estadio).
 
     """
-    def __init__(self, id, nombre):
-        """construye un estadio fenológico a partir de un identificador y un
-        nombre. El identificador puede ser un número, el nombre
-        debería ser un string (usado a modo de símbolo)
+    def __init__(self, umbrales=None):
+        """Crea un nuevo plan maestro vacío, sin ningún umbral definido, o
+        bien a partir de una lista de umbrales.
+
         """
-        self._tupla = (id, nombre)
-        # la función 'id' en python existe, pero no conflictúa con
-        # este uso. Si 'e0' es una instancia de 'EstadioFenologico',
-        # id(e0) y e0.id() son dos cosas distintas.
+        self._umbralGerminacion = None
+        self._umbralDesarrollo = None
+        self._umbralBrotes = None
+        self._umbralAparicion = None
+        self._umbralFloracion = None
+        self._umbralFruto = None
+        self._umbralMaduracion = None
+        self._umbralSenescencia = None
+        if umbrales is not None:
+            for u in umbrales:
+                self.definirUmbralParaEstadio(u.estadio(), u)
 
-    def id(self):
-        return self._tupla[0]
+    def umbralParaEstadio(self, claseEstadio):
+        """Retorna el umbral para el estadio de cultivo indicado. Se
+        debe pasar como argumento una clase (o instancia) de estadio
+        de cultivo.
 
-    def nombre(self):
-        return self._tupla[1]
+        """
+        return claseEstadio.umbral(self)
 
-    def __eq__(self, otro):
-        return self._tupla == otro._tupla
+    def definirUmbralParaEstadio(self, claseEstadio, umbral):
+        """Define el umbral para el estadio de cultivo indicado. El argumento
+        'claseEstadio' funciona como en 'umbralParaEstadio'
 
-    def __ne__(self, otro):
-        return not self.__eq__(otro)
+        """
+        return claseEstadio.umbral(self, umbral)
 
-    def __hash__(self):
-        return self._tupla.__hash__()
+    def umbrales(self):
+        """Retorna la lista de todos los umbrales que planifica"""
+        estadios = CicloDeVida.estadios()
+        umbrales = [self.umbralParaEstadio(estadio) for estadio in estadios]
+        return [umbral for umbral in umbrales if umbral is not None]
+
+    # los dos siguientes son para aprovechar la sintaxis de acceso por
+    # corchetes.
+
+    def __getitem__(self, estadio):
+        return self.umbralParaEstadio(estadio)
+
+    def __setitem__(self, estadio, umbral):
+        return self.definirUmbralParaEstadio(estadio, umbral)
+
+    # los siguientes métodos son de uso interno para doble-dispatch
+    # contra los estadios de cultivo. No deben ser usados
+    # externamente.
+
+    def umbralGerminacion(self, umbralGerminacion=None):
+        if umbralGerminacion is None:
+            return self._umbralGerminacion
+        else:
+            self._umbralGerminacion = umbralGerminacion
+            return self
+
+    def umbralDesarrollo(self, umbralDesarrollo=None):
+        if umbralDesarrollo is None:
+            return self._umbralDesarrollo
+        else:
+            self._umbralDesarrollo = umbralDesarrollo
+            return self
+
+    def umbralBrotes(self, umbralBrotes=None):
+        if umbralBrotes is None:
+            return self._umbralBrotes
+        else:
+            self._umbralBrotes = umbralBrotes
+            return self
+
+    def umbralAparicion(self, umbralAparicion=None):
+        if umbralAparicion is None:
+            return self._umbralAparicion
+        else:
+            self._umbralAparicion = umbralAparicion
+            return self
+
+    def umbralFloracion(self, umbralFloracion=None):
+        if umbralFloracion is None:
+            return self._umbralFloracion
+        else:
+            self._umbralFloracion = umbralFloracion
+            return self
+
+    def umbralFruto(self, umbralFruto=None):
+        if umbralFruto is None:
+            return self._umbralFruto
+        else:
+            self._umbralFruto = umbralFruto
+            return self
+
+    def umbralMaduracion(self, umbralMaduracion=None):
+        if umbralMaduracion is None:
+            return self._umbralMaduracion
+        else:
+            self._umbralMaduracion = umbralMaduracion
+            return self
+
+    def umbralSenescencia(self, umbralSenescencia=None):
+        if umbralSenescencia is None:
+            return self._umbralSenescencia
+        else:
+            self._umbralSenescencia = umbralSenescencia
+            return self
 
 
-# por practicidad, generamos todos los estadios posibles acá
-class EstadiosFenologicos:
-    estadios = {'GERMINACION': EstadioFenologico(0, 'GERMINACION'),
-                'DESARROLLO':  EstadioFenologico(1, 'DESARROLLO'),
-                'BROTES':      EstadioFenologico(2, 'BROTES'),
-                'APARICION':   EstadioFenologico(3, 'APARICION'),
-                'FLORACION':   EstadioFenologico(4, 'FLORACION'),
-                'FRUTO':       EstadioFenologico(5, 'FRUTO'),
-                'MADURACION':  EstadioFenologico(6, 'MADURACION'),
-                'SENESCENCIA': EstadioFenologico(7, 'SENESCENCIA')}
+# ====================================================================
+# Estadios de cultivo
 
-    def listaDeEstadiosOrdenados() :
+class EstadioDeCultivo():
+    def __init__():
+        raise NotImplemented("Clase abstracta")
+
+    def umbral(planMaestro, *args):
+        raise NotImplemented("Método abstracto")
+
+    def nombre():
+        raise NotImplemented("Método abstracto")
+
+
+class EstadioGerminacion(EstadioDeCultivo):
+
+    def umbral(planMaestro, *args):
+        return planMaestro.umbralGerminacion(*args)
+
+    def nombre():
+        return 'GERMINACION'
+
+
+class EstadioDesarrollo(EstadioDeCultivo):
+
+    def umbral(planMaestro, *args):
+        return planMaestro.umbralDesarrollo(*args)
+
+    def nombre():
+        return 'DESARROLLO'
+
+
+class EstadioBrotes(EstadioDeCultivo):
+
+    def umbral(planMaestro, *args):
+        return planMaestro.umbralBrotes(*args)
+
+    def nombre():
+        return 'BROTES'
+
+
+class EstadioAparicion(EstadioDeCultivo):
+
+    def umbral(planMaestro, *args):
+        return planMaestro.umbralAparicion(*args)
+
+    def nombre():
+        return 'APARICION'
+
+
+class EstadioFloracion(EstadioDeCultivo):
+
+    def umbral(planMaestro, *args):
+        return planMaestro.umbralFloracion(*args)
+
+    def nombre():
+        return 'FLORACION'
+
+
+class EstadioFruto(EstadioDeCultivo):
+
+    def umbral(planMaestro, *args):
+        return planMaestro.umbralFruto(*args)
+
+    def nombre():
+        return 'FRUTO'
+
+
+class EstadioMaduracion(EstadioDeCultivo):
+
+    def umbral(planMaestro, *args):
+        return planMaestro.umbralMaduracion(*args)
+
+    def nombre():
+        return 'MADURACION'
+
+
+class EstadioSenescencia(EstadioDeCultivo):
+
+    def umbral(planMaestro, *args):
+        return planMaestro.umbralSenescencia(*args)
+
+    def nombre():
+        return 'SENESCENCIA'
+
+
+# ============================================================
+# CicloDeVida
+
+# El ciclo de vida define la secuencia de todos los estadios de
+# cultivo.
+
+class CicloDeVida():
+    def estadios():
+        """Retorna una lista de los estadios del ciclo de vida de la planta,
+        en orden
+
+        """
         return [
-            EstadiosFenologicos.germinacion(),
-            EstadiosFenologicos.desarrollo(),
-            EstadiosFenologicos.brotes(),
-            EstadiosFenologicos.aparicion(),
-            EstadiosFenologicos.floracion(),
-            EstadiosFenologicos.fruto(),
-            EstadiosFenologicos.maduracion(),
-            EstadiosFenologicos.senescencia()
+            EstadioGerminacion,
+            EstadioDesarrollo,
+            EstadioBrotes,
+            EstadioAparicion,
+            EstadioFloracion,
+            EstadioFruto,
+            EstadioMaduracion,
+            EstadioSenescencia
         ]
-
-    def germinacion():
-        return EstadiosFenologicos.estadios['GERMINACION']
-
-    def desarrollo():
-        return EstadiosFenologicos.estadios['DESARROLLO']
-
-    def brotes():
-        return EstadiosFenologicos.estadios['BROTES']
-
-    def aparicion():
-        return EstadiosFenologicos.estadios['APARICION']
-
-    def floracion():
-        return EstadiosFenologicos.estadios['FLORACION']
-
-    def fruto():
-        return EstadiosFenologicos.estadios['FRUTO']
-
-    def maduracion():
-        return EstadiosFenologicos.estadios['MADURACION']
-
-    def senescencia():
-        return EstadiosFenologicos.estadios['SENESCENCIA']
 
 
 # ====================================================================
 # UmbralOptimoDeCultivo
+
 class UmbralOptimoDeCultivo:
     """Un umbral óptimo de cultivo básicamente es una tripla de rangos
     aceptables de T/H/PH para un estadio fenológico dado, que indica
@@ -129,33 +270,6 @@ class UmbralOptimoDeCultivo:
 
 
 # ====================================================================
-# PlanMaestro
-class PlanMaestro:
-    """Un plan maestro es un diccionario de estado fenológico en umbral
-    óptimo de cultivo. Con el plan maestro sabemos en qué parámetros
-    de T/H/PH se debe mantener la planta en el estadio actual. Para
-    construirse, requiere una lista de umbrales óptimos de cultivo
-    (que no se solapen, es decir no haya dos que correspondan al mismo
-    estadio).
-
-    """
-    def __init__(self, umbrales):
-        """construye un plan maestro a partir de una colección de umbrales"""
-        self._umbrales = dict([(u.estadio(), u) for u in umbrales])
-        # si había umbrales distintos con el mismo estadio, sólo uno
-        # de ellos quedará asociado (pero no debería construirse con
-        # una lista así)
-
-    def umbralParaEstadio(self, estadio):
-        """retorna el umbral asociado al estadio dado"""
-        return self._umbrales[estadio]
-
-    def umbrales(self):
-        """retorna la lista de todos los umbrales que planifica"""
-        return [umbral for umbral in self._umbrales.values()]
-
-
-# ====================================================================
 # mini demo (para correr en la repl)
 
 # Lo que hace es construir un plan maestro con un par de estadios,
@@ -163,36 +277,36 @@ class PlanMaestro:
 # aceptados de T/H/PH por cada estadio).
 
 def demo():
-    from icherry.magnitudes import Rango
-    from icherry.magnitudes import HumedadRelativa, Porcentaje
-    from icherry.magnitudes import TemperaturaEnCelsius, AcidezEnPH
+    from magnitudes import Rango
+    from magnitudes import HumedadRelativa, Porcentaje
+    from magnitudes import TemperaturaEnCelsius, AcidezEnPH
 
     def humedadRelativa(x):
         return HumedadRelativa(Porcentaje(x))
 
-    e0 = EstadiosFenologicos.germinacion()
-    e1 = EstadiosFenologicos.desarrollo()
+    estadio0 = EstadioGerminacion
+    estadio1 = EstadioDesarrollo
 
     temperatura = Rango(TemperaturaEnCelsius(10), TemperaturaEnCelsius(30))
     humedad = Rango(humedadRelativa(40), humedadRelativa(50))
     acidez = Rango(AcidezEnPH(6.5), AcidezEnPH(7.5))
 
-    umbral0 = UmbralOptimoDeCultivo(e0, temperatura, humedad, acidez)
+    umbral0 = UmbralOptimoDeCultivo(estadio0, temperatura, humedad, acidez)
 
     temperatura = Rango(TemperaturaEnCelsius(12), TemperaturaEnCelsius(20))
     humedad = Rango(humedadRelativa(40), humedadRelativa(70))
     acidez = Rango(AcidezEnPH(6.0), AcidezEnPH(7.5))
 
-    umbral1 = UmbralOptimoDeCultivo(e1, temperatura, humedad, acidez)
+    umbral1 = UmbralOptimoDeCultivo(estadio1, temperatura, humedad, acidez)
 
     plan = PlanMaestro([umbral0, umbral1])
 
     # verifiquemos que el diccionario ande bien
-    assert(plan.umbralParaEstadio(e0) == umbral0)
-    assert(plan.umbralParaEstadio(e1) == umbral1)
+    assert(plan[estadio0] == umbral0)
+    assert(plan[estadio1] == umbral1)
 
     print("los estadios fenologicos definidos son:")
-    for estadio in EstadiosFenologicos.listaDeEstadiosOrdenados():
+    for estadio in CicloDeVida.estadios():
         print("{}".format(estadio.nombre()))
 
     # ahora hacemos un print de todo para ver bien los datos

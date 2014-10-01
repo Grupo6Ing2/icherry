@@ -28,8 +28,8 @@ def actualizarLosDatos(central, sensorDeAcidez, sensorDeHumedad, sensorDeTempera
     sensorDeTemperatura.sensar()
 
 def armarPlanMaestro():
-    e0 =  plan_maestro.EstadiosFenologicos.germinacion()
-    e1 = plan_maestro.EstadiosFenologicos.desarrollo()
+    e0 = plan_maestro.EstadioGerminacion
+    e1 = plan_maestro.EstadioDesarrollo
 
     temperatura = magnitudes.Rango(magnitudes.TemperaturaEnCelsius(10),
                                    magnitudes.TemperaturaEnCelsius(30))
