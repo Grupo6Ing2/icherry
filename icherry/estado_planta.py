@@ -33,7 +33,7 @@ class EstadoDePlanta(Observable):
         self._temperatura = TemperaturaEnCelsius(16)
         self._humedad = HumedadRelativa(Porcentaje(0))
         self._acidez = AcidezEnPH(7)
-        self._estadoDeSalud = EstadoDeSaludBueno()
+        self._estadoDeSalud = EstadoDeSaludBueno
 
     def estadoFenologico(self):
         # Si se quiere modificar el estado fenológico, puede
@@ -98,9 +98,9 @@ class EstadoDePlanta(Observable):
 class EstadoDeSalud:
 
     def __init__(self):
-        raise NotImplementedError("Clase abstracta")
+        raise NotImplementedError("Clase abstracta y estatica!")
 
-    def nombre(self):
+    def nombre():
         raise NotImplementedError("Método abstracto")
 
     def notificarEstadoA():
