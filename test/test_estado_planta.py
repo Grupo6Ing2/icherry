@@ -1,5 +1,5 @@
-from icherry.estado_salud import EstadoDePlanta, EstadoFenologico
-from icherry.estado_salud import EstadoDeSaludBueno, EstadoDeSaludMalo
+from icherry.estado_planta import EstadoDePlanta, EstadoFenologico
+from icherry.estado_planta import EstadoDeSaludBueno, EstadoDeSaludMalo
 from icherry.plan_maestro import EstadioGerminacion, EstadioFloracion
 from icherry.magnitudes import Porcentaje, LongitudEnCentimetros, AcidezEnPH
 from icherry.magnitudes import TemperaturaEnCelsius, HumedadRelativa
@@ -8,9 +8,9 @@ import unittest
 
 class TestEstadoFenologico(unittest.TestCase):
     def test_estadoFenologico_se_inicializa_en_cero_y_estadio_germinacion(self):
-        """inicializamos un estado fenologico, deberian estar todos los
-        parametros numericos en cero (el porcentaje tiene valor() 0),
-        y el estadio de cultivo deberia ser el de germinacion (es el
+        """Inicializa un estado fenológico, deberían estar todos los
+        parámetros numéricos en cero (el porcentaje tiene valor() 0),
+        y el estadio de cultivo debería ser el de germinación (es el
         primer estadio de cualquier plan maestro).
 
         """
@@ -24,7 +24,7 @@ class TestEstadoFenologico(unittest.TestCase):
 
     def test_estadoFenologico_puede_modificarse_correctamente(self):
         """verificamos que los setters efectivamente modifiquen los valores
-        como corresponde. De paso verificamos que los metodos
+        como corresponde. De paso verificamos que los métodos
         funcionen bien tanto como getters y setters.
 
         """

@@ -1,6 +1,11 @@
 # ====================================================================
-#                          ESTADO DE SALUD
+#                          ESTADO DE PLANTA
 # ====================================================================
+
+# En este módulo se definen las clases relacionadas al estado de
+# planta. Eso incluye las clases EstadoDePlanta, EstadoFenologico y
+# EstadoDeSalud (y subclases).
+
 
 from icherry.observer import Observable
 from icherry.plan_maestro import EstadioGerminacion
@@ -10,18 +15,30 @@ from icherry.magnitudes import TemperaturaEnCelsius
 from icherry.magnitudes import HumedadRelativa
 from icherry.magnitudes import AcidezEnPH
 
+
 # ====================================================================
 # EstadoDePlanta
+
+# El estado de la planta consiste en los valores de T/H/PH, el estado
+# fenológico y el estado de salud. Todos estos valores internos pueden
+# modificarse en cualquier instante. Al instanciarse, se crea un
+# estado fenológico por defecto, y las magnitudes T/H/PH con algunos
+# valores arbitrarios (recomendamos fuertemente no depender de esto y
+# modificarlos ni bien se crea una instancia).
+
 class EstadoDePlanta(Observable):
 
     def __init__(self):
         self._estadoFenologico = EstadoFenologico()
-        self._temperatura = TemperaturaEnCelsius(0)
+        self._temperatura = TemperaturaEnCelsius(16)
         self._humedad = HumedadRelativa(Porcentaje(0))
-        self._acidez = AcidezEnPH(0)
+        self._acidez = AcidezEnPH(7)
         self._estadoDeSalud = EstadoDeSaludBueno
 
     def estadoFenologico(self):
+        # Si se quiere modificar el estado fenológico, puede
+        # obtenérselo primero y luego modificárselo a través de sus
+        # setters.
         """Retorna el estado fenológico de la planta."""
         return self._estadoFenologico
 
@@ -63,29 +80,72 @@ class EstadoDePlanta(Observable):
 # ====================================================================
 # EstadoDeSalud
 
+# El estado de salud básicamente es un identificador utilizado para
+# determinar el estado de salud de la planta. Cada estado de salud
+# implementa el mensaje 'notificarEstadoA()' que notifica a algún
+# objeto que pueda responder a mensajes de respuesta de notificación
+# por estado de salud (doble dispatch). Este mecanismo puede servir
+# para implementar una alerta si el estado de salud de la planta se
+# vuelve crítico.
+
+# La versión actual tiene sólo estados de salud posibles: bueno y
+# malo. En versiones futuras se puede expandir. Quienquiera que
+# actualice el estado de la planta deberá determinar en base al plan
+# maestro y los valores de T/H/PH cuál es el nuevo estado de salud, y
+# notificar a los interesados de monitorear esta variable.
+
+
 class EstadoDeSalud:
+
     def __init__(self):
         raise NotImplementedError("Clase abstracta")
+
     def nombre(self):
         raise NotImplementedError("Método abstracto")
+
     def notificarEstadoA():
         raise NotImplementedError("Método abstracto")
 
+
 class EstadoDeSaludBueno(EstadoDeSalud):
+
     def nombre():
         return 'BUENO'
+
     def notificarEstadoA(notificado):
+
         notificado.notificarseEstadoBueno()
 
+
 class EstadoDeSaludMalo(EstadoDeSalud):
+
     def nombre():
         return 'MALO'
+
     def notificarEstadoA(notificado):
         notificado.notificarseEstadoMalo()
 
+
 # ====================================================================
 # EstadoFenologico
+
+# El estado fenológico consiste en el siguiente conjunto de valores:
+#
+# * cantidad de brotes
+# * cantidad de flores
+# * cantidad de frutos
+# * porcentaje de frutas maduras
+# * estadio de cultivo
+# * altura
+#
+# Todos estos parámetros pueden obtenerse y modificarse en cualquier
+# momento. Cuando se inicializa una instancia, el constructor asigna
+# valores por defecto a todos los parámetros, lo más parecidos a
+# "cero" posibles (las cantidades todas en cero, la altura en 0
+# centímetros, etc).
+
 class EstadoFenologico:
+
     def __init__(self):
         """inicializa un estado fenologico a partir de valores por defecto
         (todos cero).

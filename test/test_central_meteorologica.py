@@ -19,6 +19,9 @@ class TestCentralMeteorologica(unittest.TestCase):
                                              LuzEnLux(800))
 
         central = CentralMeteorologica(predictor, None)
+
+        self.assertIsNone(central.ultimoPronostico())
+
         pronostico = central.obtenerPronostico(desdeFechaYHora=desde, cantidadDeHs=2)
 
         self.assertEqual(desde, pronostico.fechaInicio())

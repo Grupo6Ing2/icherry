@@ -6,15 +6,14 @@ import icherry.parsers as parsers
 import icherry.actuadores as actuadores
 import icherry.ui_ncurses as ui_ncurses
 import icherry.central_meteorologica as central_meteorologica
-import icherry.tipos_para_la_demo as demo
 import icherry.proveedor_texto as proveedor_texto
-import icherry.estado_salud as estado_salud
+import icherry.estado_planta as estado_planta
 import icherry.temporizador as temporizador
 import icherry.tiempo as tiempo
 import icherry.logging as logging
 import icherry.plan_maestro as plan_maestro
 import icherry.programa_suministro as programa_suministro
-import icherry.constructor_programa as constructor_programa
+import icherry.generador_programa as generador_programa
 import icherry.recomendaciones as recomendaciones
 
 
@@ -56,13 +55,14 @@ def armarProgramaDeSuministro(central):
     return programaDeSuministro
 
 def armarActualizadorDePrograma(planMaestro, planta, central, programa):
-    constructorDePrograma = constructor_programa.ConstructorDeProgramaDeSuministro(planMaestro)
+    _recomendaciones = [recomendaciones.RecomendacionNoDebeHaberAltaAmplitudTermica(),
+                       recomendaciones.RecomendacionDeCultivoRiegosConstantes(),
+                       recomendaciones.RecomendacionDeCultivoSePrefierenTemperaturasModeradas()]
+    generadorDePrograma = generador_programa.GeneradorDeProgramaDeSuministro(
+        planMaestro,_recomendaciones)
 
-    actualizador = constructor_programa.ActualizadorDeProgramaDeSuministro(
-        programa, constructorDePrograma, planta, central,
-        [recomendaciones.RecomendacionNoDebeHaberAltaAmplitudTermica(),
-         recomendaciones.RecomendacionDeCultivoRiegosConstantes(),
-         recomendaciones.RecomendacionDeCultivoSePrefierenTemperaturasModeradas()])
+    actualizador = generador_programa.ActualizadorDeProgramaDeSuministro(
+        programa, generadorDePrograma, planta, central)
     return actualizador
 
 
@@ -104,14 +104,14 @@ actuadorDeAntibiotico = constructorDeActuador.crear(
     'devices/actuador_antibiotico')
 
 # construcción de la central meteorologica que lee los datos de los archivos.
-predictor = demo.PredictorMeteorologicoPorArchivo(
+predictor = central_meteorologica.PredictorMeteorologicoPorArchivo(
     dispositivos.DispositivoDeLecturaArchivo("devices/pronostico"))
-reloj = demo.ProveedorDeTiempoPorArchivo(
+reloj = central_meteorologica.ProveedorDeTiempoPorArchivo(
     dispositivos.DispositivoDeLecturaArchivo("devices/tiempo"))
 central = central_meteorologica.CentralMeteorologica(predictor, reloj)
 
 
-estado = estado_salud.EstadoDePlanta()
+estado = estado_planta.EstadoDePlanta()
 estadoFenologico = estado.estadoFenologico()
 estadoFenologico.cantidadBrotes(2)
 estadoFenologico.cantidadFlores(10)

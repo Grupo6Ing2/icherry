@@ -5,17 +5,17 @@ class Log(Observer):
     def __init__(self, unDispositivoDeEscritura):
         self.__dispositivoDeEscritura = unDispositivoDeEscritura
 
-    def update(self, unObservable):
+    def actualizar(self, unObservable):
         self.__dispositivoDeEscritura.escribir(self.entradaEnElLog(unObservable))
 
     # Devuelve una cadena que se va a escribir en el log
     def entradaEnElLog(self, unObservable):
-        raise NotImplementedError("Metodo abstracta")
+        raise NotImplementedError("Método abstracto")
 
 
 class LogCentralMeteorologica(Log):
     def entradaEnElLog(self, centralMeteorologica):
-        return 'Ultimo pronostico de la central meteorologica: {0}\n'.\
+        return 'Último pronóstico de la central meteorológica: {0}\n'.\
             format(centralMeteorologica.ultimoPronostico())
 
 

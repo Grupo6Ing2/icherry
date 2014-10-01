@@ -14,19 +14,19 @@ from icherry.observer import Observable
 
 class Accion:
     """Una acción es aquello que puede ejecutarse en el contexto de un
-    Ejecutor, o sea, ser ejecutador por un Ejecutor. Todas las
-    acciones se definen con una cantidad de suministro, la magnitud
-    empleada dependerá de qué tipo de acción se trata (una acción de
-    regado requerirá una magnitud líquida, mientras que una acción de
-    luz requerirá una magnitud de luz, etc). Cada tipo de acción es
-    una subclase de Accion.
+    ejecutor, o sea, ser ejecutador por un EjecutorDeAccion. Todas
+    las acciones se definen con una cantidad de suministro, la
+    magnitud empleada dependerá de qué tipo de acción se trata (una
+    acción de regado requerirá una magnitud líquida, mientras que una
+    acción de luz requerirá una magnitud de luz, etc). Cada tipo de
+    acción es una subclase de Accion.
 
     """
     def __init__(self):
         raise NotImplementedError("Clase abstracta")
 
     def ejecutarEn(self, ejecutor):
-        """Ejecuta la acción en el contexto de un Ejecutor.
+        """Ejecuta la acción en el contexto de un EjecutorDeAccion.
 
         """
         raise NotImplementedError("Método abstracto")
@@ -154,22 +154,23 @@ class AccionProgramada:
 class ProgramaDeSuministro(Observable):
     """Un programa de suministro es un cronograma de acciones programadas.
     Sabe responder qué acciones caen en un lapso de tiempo dado. Se
-    construye con un lapso dado, y opcionalmente una lista de acciones
-    programadas, en su defecto la lista será vacía. En cualquier caso,
-    siempre puede usarse el método 'programar()' para agregar una
-    nueva tarea programada. La fecha y hora de cualquier acción
-    programada debe caer en el lapso indicado). La variante
-    'programarAccion()' permite proveer directamente el horario y la
-    acción, sin requerir construir un argumento de tipo
-    AccionProgramada. El programa de suministro es un mero cronograma,
-    y no es responsable de la ejecución de sus tareas programadas.
+    construye con un lapso, el cronograma será vacío. Puede usarse el
+    método 'programar()' para agregar una nueva tarea programada. La
+    fecha y hora de cualquier acción programada debe caer en el lapso
+    indicado. La variante 'programarAccion()' permite proveer
+    directamente el horario y la acción, sin requerir construir un
+    argumento de tipo AccionProgramada. El programa de suministro es
+    un mero cronograma, y no es responsable de la ejecución de sus
+    tareas programadas. Es observable, pero no la actualización de los
+    observadores no es responsabilidad del programa de suministro,
+    debe llamarse a 'actualizar()' en forma externa.
 
     """
 
     def __init__(self, lapso):
-        """Crea un programa de suministros abarcando el lapso dado, puede
-        opcionalmente proveerse una lista de acciones programadas (si
-        se omite, la lista interna de tareas programadas será vacía)
+        """Crea un programa de suministros abarcando el lapso dado. El
+        programa está inicialmente vacío, y deberán programarse las
+        tareas una por una.
 
         """
         super().__init__()
@@ -178,9 +179,12 @@ class ProgramaDeSuministro(Observable):
         self._accionesProgramadas = []
 
     def vaciar(self):
+        """Vacía el programa, dejándolo sin ninguna acción programada."""
         self._accionesProgramadas = []
 
     def copiar(self, otroPrograma):
+        """Modifica al programa de suministro para que se vuelva una copia de
+        otro programa de suministro. Se comparten los colaboradores internos."""
         self._lapso = otroPrograma._lapso
         self._accionesProgramadas = otroPrograma._accionesProgramadas
 
@@ -214,19 +218,23 @@ class ProgramaDeSuministro(Observable):
         return sorted(self._accionesProgramadas)
 
     def accionesEnHorario(self, lapso):
+        """Determina qué acciones programadas caen en un lapso dado. El
+        resultado es una lista (sin ningún orden particular).
+
+        """
         acciones = [aP.accion() for aP in self.accionesProgramadas()
             if lapso.contiene(aP.fechaYHora())]
 
         return acciones
 
     def retirarAccionesEnHorario(self, lapso):
-        """Determina qué acciones programadas caen en un lapso dado. El
-        resultado es una lista (sin ningún orden particular). Se puede
-        especificar si se desea o no remover las acciones programadas
-        (por ejemplo porque van a ser ejecutadas y por lo tanto no
-        tiene sentido que permanezcan en el cronograma).
+        """Variante de 'accionesEnHorario()', que adicionalmente retira las
+        acciones programadas (por ejemplo porque van a ser ejecutadas
+        y por lo tanto no tiene sentido que permanezcan en el
+        cronograma).
 
         """
+
         accionesEnHorario = self.accionesEnHorario(lapso)
         self._accionesProgramadas = [aP for aP in self._accionesProgramadas
              if aP.accion() not in accionesEnHorario]

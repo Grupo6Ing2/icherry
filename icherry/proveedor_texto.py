@@ -3,7 +3,7 @@ import json
 
 class ProveedorDeTexto():
     """
-    Permite obtener textos segun una clave especificada.
+    Permite obtener textos según una clave especificada.
     Los textos son cargados de un archivo json.
     """
 

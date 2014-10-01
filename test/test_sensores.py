@@ -1,5 +1,4 @@
 import unittest
-import datetime
 
 from icherry.sensores import Sensor
 from icherry.parsers import CadenaANumero

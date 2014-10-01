@@ -14,7 +14,7 @@ class Sensor(Observable):
     def sensar(self):
         cantidadParseada = self._parser.parse(self._dispositivo.leer())
         self._valor = self._clase_de_magnitud(cantidadParseada)
-        self.notificarCambios()
+        self.notificarObservers()
         return self._valor
 
     def ultimoValorSensado(self):

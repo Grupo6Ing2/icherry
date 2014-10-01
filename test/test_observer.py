@@ -1,6 +1,5 @@
 
 import unittest
-import datetime
 
 from icherry.observer import Observer, Observable
 
@@ -10,14 +9,14 @@ class ObservableMock(Observable):
 
     def realizarAccionObservada(self, valor):
         self.valor = valor
-        self.notificarCambios()
+        self.notificarObservers()
 
 
 class ObserverMock(Observer):
     def __init__(self):
         self.valor = None
 
-    def update(self, unObservable):
+    def actualizar(self, unObservable):
         self.valor = unObservable.valor
 
 

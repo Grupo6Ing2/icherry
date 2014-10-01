@@ -1,5 +1,5 @@
 # ====================================================================
-#                             EJECUCIÓN
+#                EJECUCIÓN DEL PROGRAMA DE SUMINISTRO
 # ====================================================================
 
 # Ejecución del programa de suministro
@@ -10,15 +10,15 @@
 # en que un planificador de ejecución se activa y decide qué acciones
 # del programa de suministro deben ejecutarse en ese instante. Estas
 # acciones se remueven del plan de suministro y son ejecutadas de
-# inmediato, activando los actuadores para que éstos tomen la acción
-# que corresponda. Terminado esto, el heartbeat termina, reiniciando
-# el ciclo.
+# inmediato por el ejecutor de acción, activando los actuadores para
+# que éstos tomen la acción que corresponda. Terminado esto, el
+# heartbeat termina, reiniciando el ciclo.
 
 from icherry.magnitudes import Rango
 
 
 # ====================================================================
-# Planificador
+# PlanificadorDeEjecucion
 
 # La "planificación" es como denominamos al proceso de seleccionar qué
 # acciones corresponden al heartbeat de ejecución del plan de
@@ -30,7 +30,7 @@ from icherry.magnitudes import Rango
 # con cuidado y tener una relación razonable con el período de
 # heartbeat del generador del plan de suministro.
 
-class PlanificadordeEjecucion:
+class PlanificadorDeEjecucion:
     # NOTICE: hay muchas combinaciones posibles para armar el
     # planificador. Al planificador lo despierta un temporizador
     # externo, o el temporizador es interno? Requiere realmente
@@ -42,7 +42,7 @@ class PlanificadordeEjecucion:
 
     def __init__(self, delta, programaDeSuministro):
         self._programaDeSuministro = programaDeSuministro
-        self._delta = delta  # NOTICE: timedelta? Duracion? mmmmmm.....
+        self._delta = delta  # NOTICE: Es una duración (magnitud)
 
     def planificarAcciones(self, fechaYHora):
         desde = fechaYHora
@@ -50,10 +50,10 @@ class PlanificadordeEjecucion:
         lapso = Rango(desde, hasta)
         accionesAEjecutar = self._programaDeSuministro.retirarAccionesEnHorario(lapso)
         for accion in accionesAEjecutar:
-            Ejecutor.ejecutarAccion(accion)
+            EjecutorDeAccion.ejecutarAccion(accion)
 
 # ====================================================================
-# Ejecutor
+# EjecutorDeAccion
 
 # Un ejecutor es el responsable de ejecutar una acción (previamente
 # obtenida del programa de suministro). El ejecutor cuenta con cuatro
@@ -66,7 +66,7 @@ class PlanificadordeEjecucion:
 # en acción al actuador correspondiente.
 
 
-class Ejecutor:
+class EjecutorDeAccion:
 
     def __init__(self, actuadorRegado, actuadorFertilizante,
                  actuadorAntibiotico, actuadorLuz):
@@ -76,9 +76,9 @@ class Ejecutor:
         self._actuadorLuz = actuadorLuz
 
     # Esquema de doble dispatch:
-    # ---->  ejecutarAccion      | Ejecutor (self)
+    # ---->  ejecutarAccion      | EjecutorDeAccion (self)
     # <----  ejecutarEn          | Accion
-    # ---->  ejecutar{R,F,A,L}   | Ejecutor (self)
+    # ---->  ejecutar{R,F,A,L}   | EjecutorDeAccion (self)
     # <----  aplicar             | Actuador
 
     def ejecutarAccion(self, accion):
@@ -88,6 +88,8 @@ class Ejecutor:
 
         """
         accion.ejecutarEn(self)  # esto dispara el doble dispatch
+
+    # los que siguen son los métodos que ejecutan cada tipo de acción
 
     def ejecutarRegado(self, cantidad):
         self._actuadorRegado.aplicar(cantidad)

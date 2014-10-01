@@ -107,9 +107,10 @@ class CentralMeteorologica(Observable):
 
         self.__proveedorDeTiempo = proveedorDeTiempo
         self.__predictorMeteorologico = predictorMeteorologico
+        self.__ultimoPronostico = None
 
     def obtenerFechaYHora(self):
-        self.notificarCambios()
+        self.notificarObservers()
         return self.__proveedorDeTiempo.fechaYHoraActual()
 
     def obtenerPronostico(self, desdeFechaYHora, cantidadDeHs):
@@ -123,7 +124,7 @@ class CentralMeteorologica(Observable):
             desde = desde.agregarHoras(1)
 
         self.__ultimoPronostico = PronosticoMeteorologico(predicciones)
-        self.notificarCambios()
+        self.notificarObservers()
         return self.__ultimoPronostico
 
     def ultimoPronostico(self):

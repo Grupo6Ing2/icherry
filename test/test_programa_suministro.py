@@ -1,7 +1,7 @@
 from icherry.magnitudes import Rango
 from icherry.programa_suministro import AccionProgramada, ProgramaDeSuministro
 from icherry.tiempo import FechaYHora
-from datetime import date,time,timedelta
+from datetime import date, time, timedelta
 
 import unittest
 
