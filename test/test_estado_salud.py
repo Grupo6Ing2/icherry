@@ -1,4 +1,5 @@
-from icherry.estado_salud import EstadoDeSalud, EstadoFenologico
+from icherry.estado_salud import EstadoDePlanta, EstadoFenologico
+from icherry.estado_salud import EstadoDeSaludBueno, EstadoDeSaludMalo
 from icherry.plan_maestro import EstadioGerminacion, EstadioFloracion
 from icherry.magnitudes import Porcentaje, LongitudEnCentimetros, AcidezEnPH
 from icherry.magnitudes import TemperaturaEnCelsius, HumedadRelativa
@@ -39,12 +40,27 @@ class TestEstadoFenologico(unittest.TestCase):
         x.altura(LongitudEnCentimetros(20))
         self.assertEqual(x.altura(), LongitudEnCentimetros(20))
 
-class TestEstadoSalud(unittest.TestCase):
-    def test_estadoDeSalud_puede_modificarse_correctamente(self):
-        x = EstadoDeSalud(EstadoFenologico())
+class TestPlanta(unittest.TestCase):
+    def test_planta_puede_modificarse_correctamente(self):
+        x = EstadoDePlanta()
         x.temperatura(TemperaturaEnCelsius(15))
         self.assertEqual(x.temperatura(), TemperaturaEnCelsius(15))
         x.humedad(HumedadRelativa(Porcentaje(30)))
         self.assertEqual(x.humedad(), HumedadRelativa(Porcentaje(30)))
         x.acidez(AcidezEnPH(6.66))
         self.assertEqual(x.acidez(), AcidezEnPH(6.66))
+
+class TestEstadoSalud(unittest.TestCase):
+    def test_estadoSalud_notifica_correctamente(self):
+        class NotificadoMock():
+            def __init__(self):
+                self.estado = 'BUENO'
+            def notificarseEstadoBueno(self):
+                self.estado = 'BUENO'
+            def notificarseEstadoMalo(self):
+                self.estado = 'MALO'
+
+        n = NotificadoMock()
+        for e in [EstadoDeSaludBueno,EstadoDeSaludMalo]:
+            e.notificarEstadoA(n)
+            self.assertEqual(n.estado, e.nombre())

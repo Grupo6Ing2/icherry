@@ -111,13 +111,12 @@ reloj = demo.ProveedorDeTiempoPorArchivo(
 central = central_meteorologica.CentralMeteorologica(predictor, reloj)
 
 
-# Estado de salud dummy, se usa para la demo:
-estadoFenologicoDummy = estado_salud.EstadoFenologico()
-estadoFenologicoDummy.cantidadBrotes(2)
-estadoFenologicoDummy.cantidadFlores(10)
-estadoFenologicoDummy.altura(15)
+estado = estado_salud.EstadoDePlanta()
+estadoFenologico = estado.estadoFenologico()
+estadoFenologico.cantidadBrotes(2)
+estadoFenologico.cantidadFlores(10)
+estadoFenologico.altura(magnitudes.LongitudEnCentimetros(15))
 
-estado = estado_salud.EstadoDeSalud(estadoFenologicoDummy)
 estado.temperatura(sensorDeTemperatura.sensar())
 estado.humedad(sensorDeHumedad.sensar())
 estado.acidez(sensorDeAcidez.sensar())

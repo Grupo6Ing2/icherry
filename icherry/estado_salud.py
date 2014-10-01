@@ -1,6 +1,8 @@
 # ====================================================================
 #                          ESTADO DE SALUD
 # ====================================================================
+
+from icherry.observer import Observable
 from icherry.plan_maestro import EstadioGerminacion
 from icherry.magnitudes import Porcentaje
 from icherry.magnitudes import LongitudEnCentimetros
@@ -8,18 +10,28 @@ from icherry.magnitudes import TemperaturaEnCelsius
 from icherry.magnitudes import HumedadRelativa
 from icherry.magnitudes import AcidezEnPH
 
-
 # ====================================================================
-# EstadoDeSalud
-class EstadoDeSalud:
-    def __init__(self, estadoFenologico):
-        self._estadoFenologico = estadoFenologico
+# EstadoDePlanta
+class EstadoDePlanta(Observable):
+
+    def __init__(self):
+        self._estadoFenologico = EstadoFenologico()
         self._temperatura = TemperaturaEnCelsius(0)
         self._humedad = HumedadRelativa(Porcentaje(0))
         self._acidez = AcidezEnPH(0)
+        self._estadoDeSalud = EstadoDeSaludBueno
 
     def estadoFenologico(self):
+        """Retorna el estado fenológico de la planta."""
         return self._estadoFenologico
+
+    def estadoDeSalud(self, nuevoValor=None):
+        """Retorna o modifica el estado de salud de la planta."""
+        if nuevoValor is not None:
+            self._estadoSalud = nuevoValor
+            return self
+        else:
+            return self._estadoSalud
 
     # definimos ahora getters/setters para T/H/PH. Cada método puede
     # usarse tanto como getter (sin argumentos) o setter (con
@@ -49,6 +61,29 @@ class EstadoDeSalud:
 
 
 # ====================================================================
+# EstadoDeSalud
+
+class EstadoDeSalud:
+    def __init__(self):
+        raise NotImplementedError("Clase abstracta")
+    def nombre(self):
+        raise NotImplementedError("Método abstracto")
+    def notificarEstadoA():
+        raise NotImplementedError("Método abstracto")
+
+class EstadoDeSaludBueno(EstadoDeSalud):
+    def nombre():
+        return 'BUENO'
+    def notificarEstadoA(notificado):
+        notificado.notificarseEstadoBueno()
+
+class EstadoDeSaludMalo(EstadoDeSalud):
+    def nombre():
+        return 'MALO'
+    def notificarEstadoA(notificado):
+        notificado.notificarseEstadoMalo()
+
+# ====================================================================
 # EstadoFenologico
 class EstadoFenologico:
     def __init__(self):
@@ -64,7 +99,7 @@ class EstadoFenologico:
         self._altura = LongitudEnCentimetros(0)
 
     # definimos ahora getters/setters para cada cantidad, con la misma
-    # convención que en EstadoDeSalud.
+    # convención que en EstadoDePlanta.
 
     def cantidadBrotes(self, nuevoValor=None):
         if nuevoValor is not None:

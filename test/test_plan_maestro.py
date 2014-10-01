@@ -54,5 +54,4 @@ class TestPlanMaestro(unittest.TestCase):
     def test_debe_fallar_ante_un_plan_maestro_con_menos_items(self):
         umbrales = [self.umbrales[4], self.umbrales[5], self.umbrales[6]]
         plan = PlanMaestro(umbrales)
-        # debe tirar excepción
         self.aux_chequea_un_plan_maestro_que_tenga_todo_definido(plan)
