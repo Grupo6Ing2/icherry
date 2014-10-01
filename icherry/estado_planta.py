@@ -33,7 +33,7 @@ class EstadoDePlanta(Observable):
         self._temperatura = TemperaturaEnCelsius(16)
         self._humedad = HumedadRelativa(Porcentaje(0))
         self._acidez = AcidezEnPH(7)
-        self._estadoDeSalud = EstadoDeSaludBueno
+        self._estadoDeSalud = EstadoDeSaludBueno()
 
     def estadoFenologico(self):
         # Si se quiere modificar el estado fenológico, puede
