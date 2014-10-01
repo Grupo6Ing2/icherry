@@ -12,7 +12,7 @@ import npyscreen
 
 # construcción de sensores
 def crearSensor(archivo, parser, magnitud):
-    sensor = sensores.Sensor(
+    sensor = sensores.SensorDesdeArchivo(
         dispositivos.DispositivoDeLecturaArchivo(archivo), parser, magnitud
     )
     sensor.sensar()

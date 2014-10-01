@@ -68,21 +68,21 @@ def armarActualizadorDePrograma(planMaestro, planta, central, programa):
 
 
 # construcción de sensores
-sensorDeTemperatura = sensores.Sensor(
+sensorDeTemperatura = sensores.SensorDesdeArchivo(
     dispositivos.DispositivoDeLecturaArchivo(
         'devices/sensor_temperatura'),
     parsers.CadenaANumero(),
     magnitudes.TemperaturaEnCelsius
 )
 
-sensorDeHumedad = sensores.Sensor(
+sensorDeHumedad = sensores.SensorDesdeArchivo(
     dispositivos.DispositivoDeLecturaArchivo(
         'devices/sensor_humedad'),
     parsers.CadenaAPorcentaje(),
     magnitudes.HumedadRelativa
 )
 
-sensorDeAcidez = sensores.Sensor(
+sensorDeAcidez = sensores.SensorDesdeArchivo(
     dispositivos.DispositivoDeLecturaArchivo(
         'devices/sensor_acidez'),
     parsers.CadenaANumero(),
