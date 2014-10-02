@@ -2,7 +2,6 @@
 import npyscreen
 import icherry.builders as builders
 
-
 builder = builders.ContructorDemo()
 segundosDeActualizacionSensores = 1
 segundosDeActualizacionDeCentral = 1

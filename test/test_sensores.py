@@ -1,6 +1,6 @@
 import unittest
 
-from icherry.sensores import Sensor
+from icherry.sensores import SensorDesdeArchivo
 from icherry.parsers import CadenaANumero
 from icherry.dispositivos import DispositivoDeLectura
 from icherry.magnitudes import LuzEnLux
@@ -19,7 +19,7 @@ class TestSensor(unittest.TestCase):
     def test_sensar(self):
         dispositivo = DispositivoDeLecturaMock('42')
         parser = CadenaANumero()
-        sensor = Sensor(dispositivo, parser, LuzEnLux)
+        sensor = SensorDesdeArchivo(dispositivo, parser, LuzEnLux)
 
         self.assertIsNone(sensor.ultimoValorSensado())
 

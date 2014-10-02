@@ -7,16 +7,18 @@ from icherry.observer import Observable
 
 class Actuador(Observable):
 
-    def __init__(self, unDispositivoDeEscritura, unParserACadena):
-        raise NotImplementedError("Clase abstracta")
+    def __init__(self):
+        super().__init__()
 
     def aplicar(self, unaMagnitud):
         raise NotImplementedError("Método abstracto")
 
 
-class ActuadorEnArchivo(Actuador):
+class ActuadorEnArchivo(Observable):
 
     def __init__(self, unDispositivoDeEscritura, unParserACadena):
+        super().__init__()
+
         self._dispositivo = unDispositivoDeEscritura
         self._parser = unParserACadena
 

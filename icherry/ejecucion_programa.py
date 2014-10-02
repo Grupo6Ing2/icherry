@@ -40,9 +40,10 @@ class PlanificadorDeEjecucion:
     # por lo tanto mucho que puede variar acá. Por ahora considerar
     # esto en un estado muy inmaduro!
 
-    def __init__(self, delta, programaDeSuministro):
+    def __init__(self, delta, programaDeSuministro, unEjecutorDeAccion):
         self._programaDeSuministro = programaDeSuministro
         self._delta = delta  # NOTICE: Es una duración (magnitud)
+        self._ejecutor = unEjecutorDeAccion
 
     def planificarAcciones(self, fechaYHora):
         desde = fechaYHora
@@ -50,7 +51,7 @@ class PlanificadorDeEjecucion:
         lapso = Rango(desde, hasta)
         accionesAEjecutar = self._programaDeSuministro.retirarAccionesEnHorario(lapso)
         for accion in accionesAEjecutar:
-            EjecutorDeAccion.ejecutarAccion(accion)
+            self._ejecutor.ejecutarAccion(accion)
 
 # ====================================================================
 # EjecutorDeAccion

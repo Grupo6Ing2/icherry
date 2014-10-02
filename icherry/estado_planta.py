@@ -98,9 +98,9 @@ class EstadoDePlanta(Observable):
 class EstadoDeSalud:
 
     def __init__(self):
-        raise NotImplementedError("Clase abstracta")
+        raise NotImplementedError("Clase abstracta y estatica!")
 
-    def nombre(self):
+    def nombre():
         raise NotImplementedError("Método abstracto")
 
     def notificarEstadoA():

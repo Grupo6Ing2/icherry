@@ -14,7 +14,7 @@ class ContructorDemo():
 
     def construirSensor(self, unNombreDeArchivo, unParser, unaMagnitud):
 
-        sensor = sensores.Sensor(
+        sensor = sensores.SensorDesdeArchivo(
             dispositivos.DispositivoDeLecturaArchivo(unNombreDeArchivo),
             unParser,
             unaMagnitud
