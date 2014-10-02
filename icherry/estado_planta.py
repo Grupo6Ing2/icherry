@@ -114,7 +114,7 @@ class EstadoDeSaludBueno(EstadoDeSalud):
     def nombre():
         return 'BUENO'
 
-    def notificarEstadoA(notificado):
+    def recibirNotificacionEstadoBueno(notificado):
         notificado.notificarseEstadoBueno()
 
 
@@ -123,7 +123,7 @@ class EstadoDeSaludMalo(EstadoDeSalud):
     def nombre():
         return 'MALO'
 
-    def notificarEstadoA(notificado):
+    def recibirNotificacionEstadoMalo(notificado):
         notificado.notificarseEstadoMalo()
 
 
