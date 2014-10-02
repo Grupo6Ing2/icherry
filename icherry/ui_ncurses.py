@@ -80,7 +80,7 @@ class PantallaDeInicio(npyscreen.FormWithMenus):
         self._agregarEntradaDeMenu(
             menu, 'MENU_EDITAR_PLAN_MAESTRO', 'EDITAR_PLAN_MAESTRO')
         self._agregarEntradaDeMenu(
-            menu, 'MENU_PROGRAMA_SUMINISTROS', 'EN_CONSTRUCCION')
+            menu, 'MENU_PROGRAMA_SUMINISTROS', 'PROGRAMA')
         self._agregarEntradaDeMenu(
             menu, 'MENU_CENTRAL_METEOROLOGICA', 'CENTRAL')
         self._agregarEntradaDeMenu(
@@ -283,21 +283,62 @@ class PantallaDeCentralMVC(npyscreen.Form):
             ]
         )
 
-    def render(self):
+class PantallaDeProgramaMVC(npyscreen.Form):
+
+    def __init__(self, proveedorDeTexto, programa, **kargs):
+
+        self._proveedorDeTexto = proveedorDeTexto
+        self._programa = programa
+
+        self._estadoVisibilidad = EstadoPantallaOculta()
+        self._programa.registrarObserver(self)
+
+        super(PantallaDeProgramaMVC, self).__init__(
+            name=proveedorDeTexto.obtener('SCREEN_PROGRAMA_SUMINISTRO'), **kargs)
+
+    def beforeEditing(self):
+
+        self._estadoVisibilidad = EstadoPantallaVisible()
+
+    def afterEditing(self):
+
+        self._estadoVisibilidad = EstadoPantallaOculta()
+        self.parentApp.setNextForm('MAIN')
+
+    def _obtenerTextoFechaYHora(self, fechaYHora):
+
+        return self._proveedorDeTexto.obtener(
+            'FORMAT_FECHAYHORA', fechaYHora.fecha(), fechaYHora.hora())
+
+    def _crearTablaPrograma(self):
+
+        tabla = []
+        for aP in self._programa.accionesProgramadas():
+            tabla.append([
+                self._obtenerTextoFechaYHora(aP.fechaYHora()),
+                aP.accion().nombre(),
+                str(aP.accion().cantidad())
+            ])
+
+        return tabla
+
+    def actualizar(self, unaCentalMeteorologica):
+        self._wPrograma.values = self._crearTablaPrograma()
+        self._estadoVisibilidad.dibujar(self)
+
+    def create(self):
 
         proveedorDeTexto = self._proveedorDeTexto
-        textos = []
 
-        fechaYHora = self._central.ultimaFechaYHora()
-        textos.append(proveedorDeTexto.obtener(
-            'SPAN_FECHAYHORA_ACTUAL',
-            self._obtenerTextoFechaYHora(fechaYHora)))
-
-        textos.append('')
-        textos.append(proveedorDeTexto.obtener('SPAN_PRONOSTICO_24_HORAS'))
-        textos = textos + self._crearTablaPronostico().get_string().split("\n")
-        return textos
-
+        self._wPrograma = self.add(npyscreen.GridColTitles,
+            # name=proveedorDeTexto.obtener('PRONOSTICO'),  # FIXME
+            col_titles=[
+                proveedorDeTexto.obtener("HEADER_FECHA"),
+                proveedorDeTexto.obtener("HEADER_ACCION"),
+                proveedorDeTexto.obtener("HEADER_CANTIDAD"),
+            ],
+            values = [["programa vacío"]]
+        )
 
 class PantallaDeVisualizacionDePlanMaestro(npyscreen.Form):
 

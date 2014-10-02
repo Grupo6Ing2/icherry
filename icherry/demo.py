@@ -46,7 +46,7 @@ generadorDePrograma = builder.construirGeneradorDeProgramaDeSuministro(
 
 # NOTICE: Poblamos el Programa de Suministro (si no, hay que esperar
 # hasta el primer heartbeat del APS para que haya algo en el PS)
-generadorDePrograma.generarPrograma()
+generadorDePrograma.generarPrograma()  # anda esto?
 
 # Actualizador de Programa de Suministro (APS)
 actualizadorDeProgramaDeSuministro = \
@@ -93,6 +93,13 @@ def main(*args):
         centralMeteorologica
     )
     aplicacion.registerForm('CENTRAL', pantallaCentralMeteorologica)
+
+    # Pantalla del programa de suministro
+    pantallaProgramaSuministro = builder.construirPantallaProgramaDeSuministro(
+        proveedorDeTexto,
+        programaDeSuministro
+    )
+    aplicacion.registerForm('PROGRAMA', pantallaProgramaSuministro)
 
     # Pantalla inicio
     pantallaInicio = builder.contruirPantallaInicio(proveedorDeTexto)
