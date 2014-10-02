@@ -73,6 +73,11 @@ def main(*args):
     pantallaEstadoDePlanta = builder.construirPantallaEstadoDePlanta(proveedorDeTexto, estadoDePlanta)
     aplicacion.registerForm('ESTADO', pantallaEstadoDePlanta)
 
+    # Pantalla de edicion de estado fenologico
+    pantallaDeEdicionDeEstadoFenologico = builder.construirPantallaDeEdicionDeEstadoFenologico(
+        proveedorDeTexto, estadoDePlanta.estadoFenologico())
+    aplicacion.registerForm('EDICION_ESTADO_FENOLOGICO', pantallaDeEdicionDeEstadoFenologico)
+
     # Inicio la aplicacion ncurses
     aplicacion.run()
 

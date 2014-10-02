@@ -79,6 +79,7 @@ class ContructorDemo():
         )
 
         central = central_meteorologica.CentralMeteorologica(predictor, reloj)
+        central.obtenerPronostico(central.obtenerFechaYHora(), 24)
 
         return central
 
@@ -135,3 +136,7 @@ class ContructorDemo():
     def construirPantallaEstadoDePlanta(self, proveedorDeTexto, estadoDePlanta):
 
         return ui_ncurses.PantallaDeEstadoDePlantaMVC(proveedorDeTexto, estadoDePlanta)
+
+    def construirPantallaDeEdicionDeEstadoFenologico(self, proveedorDeTexto, estadoFenologico):
+
+        return ui_ncurses.PantallaDeEdicionDeEstadoFenologico(proveedorDeTexto, estadoFenologico)

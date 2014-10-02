@@ -184,9 +184,9 @@ class EstadoFenologico:
         else:
             return self._cantidadFrutos
 
-    def porcentajeFrutasMaduras(self, nuevoValor=None):
-        if nuevoValor is not None:
-            self._porcentajeFrutasMaduras = nuevoValor
+    def porcentajeFrutasMaduras(self, nuevoPorcentaje=None):
+        if nuevoPorcentaje is not None:
+            self._porcentajeFrutasMaduras = nuevoPorcentaje
             return self
         else:
             return self._porcentajeFrutasMaduras
@@ -198,9 +198,9 @@ class EstadoFenologico:
         else:
             return self._estadioDeCultivo
 
-    def altura(self, nuevoValor=None):
-        if nuevoValor is not None:
-            self._altura = nuevoValor
+    def altura(self, nuevaLongitud=None):
+        if nuevaLongitud is not None:
+            self._altura = nuevaLongitud
             return self
         else:
             return self._altura

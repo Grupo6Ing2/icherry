@@ -1,5 +1,24 @@
 import npyscreen
 import prettytable
+import icherry.magnitudes as magnitudes
+import icherry.plan_maestro as plan_maestro
+
+class EstadoPantallaVisibilidad():
+
+    def dibujar(self, unaPantalla):
+        pass
+
+
+class EstadoPantallaVisible(EstadoPantallaVisibilidad):
+
+    def dibujar(self, unaPantalla):
+        unaPantalla.display()
+
+
+class EstadoPantallaOculta(EstadoPantallaVisibilidad):
+
+    def dibujar(self, unaPantalla):
+        pass
 
 
 class ICherryCurses(npyscreen.NPSAppManaged):
@@ -55,7 +74,7 @@ class PantallaDeInicio(npyscreen.FormWithMenus):
         self._agregarEntradaDeMenu(
             menu, 'MENU_ESTADO_PLANTA', 'ESTADO')
         self._agregarEntradaDeMenu(
-            menu, 'MENU_EDITAR_ESTADO_FENOLOGICO', 'EN_CONSTRUCCION')
+            menu, 'MENU_EDITAR_ESTADO_FENOLOGICO', 'EDICION_ESTADO_FENOLOGICO')
         self._agregarEntradaDeMenu(
             menu, 'MENU_CONFIGURAR_PLAN_MAESTRO', 'EN_CONSTRUCCION')
         self._agregarEntradaDeMenu(
@@ -83,16 +102,19 @@ class PantallaDeEstadoDePlantaMVC(npyscreen.Form):
         self._estadoDePlanta = estadoDePlanta
         self._proveedorDeTexto = proveedorDeTexto
 
+        self._estadoVisibilidad = EstadoPantallaOculta()
+        self._estadoDePlanta.registrarObserver(self)
+
         super(PantallaDeEstadoDePlantaMVC, self).__init__(
             name=proveedorDeTexto.obtener("SCREEN_ESTADO_PLANTA"), **kargs)
 
     def beforeEditing(self):
 
-        self._estadoDePlanta.registrarObserver(self)
+        self._estadoVisibilidad = EstadoPantallaVisible()
 
     def afterEditing(self):
 
-        self._estadoDePlanta.eliminarObserver(self)
+        self._estadoVisibilidad = EstadoPantallaOculta()
         self.parentApp.setNextForm('MAIN')
 
     def create(self):
@@ -102,7 +124,7 @@ class PantallaDeEstadoDePlantaMVC(npyscreen.Form):
     def actualizar(self, unSensor):
 
         self._wPager.values = self.render()
-        self.display()
+        self._estadoVisibilidad.dibujar(self)
 
     def render(self):
         return [
@@ -149,23 +171,22 @@ class PantallaDeSensoresMVC(npyscreen.Form):
         self._sensorDeAcidez = sensorDeAcidez
         self._proveedorDeTexto = proveedorDeTexto
 
-        self.enPantalla = True
+        self._estadoVisibilidad = EstadoPantallaOculta()
+
+        self._sensorDeTemperatura.registrarObserver(self)
+        self._sensorDeHumedad.registrarObserver(self)
+        self._sensorDeAcidez.registrarObserver(self)
 
         super(PantallaDeSensoresMVC, self).__init__(
             name=proveedorDeTexto.obtener("SCREEN_SENSORES"), **kargs)
 
     def beforeEditing(self):
 
-        self._sensorDeTemperatura.registrarObserver(self)
-        self._sensorDeHumedad.registrarObserver(self)
-        self._sensorDeAcidez.registrarObserver(self)
+        self._estadoVisibilidad = EstadoPantallaVisible()
 
     def afterEditing(self):
 
-        self._sensorDeTemperatura.eliminarObserver(self)
-        self._sensorDeHumedad.eliminarObserver(self)
-        self._sensorDeAcidez.eliminarObserver(self)
-
+        self._estadoVisibilidad = EstadoPantallaOculta()
         self.parentApp.setNextForm('MAIN')
 
     def create(self):
@@ -175,7 +196,7 @@ class PantallaDeSensoresMVC(npyscreen.Form):
     def actualizar(self, unSensor):
 
         self._wPager.values = self.render()
-        self.display()
+        self._estadoVisibilidad.dibujar(self)
 
     def render(self):
         return [
@@ -194,17 +215,20 @@ class PantallaDeCentralMVC(npyscreen.Form):
 
         self._proveedorDeTexto = proveedorDeTexto
         self._central = central
+
+        self._estadoVisibilidad = EstadoPantallaOculta()
+        self._central.registrarObserver(self)
+
         super(PantallaDeCentralMVC, self).__init__(
             name=proveedorDeTexto.obtener('SCREEN_CENTRAL_METEOROLOGICA'), **kargs)
 
     def beforeEditing(self):
 
-        self._central.registrarObserver(self)
-        self._ultimoPronostico = None
+        self._estadoVisibilidad = EstadoPantallaVisible()
 
     def afterEditing(self):
 
-        self._central.eliminarObserver(self)
+        self._estadoVisibilidad = EstadoPantallaOculta()
         self.parentApp.setNextForm('MAIN')
 
     def _obtenerTextoFechaYHora(self, fechaYHora):
@@ -244,7 +268,7 @@ class PantallaDeCentralMVC(npyscreen.Form):
     def actualizar(self, unaCentalMeteorologica):
 
         self._wPager.values = self.render()
-        self.display()
+        self._estadoVisibilidad.dibujar(self)
 
     def create(self):
 
@@ -264,3 +288,59 @@ class PantallaDeCentralMVC(npyscreen.Form):
         textos.append(proveedorDeTexto.obtener('SPAN_PRONOSTICO_24_HORAS'))
         textos = textos + self._crearTablaPronostico().get_string().split("\n")
         return textos
+
+
+class PantallaDeEdicionDeEstadoFenologico(npyscreen.ActionForm):
+
+    def __init__(self, proveedorDeTexto, estadoFenologico, **kargs):
+
+        self._proveedorDeTexto = proveedorDeTexto
+        self._estadoFenologico = estadoFenologico
+
+        super(PantallaDeEdicionDeEstadoFenologico, self).__init__(
+            name=proveedorDeTexto.obtener('SCREEN_EDICION_ESTADO'), **kargs)
+
+    def beforeEditing(self):
+
+        self._wEstadio.value = plan_maestro.CicloDeVida.estadios().index(self._estadoFenologico.estadioDeCultivo())
+        self._wAltura.value = str(self._estadoFenologico.altura().valor())
+        self._wBrotes.value = str(self._estadoFenologico.cantidadBrotes())
+        self._wFlores.value = str(self._estadoFenologico.cantidadFlores())
+        self._wFrutos.value = str(self._estadoFenologico.cantidadFrutos())
+        self._wMaduras.value = str(self._estadoFenologico.porcentajeFrutasMaduras().valor())
+
+    def on_cancel(self):
+
+        self.parentApp.setNextForm('MAIN')
+
+    def on_ok(self):
+
+        try:
+            self._estadoFenologico.estadioDeCultivo(plan_maestro.CicloDeVida.estadios()[self._wEstadio.value])
+            self._estadoFenologico.altura(magnitudes.LongitudEnCentimetros(int(self._wAltura.value)))
+            self._estadoFenologico.cantidadBrotes(int(self._wBrotes.value))
+            self._estadoFenologico.cantidadFlores(int(self._wFlores.value))
+            self._estadoFenologico.cantidadFrutos(int(self._wFrutos.value))
+            self._estadoFenologico.porcentajeFrutasMaduras(magnitudes.Porcentaje(int(self._wMaduras.value)))
+
+        except Exception as err:
+            npyscreen.notify_confirm("Error: {0}".format(err))
+
+        else:
+            self.parentApp.setNextForm('MAIN')
+
+    def create(self):
+
+        proveedorDeTexto = self._proveedorDeTexto
+
+        self._wEstadio = self.add(
+            npyscreen.TitleMultiLine,
+            max_height=8,
+            name=proveedorDeTexto.obtener("INPUT_ESTADIO"),
+            values=[e.nombre() for e in plan_maestro.CicloDeVida.estadios()])
+
+        self._wAltura = self.add(npyscreen.TitleText, name=proveedorDeTexto.obtener("INPUT_ALTURA"))
+        self._wBrotes = self.add(npyscreen.TitleText, name=proveedorDeTexto.obtener("INPUT_CANT_BROTES"))
+        self._wFlores = self.add(npyscreen.TitleText, name=proveedorDeTexto.obtener("INPUT_CANT_FLORES"))
+        self._wFrutos = self.add(npyscreen.TitleText, name=proveedorDeTexto.obtener("INPUT_CANT_FRUTOS"))
+        self._wMaduras = self.add(npyscreen.TitleText, name=proveedorDeTexto.obtener("INPUT_FRUTAS_MADURAS"))

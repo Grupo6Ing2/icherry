@@ -35,5 +35,11 @@
 "SPAN_ALTURA": "Altura: {0}",
 "SPAN_ESTADIO": "Estadio: {0}",
 "CONDICION_SALUD": "Condición de salud",
-"ESTADO_SALUD": "Estado de salud"
+"ESTADO_SALUD": "Estado de salud",
+"INPUT_ALTURA": "Altura de la planta (en cm):",
+"INPUT_CANT_BROTES": "Cantidad de brotes:",
+"INPUT_CANT_FLORES": "Cantidad de flores:",
+"INPUT_CANT_FRUTOS": "Cantidad de frutos",
+"INPUT_FRUTAS_MADURAS": "Porcentaje de frutas maduras:",
+"INPUT_ESTADIO" : "Estadío de cultivo:"
 }
