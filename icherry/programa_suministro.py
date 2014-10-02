@@ -31,6 +31,10 @@ class Accion:
         """
         raise NotImplementedError("Método abstracto")
 
+    def nombre(self):
+        """Retorna el nombre de la acción"""
+        raise NotImplementedError("Método abstracto")
+
     def cantidad(self):
         """Obtiene la cantidad de suministro. Es una instancia de alguna
         magnitud, según el tipo de acción.
@@ -50,6 +54,9 @@ class AccionRegado(Accion):
     def ejecutarEn(self, ejecutor):
         ejecutor.ejecutarRegado(self.cantidad())
 
+    def nombre(self):
+        return 'REGADO'
+
 
 class AccionAntibiotico(Accion):
     """Una acción de aplicación de antibiótico. Su cantidad es una
@@ -61,6 +68,9 @@ class AccionAntibiotico(Accion):
 
     def ejecutarEn(self, ejecutor):
         ejecutor.ejecutarAntibiotico(self.cantidad())
+
+    def nombre(self):
+        return 'ANTIBIOTICO'
 
 
 class AccionFertilizante(Accion):
@@ -74,6 +84,9 @@ class AccionFertilizante(Accion):
     def ejecutarEn(self, ejecutor):
         ejecutor.ejecutarFertilizante(self.cantidad())
 
+    def nombre(self):
+        return 'FERTILIZANTE'
+
 
 class AccionLuz(Accion):
     """Una acción de aplicación de luz. Su cantidad es una magnitud de
@@ -85,6 +98,9 @@ class AccionLuz(Accion):
 
     def ejecutarEn(self, ejecutor):
         ejecutor.ejecutarLuz(self.cantidad())
+
+    def nombre(self):
+        return 'LUZ'
 
 
 # ====================================================================
@@ -132,24 +148,6 @@ class AccionProgramada:
 
 # ====================================================================
 # ProgramaDeSuministro
-
-# NOTICE: Esta versión de 'ProgramaDeSuministro' es en realidad mucho
-# más general que lo que el nombre indica, ya que lo único que
-# interesa es que haya "eventos" programados a "horarios" (y lo único
-# que realmente se exige es que los "horarios" puedan formar rangos,
-# es decir que sean comparables con "<="). Por lo tanto puede
-# construirse una instancia a partir de una lista como
-# [(1,"uno"),(2,"dos"),(3,"tres")] para el rango 'Rango(1,3)' por
-# ejemplo, y responderse a 'accionesEnHorario(Rango(1,2))'.
-#
-# Una alternativa es renombrarlo todo y llamarlo 'Cronograma' y
-# cambiar el nombre de 'accionProgramada' a otra cosa
-# ('eventoProgramado' por ejemplo, o ni siquiera tener tal clase y
-# hacerlo totalmente interno, eso simplificaría las cosas). Pero por
-# ahora no parece haber otros usos de esta clase, así que por ahora no
-# está tan mal supongo.
-#
-# -- xol (28/09/2014)
 
 class ProgramaDeSuministro(Observable):
     """Un programa de suministro es un cronograma de acciones programadas.

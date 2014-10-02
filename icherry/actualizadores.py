@@ -136,3 +136,21 @@ class ActualizadorDeEstadoDePlanta(ActualizadorDeObjectos):
         self._estadoPlanta.humedad(humedad)
         self._estadoPlanta.acidez(acidez)
         self._estadoPlanta.notificarObservers()
+
+# este bicho es casi trivial porque el GPS hace todo el laburo
+class ActualizadorDeProgramaDeSuministro(ActualizadorDeObjectos):
+
+    def _inicializar(self, generadorDeProgramaDeSuministro):
+        self._GPS = generadorDeProgramaDeSuministro
+
+    def _actualizar(self):
+        self._GPS.generarPrograma()
+
+class ActualizadorDeEjecucion(ActualizadorDeObjectos):
+    def _inicializar(self, centralMeteorologica, planificadorEjecucion):
+        self._PE = planificadorEjecucion
+        self._CM = centralMeteorologica
+
+    def _actualizar(self):
+        ahora = self._CM.obtenerFechaYHora()
+        self._PE.planificarAcciones(ahora)
