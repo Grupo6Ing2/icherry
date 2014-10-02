@@ -1,1 +1,1 @@
-python3 icherry/demo.py
+python3 -m icherry.demo
