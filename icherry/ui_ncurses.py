@@ -511,8 +511,10 @@ class PantallaDeEdicionDePlanMaestro(npyscreen.ActionForm):
             name=proveedorDeTexto.obtener("INPUT_ESTADIO"),
             values=[e.nombre() for e in plan_maestro.CicloDeVida.estadios()])
 
-        self._wTemperaturaMin = self.add(npyscreen.TitleText, name=proveedorDeTexto.obtener("INPUT_TEMPERATURA_MIN"), value='0')
-        self._wTemperaturaMax = self.add(npyscreen.TitleText, name=proveedorDeTexto.obtener("INPUT_TEMPERATURA_MAX"), value='0')
+        self._wTemperaturaMin = self.add(npyscreen.TitleText,
+            name=proveedorDeTexto.obtener("INPUT_TEMPERATURA_MIN"), value='0')
+        self._wTemperaturaMax = self.add(npyscreen.TitleText,
+            name=proveedorDeTexto.obtener("INPUT_TEMPERATURA_MAX"), value='0')
         self._wHumedadMin = self.add(npyscreen.TitleText, name=proveedorDeTexto.obtener("INPUT_HUMEDAD_MIN"), value='0')
         self._wHumedadMax = self.add(npyscreen.TitleText, name=proveedorDeTexto.obtener("INPUT_HUMEDAD_MAX"), value='0')
         self._wAcidezMin = self.add(npyscreen.TitleText, name=proveedorDeTexto.obtener("INPUT_ACIDEZ_MIN"), value='0')

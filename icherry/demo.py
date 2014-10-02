@@ -70,7 +70,6 @@ actualizadores.append(actualizadorDeEjecucion)
 for actualizador in actualizadores:
     actualizador.iniciarActualizacion()
 
-
 # Función principal que va a correr en el entorno ncurses
 def main(*args):
     # Las pantallas tengo que construirlas con el enterno ncurses activo
