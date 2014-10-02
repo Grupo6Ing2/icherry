@@ -1,7 +1,7 @@
 import icherry.temporizador as temporizador
 import icherry.tiempo as tiempo
 import icherry.observer as observer
-
+import icherry.estado_planta as planta
 
 class ActualizadorDeObjectos(observer.Observable):
 
@@ -77,7 +77,8 @@ class ActualizadorDeCentralMeteorologica(ActualizadorDeObjectos):
 
 class ActualizadorDeEstadoDePlanta(ActualizadorDeObjectos):
 
-    def _inicializar(self, estadoPlanta, sensorDeTemperatura, sensorDeHumedad, sensorDeAcidez, planMaestro):
+    def _inicializar(self, estadoPlanta, sensorDeTemperatura,
+                     sensorDeHumedad, sensorDeAcidez, planMaestro):
 
         self._estadoPlanta = estadoPlanta
         self._sensorDeTemperatura = sensorDeTemperatura
@@ -87,28 +88,51 @@ class ActualizadorDeEstadoDePlanta(ActualizadorDeObjectos):
 
     def estadoPlanta(self):
 
-        return self.estadoPlanta
+        return self._estadoPlanta
 
     def sensorDeTemperatura(self):
 
-        return self.sensorDeTemperatura
+        return self._sensorDeTemperatura
 
     def sensorDeHumedad(self):
 
-        return self.sensorDeHumedad
+        return self._sensorDeHumedad
 
     def sensorDeAcidez(self):
 
-        return self.sensorDeAcidez
+        return self._sensorDeAcidez
 
     def planMaestro(self):
 
-        return self.planMaestro
+        return self._planMaestro
 
     def _actualizar(self):
 
-        # Actualizo los valores de los sensores
-        self._estadoPlanta.temperatura(self._sensorDeTemperatura.ultimoValorSensado())
-        self._estadoPlanta.humedad(self._sensorDeHumedad.ultimoValorSensado())
-        self._estadoPlanta.acidez(self._sensorDeAcidez.ultimoValorSensado())
+        # Obtenemos los valores de T/H/PH de los sensores según la última medición
+        temperatura = self.sensorDeTemperatura().ultimoValorSensado()
+        humedad = self.sensorDeHumedad().ultimoValorSensado()
+        acidez = self.sensorDeAcidez().ultimoValorSensado()
+
+        # Obtenemos el umbral del estadio actual de la planta
+        estadio = self.estadoPlanta().estadoFenologico().estadioDeCultivo()
+        umbral = self.planMaestro()[estadio]
+
+        # # Actualizamos el estado de salud, según el umbral óptimo de
+        # # cultivo para el estadio de cultivo actual
+        estadoDeSalud = planta.EstadoDeSaludBueno
+        if not umbral.temperatura().contiene(temperatura):
+            estadoDeSalud = planta.EstadoDeSaludMalo
+        if not umbral.humedad().contiene(humedad):
+            estadoDeSalud = planta.EstadoDeSaludMalo
+        if not umbral.acidez().contiene(acidez):
+            estadoDeSalud = planta.EstadoDeSaludMalo
+
+        self._estadoPlanta.estadoDeSalud(estadoDeSalud)
+        # estadoDeSalud.notificarEstadoA(notificado)
+
+        # actualizamos el estado de la planta y notificamos a sus
+        # observadores.
+        self._estadoPlanta.temperatura(temperatura)
+        self._estadoPlanta.humedad(humedad)
+        self._estadoPlanta.acidez(acidez)
         self._estadoPlanta.notificarObservers()

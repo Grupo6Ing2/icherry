@@ -1,7 +1,5 @@
 import icherry.sensores as sensores
-import icherry.temporizador as temporizador
 import icherry.dispositivos as dispositivos
-import icherry.tiempo as tiempo
 import icherry.magnitudes as magnitudes
 import icherry.parsers as parsers
 import icherry.proveedor_texto as proveedor_texto
@@ -9,6 +7,7 @@ import icherry.ui_ncurses as ui_ncurses
 import icherry.central_meteorologica as central_meteorologica
 import icherry.actualizadores as actualizadores
 import icherry.estado_planta as estado_planta
+import icherry.plan_maestro as plan_maestro
 
 
 class ContructorDemo():
@@ -85,7 +84,46 @@ class ContructorDemo():
 
     def construirActualizadorDeCentral(self, segundosDeActualizacion, centralMeteorologica):
 
-        return actualizadores.ActualizadorDeCentralMeteorologica(segundosDeActualizacion, centralMeteorologica)
+        return actualizadores.ActualizadorDeCentralMeteorologica(
+            segundosDeActualizacion, centralMeteorologica)
+
+    def construirPlanMaestro(self):
+
+        def rangoT(desde, hasta):
+            return magnitudes.Rango(magnitudes.TemperaturaEnCelsius(desde),
+                                    magnitudes.TemperaturaEnCelsius(hasta))
+
+        def rangoH(desde, hasta):
+            return magnitudes.Rango(magnitudes.HumedadRelativa(magnitudes.Porcentaje(desde)),
+                                    magnitudes.HumedadRelativa(magnitudes.Porcentaje(hasta)))
+
+        def rangoPH(desde, hasta):
+            return magnitudes.Rango(magnitudes.AcidezEnPH(desde),
+                                    magnitudes.AcidezEnPH(hasta))
+
+        def definirUmbral(planMaestro, estadio,
+                          desdeT, hastaT,
+                          desdeH, hastaH,
+                          desdePH, hastaPH):
+            umbral = plan_maestro.UmbralOptimoDeCultivo(
+                estadio,
+                rangoTemperatura=rangoT(desdeT, hastaT),
+                rangoHumedad=rangoH(desdeH, hastaH),
+                rangoAcidez=rangoPH(desdePH, hastaPH))
+            planMaestro[estadio] = umbral
+
+        # construimos un plan maestro con algunos valores arbitrarios por defacto.
+        planMaestro = plan_maestro.PlanMaestro()
+        definirUmbral(planMaestro, plan_maestro.EstadioGerminacion, 12, 40, 40, 70, 5, 8)
+        definirUmbral(planMaestro, plan_maestro.EstadioDesarrollo, 14, 35, 40, 70, 5, 8)
+        definirUmbral(planMaestro, plan_maestro.EstadioBrotes, 12, 35, 40, 70, 5, 8)
+        definirUmbral(planMaestro, plan_maestro.EstadioAparicion, 12, 35, 40, 70, 5, 8)
+        definirUmbral(planMaestro, plan_maestro.EstadioFloracion, 15, 36, 40, 70, 5, 8)
+        definirUmbral(planMaestro, plan_maestro.EstadioFruto, 18, 40, 50, 90, 5, 8)
+        definirUmbral(planMaestro, plan_maestro.EstadioMaduracion, 18, 45, 45, 60, 5, 8)
+        definirUmbral(planMaestro, plan_maestro.EstadioSenescencia, 16, 32, 40, 60, 5, 8)
+
+        return planMaestro
 
     def construirEstadoDePlanta(self):
 

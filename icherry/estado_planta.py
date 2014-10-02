@@ -115,7 +115,6 @@ class EstadoDeSaludBueno(EstadoDeSalud):
         return 'BUENO'
 
     def notificarEstadoA(notificado):
-
         notificado.notificarseEstadoBueno()
 
 
@@ -126,6 +125,22 @@ class EstadoDeSaludMalo(EstadoDeSalud):
 
     def notificarEstadoA(notificado):
         notificado.notificarseEstadoMalo()
+
+
+# Un notificable por estado de salud es algo que tiene interés en el
+# estado de salud de la planta y sabe responder ante cambios de estado
+# de salud.
+
+class NotificablePorEstadoDeSalud:
+
+    def __init__(self):
+        raise NotImplementedError("Clase abstracta")
+
+    def notificarsePorEstadoBueno():
+        raise NotImplementedError("Método abstracto")
+
+    def notificarsePorEstadoMalo():
+        raise NotImplementedError("Método abstracto")
 
 
 # ====================================================================
