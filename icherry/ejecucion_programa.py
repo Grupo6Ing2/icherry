@@ -22,13 +22,13 @@ from icherry.magnitudes import Rango
 
 # La "planificación" es como denominamos al proceso de seleccionar qué
 # acciones corresponden al heartbeat de ejecución del plan de
-# suministro, es el planificador de ejecución que lleva esta tarea a
-# cabo. Un planificador está configurado con un parámetro de duración
-# que le especifica cuánto tiempo de acciones programadas debe
-# seleccionarse para ejecución. Cuanto mayor sea esta duración, más
-# acciones se ejecutarán por heartbeat. Este parámetro debe escogerse
-# con cuidado y tener una relación razonable con el período de
-# heartbeat del generador del plan de suministro.
+# suministro y luego ejecutarlas; es el planificador de ejecución que
+# lleva esta tarea a cabo. Un planificador está configurado con un
+# parámetro de duración que le especifica cuánto tiempo de acciones
+# programadas debe seleccionarse para ejecución. Cuanto mayor sea esta
+# duración, más acciones se ejecutarán por heartbeat. Este parámetro
+# debe escogerse con cuidado y tener una relación razonable con el
+# período de heartbeat del generador del plan de suministro.
 
 class PlanificadorDeEjecucion:
     # NOTICE: hay muchas combinaciones posibles para armar el
@@ -40,14 +40,14 @@ class PlanificadorDeEjecucion:
     # por lo tanto mucho que puede variar acá. Por ahora considerar
     # esto en un estado muy inmaduro!
 
-    def __init__(self, delta, programaDeSuministro, ejecutorDeAccion):
+    def __init__(self, duracionDePlanificacion, programaDeSuministro, ejecutorDeAccion):
         self._programaDeSuministro = programaDeSuministro
-        self._delta = delta  # NOTICE: Es una duración (magnitud)
+        self._duracionDePlanificacion = duracionDePlanificacion
         self._ejecutor = ejecutorDeAccion
 
     def planificarAcciones(self, fechaYHora):
         desde = fechaYHora
-        hasta = fechaYHora.agregarDuracion(self._delta)
+        hasta = fechaYHora.agregarDuracion(self._duracionDePlanificacion)
         lapso = Rango(desde, hasta)
         accionesAEjecutar = self._programaDeSuministro.retirarAccionesEnHorario(lapso)
         for accion in accionesAEjecutar:
@@ -69,8 +69,8 @@ class PlanificadorDeEjecucion:
 
 class EjecutorDeAccion:
 
-    def __init__(self, actuadorRegado, actuadorFertilizante,
-                 actuadorAntibiotico, actuadorLuz):
+    def __init__(self, actuadorRegado, actuadorAntibiotico,
+                 actuadorLuz, actuadorFertilizante):
         self._actuadorRegado = actuadorRegado
         self._actuadorFertilizante = actuadorFertilizante
         self._actuadorAntibiotico = actuadorAntibiotico
@@ -79,7 +79,7 @@ class EjecutorDeAccion:
     # Esquema de doble dispatch:
     # ---->  ejecutarAccion      | EjecutorDeAccion (self)
     # <----  ejecutarEn          | Accion
-    # ---->  ejecutar{R,F,A,L}   | EjecutorDeAccion (self)
+    # ---->  ejecutar{R,A,L,F}   | EjecutorDeAccion (self)
     # <----  aplicar             | Actuador
 
     def ejecutarAccion(self, accion):
@@ -95,11 +95,11 @@ class EjecutorDeAccion:
     def ejecutarRegado(self, cantidad):
         self._actuadorRegado.aplicar(cantidad)
 
-    def ejecutarFertilizante(self, cantidad):
-        self._actuadorFertilizante.aplicar(cantidad)
-
     def ejecutarAntibiotico(self, cantidad):
         self._actuadorAntibiotico.aplicar(cantidad)
 
     def ejecutarLuz(self, cantidad):
         self._actuadorLuz.aplicar(cantidad)
+
+    def ejecutarFertilizante(self, cantidad):
+        self._actuadorFertilizante.aplicar(cantidad)

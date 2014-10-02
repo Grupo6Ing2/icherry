@@ -128,8 +128,6 @@ class Temporizador:
 # repl, se crean varios threads hasta que sólo queda activo el
 # thread de la repl.
 
-
-# una pruebita para ver cómo anda
 def demo():
     from time import gmtime, strftime
     from tiempo import DuracionEnSegundos

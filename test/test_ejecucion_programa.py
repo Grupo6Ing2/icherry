@@ -37,8 +37,8 @@ class KitEjecucion():
         self.actuadorRegado = ActuadorMock(self.depo, 'agua')
         self.actuadorAntibiotico = ActuadorMock(self.depo, 'antibiotico')
         self.actuadorFertilizante = ActuadorMock(self.depo, 'fertilizante')
-        self.ejecutor = EjecutorDeAccion(self.actuadorRegado, self.actuadorFertilizante,
-                                         self.actuadorAntibiotico, self.actuadorLuz)
+        self.ejecutor = EjecutorDeAccion(self.actuadorRegado, self.actuadorAntibiotico,
+                                         self.actuadorLuz, self.actuadorFertilizante)
 
     def ejecutar(self, accion):
         self.ejecutor.ejecutarAccion(accion)

@@ -80,7 +80,7 @@ class PantallaDeInicio(npyscreen.FormWithMenus):
         self._agregarEntradaDeMenu(
             menu, 'MENU_EDITAR_PLAN_MAESTRO', 'EDITAR_PLAN_MAESTRO')
         self._agregarEntradaDeMenu(
-            menu, 'MENU_PROGRAMA_SUMINISTROS', 'EN_CONSTRUCCION')
+            menu, 'MENU_PROGRAMA_SUMINISTROS', 'PROGRAMA')
         self._agregarEntradaDeMenu(
             menu, 'MENU_CENTRAL_METEOROLOGICA', 'CENTRAL')
         self._agregarEntradaDeMenu(
@@ -283,23 +283,67 @@ class PantallaDeCentralMVC(npyscreen.Form):
             ]
         )
 
-    def render(self):
+
+class PantallaDeProgramaMVC(npyscreen.Form):
+
+    def __init__(self, proveedorDeTexto, programa, **kargs):
+
+        self._proveedorDeTexto = proveedorDeTexto
+        self._programa = programa
+
+        self._estadoVisibilidad = EstadoPantallaOculta()
+        self._programa.registrarObserver(self)
+
+        super(PantallaDeProgramaMVC, self).__init__(
+            name=proveedorDeTexto.obtener('SCREEN_PROGRAMA_SUMINISTRO'), **kargs)
+
+    def beforeEditing(self):
+
+        self._estadoVisibilidad = EstadoPantallaVisible()
+
+    def afterEditing(self):
+
+        self._estadoVisibilidad = EstadoPantallaOculta()
+        self.parentApp.setNextForm('MAIN')
+
+    def _obtenerTextoFechaYHora(self, fechaYHora):
+
+        return self._proveedorDeTexto.obtener(
+            'FORMAT_FECHAYHORA', fechaYHora.fecha(), fechaYHora.hora())
+
+    def _crearTablaPrograma(self):
+
+        tabla = []
+        for aP in self._programa.accionesProgramadas():
+            tabla.append([
+                self._obtenerTextoFechaYHora(aP.fechaYHora()),
+                aP.accion().nombre(),
+                str(aP.accion().cantidad())
+            ])
+
+        return tabla
+
+    def actualizar(self, unProgramaDeSuministros):
+        self._wPrograma.values = self._crearTablaPrograma()
+        self._estadoVisibilidad.dibujar(self)
+
+    def create(self):
 
         proveedorDeTexto = self._proveedorDeTexto
-        textos = []
 
-        fechaYHora = self._central.ultimaFechaYHora()
-        textos.append(proveedorDeTexto.obtener(
-            'SPAN_FECHAYHORA_ACTUAL',
-            self._obtenerTextoFechaYHora(fechaYHora)))
+        self._wPrograma = self.add(npyscreen.GridColTitles,
+            name=proveedorDeTexto.obtener('PROGRAMA_SUMINISTRO'),
+            col_titles=[
+                proveedorDeTexto.obtener("HEADER_FECHA"),
+                proveedorDeTexto.obtener("HEADER_ACCION"),
+                proveedorDeTexto.obtener("HEADER_CANTIDAD"),
+            ],
+            values=[["programa vacío"]]
+        )
+        self.actualizar(self._programa)
 
-        textos.append('')
-        textos.append(proveedorDeTexto.obtener('SPAN_PRONOSTICO_24_HORAS'))
-        textos = textos + self._crearTablaPronostico().get_string().split("\n")
-        return textos
 
-
-class PantallaDeVisualizacionDePlanMaestro(npyscreen.Form):
+class PantallaDeVisualizacionDePlanMaestroMVC(npyscreen.Form):
 
     def __init__(self, proveedorDeTexto, planMaestro, **kargs):
 
@@ -309,7 +353,7 @@ class PantallaDeVisualizacionDePlanMaestro(npyscreen.Form):
         self._estadoVisibilidad = EstadoPantallaOculta()
         self._planMaestro.registrarObserver(self)
 
-        super(PantallaDeVisualizacionDePlanMaestro, self).__init__(
+        super(PantallaDeVisualizacionDePlanMaestroMVC, self).__init__(
             name=proveedorDeTexto.obtener('SCREEN_VER_PLAN_MAESTRO'), **kargs)
 
     def beforeEditing(self):
@@ -467,9 +511,11 @@ class PantallaDeEdicionDePlanMaestro(npyscreen.ActionForm):
             name=proveedorDeTexto.obtener("INPUT_ESTADIO"),
             values=[e.nombre() for e in plan_maestro.CicloDeVida.estadios()])
 
-        self._wTemperaturaMin = self.add(npyscreen.TitleText, name=proveedorDeTexto.obtener("INPUT_TEMPERATURA_MIN"))
-        self._wTemperaturaMax = self.add(npyscreen.TitleText, name=proveedorDeTexto.obtener("INPUT_TEMPERATURA_MAX"))
-        self._wHumedadMin = self.add(npyscreen.TitleText, name=proveedorDeTexto.obtener("INPUT_HUMEDAD_MIN"))
-        self._wHumedadMax = self.add(npyscreen.TitleText, name=proveedorDeTexto.obtener("INPUT_HUMEDAD_MAX"))
-        self._wAcidezMin = self.add(npyscreen.TitleText, name=proveedorDeTexto.obtener("INPUT_ACIDEZ_MIN"))
-        self._wAcidezMax = self.add(npyscreen.TitleText, name=proveedorDeTexto.obtener("INPUT_ACIDEZ_MAX"))
+        self._wTemperaturaMin = self.add(npyscreen.TitleText,
+            name=proveedorDeTexto.obtener("INPUT_TEMPERATURA_MIN"), value='0')
+        self._wTemperaturaMax = self.add(npyscreen.TitleText,
+            name=proveedorDeTexto.obtener("INPUT_TEMPERATURA_MAX"), value='0')
+        self._wHumedadMin = self.add(npyscreen.TitleText, name=proveedorDeTexto.obtener("INPUT_HUMEDAD_MIN"), value='0')
+        self._wHumedadMax = self.add(npyscreen.TitleText, name=proveedorDeTexto.obtener("INPUT_HUMEDAD_MAX"), value='0')
+        self._wAcidezMin = self.add(npyscreen.TitleText, name=proveedorDeTexto.obtener("INPUT_ACIDEZ_MIN"), value='0')
+        self._wAcidezMax = self.add(npyscreen.TitleText, name=proveedorDeTexto.obtener("INPUT_ACIDEZ_MAX"), value='0')

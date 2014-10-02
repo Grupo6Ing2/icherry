@@ -1,6 +1,9 @@
+# coding: utf-8
+
 import icherry.sensores as sensores
 import icherry.dispositivos as dispositivos
 import icherry.magnitudes as magnitudes
+import icherry.tiempo as tiempo
 import icherry.parsers as parsers
 import icherry.proveedor_texto as proveedor_texto
 import icherry.ui_ncurses as ui_ncurses
@@ -8,6 +11,10 @@ import icherry.central_meteorologica as central_meteorologica
 import icherry.actualizadores as actualizadores
 import icherry.estado_planta as estado_planta
 import icherry.plan_maestro as plan_maestro
+import icherry.programa_suministro as programa_suministro
+import icherry.generador_programa as generador_programa
+import icherry.ejecucion_programa as ejecucion_programa
+import icherry.actuadores as actuadores
 
 
 class ContructorDemo():
@@ -112,7 +119,7 @@ class ContructorDemo():
                 rangoAcidez=rangoPH(desdePH, hastaPH))
             planMaestro[estadio] = umbral
 
-        # construimos un plan maestro con algunos valores arbitrarios por defacto.
+        # construimos un plan maestro con algunos valores arbitrarios por defecto.
         planMaestro = plan_maestro.PlanMaestro()
         definirUmbral(planMaestro, plan_maestro.EstadioGerminacion, 12, 40, 40, 70, 5, 8)
         definirUmbral(planMaestro, plan_maestro.EstadioDesarrollo, 14, 35, 40, 70, 5, 8)
@@ -143,11 +150,66 @@ class ContructorDemo():
             sensorDeAcidez,
             planMaestro)
 
+    def construirProgramaDeSuministro(self, centralMeteorologica):
+        # el PS requiere un lapso para construirse. Así que le damos
+        # el rango de 24 horas a partir de ahora. Para eso requerimos
+        # la CM.
+        ahora = centralMeteorologica.obtenerFechaYHora()
+        return programa_suministro.ProgramaDeSuministro(
+            magnitudes.Rango(ahora, ahora.agregarDuracion(tiempo.DuracionEnHoras(24))))
+
+    def construirGeneradorDeProgramaDeSuministro(
+            self, planMaestro, estadoDePlanta,
+            centralMeteorologica, programaDeSuministro):
+        return generador_programa.GeneradorDeProgramaDeSuministroFijo24(
+            planMaestro, estadoDePlanta, centralMeteorologica, programaDeSuministro)
+
+    def construirActualizadorDeProgramaDeSuministro(
+            self, segundosDeActualizacion, generadorDeProgramaDeSuministro):
+
+        return actualizadores.ActualizadorDeProgramaDeSuministro(
+            segundosDeActualizacion, generadorDeProgramaDeSuministro)
+
+    def construirActuadorRegado(self):
+        return actuadores.ConstructorDeActuadorEnArchivo().crear("devices/actuador_agua")
+
+    def construirActuadorAntibiotico(self):
+        return actuadores.ConstructorDeActuadorEnArchivo().crear("devices/actuador_antibiotico")
+
+    def construirActuadorLuz(self):
+        return actuadores.ConstructorDeActuadorEnArchivo().crear("devices/actuador_lampara")
+
+    def construirActuadorFertilizante(self):
+        return actuadores.ConstructorDeActuadorEnArchivo().crear("devices/actuador_fertilizante")
+
+    def construirActuadores(self):
+        # R,A,L,F
+        return (self.construirActuadorRegado(), self.construirActuadorAntibiotico(),
+                self.construirActuadorLuz(), self.construirActuadorFertilizante())
+
+    def construirActualizadorDeEjecucion(
+            self, segundosDeActualizacion, duracionDePlanificacion,
+            centralMeteorologica, programaDeSuministro,
+            actuadorRegado, actuadorAntibiotico, actuadorLuz, actuadorFertilizante):
+
+        # el ejecutor sólo depende de los actuadores
+        ejecutor = ejecucion_programa.EjecutorDeAccion(
+            actuadorRegado, actuadorAntibiotico, actuadorLuz, actuadorFertilizante)
+
+        # el planificador requiere una duración de planificación, un PS y un ejecutor
+        planificador = ejecucion_programa.PlanificadorDeEjecucion(
+            duracionDePlanificacion, programaDeSuministro, ejecutor)
+
+        # el actualizador requiere (además del tiempo de temporizado), una CM y un PE
+        return actualizadores.ActualizadorDeEjecucion(
+            segundosDeActualizacion, centralMeteorologica, planificador)
+
     def construirAplicacion(self):
 
         return ui_ncurses.ICherryCurses()
 
-    def construirPantallaSensores(self, proveedorDeTexto, sensorDeTemperatura, sensorDeHumedad, sensorDeAcidez):
+    def construirPantallaSensores(self, proveedorDeTexto, sensorDeTemperatura,
+                                  sensorDeHumedad, sensorDeAcidez):
 
         return ui_ncurses.PantallaDeSensoresMVC(
             proveedorDeTexto,
@@ -171,6 +233,10 @@ class ContructorDemo():
 
         return ui_ncurses.PantallaDeCentralMVC(proveedorDeTexto, centralMeteorologica)
 
+    def construirPantallaProgramaDeSuministro(self, proveedorDeTexto, programaDeSuministro):
+
+        return ui_ncurses.PantallaDeProgramaMVC(proveedorDeTexto, programaDeSuministro)
+
     def construirPantallaEstadoDePlanta(self, proveedorDeTexto, estadoDePlanta):
 
         return ui_ncurses.PantallaDeEstadoDePlantaMVC(proveedorDeTexto, estadoDePlanta)
@@ -181,7 +247,7 @@ class ContructorDemo():
 
     def construirPantallaDeVisualizacionDePlanMaestro(self, proveedorDeTexto, planMaestro):
 
-        return ui_ncurses.PantallaDeVisualizacionDePlanMaestro(proveedorDeTexto, planMaestro)
+        return ui_ncurses.PantallaDeVisualizacionDePlanMaestroMVC(proveedorDeTexto, planMaestro)
 
     def construirPantallaDeEdicionDePlanMaestro(self, proveedorDeTexto, planMaestro):
 
