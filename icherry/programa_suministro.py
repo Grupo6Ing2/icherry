@@ -22,7 +22,7 @@ class Accion:
     acción es una subclase de Accion.
 
     """
-    def __init__(self):
+    def __init__(self, cantidad):
         raise NotImplementedError("Clase abstracta")
 
     def ejecutarEn(self, ejecutor):
@@ -76,15 +76,15 @@ class AccionFertilizante(Accion):
 
 
 class AccionLuz(Accion):
-    """Una acción de aplicación de luz. Su cantidad es una magnitud
-    líquida.
+    """Una acción de aplicación de luz. Su cantidad es una magnitud de
+    luz.
 
     """
     def __init__(self, cantidadLuz):
         self._cantidad = cantidadLuz
 
     def ejecutarEn(self, ejecutor):
-        ejecutor.ejecutarAntibiotico(self.cantidad())
+        ejecutor.ejecutarLuz(self.cantidad())
 
 
 # ====================================================================

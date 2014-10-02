@@ -100,7 +100,7 @@ class EstadoDePlanta(Observable):
 class EstadoDeSalud:
 
     def __init__(self):
-        raise NotImplementedError("Clase abstracta y estatica!")
+        raise NotImplementedError("Clase abstracta y estática")
 
     def nombre():
         raise NotImplementedError("Método abstracto")
