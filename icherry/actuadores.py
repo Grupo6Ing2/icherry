@@ -14,7 +14,7 @@ class Actuador(Observable):
         raise NotImplementedError("Método abstracto")
 
 
-class ActuadorEnArchivo(Observable):
+class ActuadorEnArchivo(Actuador):
 
     def __init__(self, unDispositivoDeEscritura, unParserACadena):
         super().__init__()

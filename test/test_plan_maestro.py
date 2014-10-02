@@ -5,7 +5,7 @@ from icherry.magnitudes import HumedadRelativa, Porcentaje
 from icherry.magnitudes import TemperaturaEnCelsius, AcidezEnPH
 from icherry.plan_maestro import CicloDeVida
 from icherry.plan_maestro import UmbralOptimoDeCultivo, PlanMaestro
-
+from icherry.plan_maestro import EstadioGerminacion, EstadioDesarrollo
 
 class TestPlanMaestro(unittest.TestCase):
 
@@ -55,3 +55,20 @@ class TestPlanMaestro(unittest.TestCase):
         umbrales = [self.umbrales[4], self.umbrales[5], self.umbrales[6]]
         plan = PlanMaestro(umbrales)
         self.aux_chequea_un_plan_maestro_que_tenga_todo_definido(plan)
+
+    def test_plan_maestro_se_modifica_correctamente(self):
+        plan = PlanMaestro()
+        self.assertEqual(plan.umbrales(), [])
+
+        uGerminacion1 = "umbral germinación 1"
+        plan[EstadioGerminacion] = uGerminacion1
+        self.assertEqual(plan[EstadioGerminacion], uGerminacion1 )
+
+        uGerminacion2 = "umbral germinación 2"
+        plan[EstadioGerminacion] = uGerminacion2
+        self.assertEqual(plan[EstadioGerminacion], uGerminacion2 )
+
+        self.assertIsNone(plan[EstadioDesarrollo])
+        uDesarrollo = "umbral desarrollo"
+        plan[EstadioDesarrollo] = uDesarrollo
+        self.assertEqual(plan[EstadioDesarrollo], uDesarrollo)

@@ -131,13 +131,13 @@ class PlanMaestro():
 
 class EstadioDeCultivo():
     def __init__():
-        raise NotImplemented("Clase abstracta")
+        raise NotImplementedError("Clase abstracta y estática")
 
     def umbral(planMaestro, *args):
-        raise NotImplemented("Método abstracto")
+        raise NotImplementedError("Método abstracto")
 
     def nombre():
-        raise NotImplemented("Método abstracto")
+        raise NotImplementedError("Método abstracto")
 
 
 class EstadioGerminacion(EstadioDeCultivo):

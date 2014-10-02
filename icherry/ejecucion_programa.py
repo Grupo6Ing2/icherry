@@ -40,10 +40,10 @@ class PlanificadorDeEjecucion:
     # por lo tanto mucho que puede variar acá. Por ahora considerar
     # esto en un estado muy inmaduro!
 
-    def __init__(self, delta, programaDeSuministro, unEjecutorDeAccion):
+    def __init__(self, delta, programaDeSuministro, ejecutorDeAccion):
         self._programaDeSuministro = programaDeSuministro
         self._delta = delta  # NOTICE: Es una duración (magnitud)
-        self._ejecutor = unEjecutorDeAccion
+        self._ejecutor = ejecutorDeAccion
 
     def planificarAcciones(self, fechaYHora):
         desde = fechaYHora
