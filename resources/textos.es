@@ -18,6 +18,7 @@
 "MENU_EDITAR_ESTADO_FENOLOGICO" : "Editar estado fenológico",
 "SCREEN_SENSORES" : "Sensores",
 "SCREEN_ESTADO_PLANTA" : "Estado de la planta",
+"SCREEN_EDICION_ESTADO" : "Edición del estado fenológico",
 "SCREEN_CENTRAL_METEOROLOGICA" : "Central Meteorologica",
 "SCREEN_PROGRAMA_SUMINISTRO" : "Programa de suministro",
 "SCREEN_VER_PLAN_MAESTRO" : "Plan Maestro",
