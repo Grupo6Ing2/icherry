@@ -144,7 +144,7 @@ class ActualizadorDeProgramaDeSuministro(ActualizadorDeObjectos):
         self._GPS = generadorDeProgramaDeSuministro
 
     def _actualizar(self):
-        self._GPS.generarPrograma()
+        self._GPS.generar()
 
 class ActualizadorDeEjecucion(ActualizadorDeObjectos):
     def _inicializar(self, centralMeteorologica, planificadorEjecucion):

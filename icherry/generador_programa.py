@@ -18,13 +18,29 @@ from datetime import date, time
 # planta, el umbral óptimo de cultivo según el plan maestro, etcétera.
 
 class GeneradorDeProgramaDeSuministro():
-    def __init__(self, planMaestro, estadoDePlanta,
-                 centralMeteorologica, programaDeSuministro):
-        raise NotImplementedError("Clase abstracta")
+    def __init__(self, unPlanMaestro, recomendacionesDeCultivo):
+        self.__planMaestro = unPlanMaestro
+        self.__recomendaciones = recomendacionesDeCultivo
 
+    # Modifica el ProgramaDeSuministro
+    def generar(self, unaPlanta, unaCentralMeteorologica):
+        programaDeSuministro = self.__generarProgramaInicial(unaPlanta,
+                                                             unaCentralMeteorologica)
+        self.__aplicarRecomendacionesDeCultivo(programaDeSuministro, unaPlanta,
+                                               unaCentralMeteorologica)
 
-    def generarPrograma(self):
-        raise NotImplementedError("Método abstracto")
+        return programaDeSuministro
+
+    # Modifica unProgramaDeSuministros en base a todos los parámetros:
+    def __generarProgramaInicial(self, unaPlanta, unaCentralMeteorologica):
+        # TODO: aca es donde se produce la magia de generación de un programa.
+        pass
+
+    def __aplicarRecomendacionesDeCultivo(self, unProgramaDeSuministros, unaPlanta,
+                                          unaCentralMeteorologica):
+        for recomendacion in self.__recomendaciones:
+            recomendacion.realizarAjustes(
+                self.__planMaestro, unaPlanta, unaCentralMeteorologica, unProgramaDeSuministros)
 
 # ====================================================================
 # GeneradorDeProgramaDeSuministroEjemploFijo24
@@ -37,7 +53,7 @@ class GeneradorDeProgramaDeSuministro():
 # Se pueden cambiar a gusto las acciones que caen en cada momento para
 # probar distintos efectos.
 
-class GeneradorDeProgramaDeSuministroFijo24():
+class GeneradorDeProgramaDeSuministroFijo24(GeneradorDeProgramaDeSuministro):
     """Genera un programa de suministro hardcodeado con valores fijos para
     distintos horarios del día, cubriendo un rango de 24 horas. Los valores son
     totalmente arbitrarios, esta instancia es útil para pruebas y
@@ -70,7 +86,7 @@ class GeneradorDeProgramaDeSuministroFijo24():
             ajustada = ajustada.agregarDuracion(DuracionEnHoras(24))
         return ajustada
 
-    def generarPrograma(self):
+    def generar(self):
         ahora = self.ahora()
 
         programa = ProgramaDeSuministro(
@@ -136,10 +152,10 @@ def demo():
         centralMeteorologica=cm,
         programaDeSuministro=programa)
 
-    gps.generarPrograma()
+    gps.generar()
     mostrar(gps, cm)
     cm.redefinirFechaYHora(ahora.agregarDuracion(DuracionEnMinutos(60*10+15)))
-    gps.generarPrograma()
+    gps.generar()
     mostrar(gps, cm)
 
 

@@ -46,7 +46,7 @@ generadorDePrograma = builder.construirGeneradorDeProgramaDeSuministro(
 
 # NOTICE: Poblamos el Programa de Suministro (si no, hay que esperar
 # hasta el primer heartbeat del APS para que haya algo en el PS)
-generadorDePrograma.generarPrograma()  # anda esto?
+generadorDePrograma.generar()  # anda esto?
 
 # Actualizador de Programa de Suministro (APS)
 actualizadorDeProgramaDeSuministro = \
