@@ -20,6 +20,7 @@
 "SCREEN_ESTADO_PLANTA" : "Estado de la planta",
 "SCREEN_CENTRAL_METEOROLOGICA" : "Central Meteorologica",
 "SCREEN_VER_PLAN_MAESTRO" : "Plan Maestro",
+"SCREEN_EDITAR_PLAN_MAESTRO" : "Editar Plan Maestro",
 "FORMAT_FECHAYHORA" : "{0.day:02}/{0.month:02}/{0.year} {1.hour:02}:{1.minute:02}:{1.second:02}",
 "SPAN_FECHAYHORA_ACTUAL" : "Hora actual: {0}",
 "SPAN_PRONOSTICO_24_HORAS" : "Pronostico para las proximas 24 horas:",
@@ -47,5 +48,11 @@
 "INPUT_FRUTAS_MADURAS": "Porcentaje de frutas maduras:",
 "INPUT_ESTADIO" : "Estadío de cultivo:",
 "PLAN_MAESTRO" : "Plan Maestro",
-"SPAN_RANGO" : "{} a {}"
+"SPAN_RANGO" : "{} a {}",
+"INPUT_TEMPERATURA_MIN" : "Temperatura mínima",
+"INPUT_TEMPERATURA_MAX" : "Temperatura máxima",
+"INPUT_HUMEDAD_MIN" : "Humedad mínima",
+"INPUT_HUMEDAD_MAX" : "Humedad máxima",
+"INPUT_ACIDEZ_MIN" : "Acidez mínima",
+"INPUT_ACIDEZ_MAX" : "Acidez máxima"
 }

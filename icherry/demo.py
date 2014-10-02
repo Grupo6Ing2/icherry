@@ -78,11 +78,16 @@ def main(*args):
         proveedorDeTexto, estadoDePlanta)
     aplicacion.registerForm('EDICION_ESTADO_FENOLOGICO', pantallaDeEdicionDeEstadoFenologico)
 
-    # Pantalla de visualizacion plan maestro
+    # Pantalla de visualizacion de plan maestro
     pantallaDeVisualizacionDePlanMaestro = builder.construirPantallaDeVisualizacionDePlanMaestro(
         proveedorDeTexto, planMaestro)
     aplicacion.registerForm('VER_PLAN_MAESTRO', pantallaDeVisualizacionDePlanMaestro)
     planMaestro.notificarObservers()
+
+    # Pantalla de edicion de plan maestro
+    pantallaDeEdicionDePlanMaestro = builder.construirPantallaDeEdicionDePlanMaestro(
+        proveedorDeTexto, planMaestro)
+    aplicacion.registerForm('EDITAR_PLAN_MAESTRO', pantallaDeEdicionDePlanMaestro)
 
     # Inicio la aplicacion ncurses
     aplicacion.run()

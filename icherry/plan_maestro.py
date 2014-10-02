@@ -50,7 +50,9 @@ class PlanMaestro(observer.Observable):
         'claseEstadio' funciona como en 'umbralParaEstadio'
 
         """
-        return claseEstadio.umbral(self, umbral)
+        result = claseEstadio.umbral(self, umbral)
+        self.notificarObservers()
+        return result
 
     def umbrales(self):
         """Retorna la lista de todos los umbrales que planifica"""

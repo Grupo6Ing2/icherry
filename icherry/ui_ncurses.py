@@ -39,9 +39,8 @@ class PantallaEnConstruccion(npyscreen.Form):
 
     def create(self):
 
-        self.add(npyscreen.GridColTitles, values=[[1, 2], [3, 4]], col_titles=['a', 'b'])
-        # self.add(npyscreen.Pager, values=[self.proveedorDeTexto.obtener(
-        #     "EN_CONSTRUCCION")])
+        self.add(npyscreen.Pager, values=[self.proveedorDeTexto.obtener(
+            "EN_CONSTRUCCION")])
 
 
 class PantallaDeInicio(npyscreen.FormWithMenus):
@@ -79,7 +78,7 @@ class PantallaDeInicio(npyscreen.FormWithMenus):
         self._agregarEntradaDeMenu(
             menu, 'MENU_VER_PLAN_MAESTRO', 'VER_PLAN_MAESTRO')
         self._agregarEntradaDeMenu(
-            menu, 'MENU_EDITAR_PLAN_MAESTRO', 'EN_CONSTRUCCION')
+            menu, 'MENU_EDITAR_PLAN_MAESTRO', 'EDITAR_PLAN_MAESTRO')
         self._agregarEntradaDeMenu(
             menu, 'MENU_PROGRAMA_SUMINISTROS', 'EN_CONSTRUCCION')
         self._agregarEntradaDeMenu(
@@ -413,3 +412,64 @@ class PantallaDeEdicionDeEstadoFenologico(npyscreen.ActionForm):
         self._wFlores = self.add(npyscreen.TitleText, name=proveedorDeTexto.obtener("INPUT_CANT_FLORES"))
         self._wFrutos = self.add(npyscreen.TitleText, name=proveedorDeTexto.obtener("INPUT_CANT_FRUTOS"))
         self._wMaduras = self.add(npyscreen.TitleText, name=proveedorDeTexto.obtener("INPUT_FRUTAS_MADURAS"))
+
+
+class PantallaDeEdicionDePlanMaestro(npyscreen.ActionForm):
+
+    def __init__(self, proveedorDeTexto, planMaestro, **kargs):
+
+        self._proveedorDeTexto = proveedorDeTexto
+        self._planMaestro = planMaestro
+
+        super(PantallaDeEdicionDePlanMaestro, self).__init__(
+            name=proveedorDeTexto.obtener('SCREEN_EDITAR_PLAN_MAESTRO'), **kargs)
+
+    def on_cancel(self):
+
+        self.parentApp.setNextForm('MAIN')
+
+    def on_ok(self):
+
+        try:
+            rangoTemperatura = magnitudes.Rango(
+                magnitudes.TemperaturaEnCelsius(float(self._wTemperaturaMin.value)),
+                magnitudes.TemperaturaEnCelsius(float(self._wTemperaturaMax.value)),
+            )
+
+            rangoHumedad = magnitudes.Rango(
+                magnitudes.HumedadRelativa(magnitudes.Porcentaje(float(self._wHumedadMin.value))),
+                magnitudes.HumedadRelativa(magnitudes.Porcentaje(float(self._wHumedadMax.value))),
+            )
+
+            rangoAcidez = magnitudes.Rango(
+                magnitudes.AcidezEnPH(float(self._wAcidezMin.value)),
+                magnitudes.AcidezEnPH(float(self._wAcidezMax.value)),
+            )
+
+            estadio = plan_maestro.CicloDeVida.estadios()[self._wEstadio.value]
+            nuevoUmbral = plan_maestro.UmbralOptimoDeCultivo(estadio, rangoTemperatura, rangoHumedad, rangoAcidez)
+
+            self._planMaestro.definirUmbralParaEstadio(estadio, nuevoUmbral)
+
+        except Exception as err:
+            npyscreen.notify_confirm("Error: {0}".format(err))
+
+        else:
+            self.parentApp.setNextForm('MAIN')
+
+    def create(self):
+
+        proveedorDeTexto = self._proveedorDeTexto
+
+        self._wEstadio = self.add(
+            npyscreen.TitleMultiLine,
+            max_height=8,
+            name=proveedorDeTexto.obtener("INPUT_ESTADIO"),
+            values=[e.nombre() for e in plan_maestro.CicloDeVida.estadios()])
+
+        self._wTemperaturaMin = self.add(npyscreen.TitleText, name=proveedorDeTexto.obtener("INPUT_TEMPERATURA_MIN"))
+        self._wTemperaturaMax = self.add(npyscreen.TitleText, name=proveedorDeTexto.obtener("INPUT_TEMPERATURA_MAX"))
+        self._wHumedadMin = self.add(npyscreen.TitleText, name=proveedorDeTexto.obtener("INPUT_HUMEDAD_MIN"))
+        self._wHumedadMax = self.add(npyscreen.TitleText, name=proveedorDeTexto.obtener("INPUT_HUMEDAD_MAX"))
+        self._wAcidezMin = self.add(npyscreen.TitleText, name=proveedorDeTexto.obtener("INPUT_ACIDEZ_MIN"))
+        self._wAcidezMax = self.add(npyscreen.TitleText, name=proveedorDeTexto.obtener("INPUT_ACIDEZ_MAX"))

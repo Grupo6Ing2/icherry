@@ -183,5 +183,6 @@ class ContructorDemo():
 
         return ui_ncurses.PantallaDeVisualizacionDePlanMaestro(proveedorDeTexto, planMaestro)
 
+    def construirPantallaDeEdicionDePlanMaestro(self, proveedorDeTexto, planMaestro):
 
-
+        return ui_ncurses.PantallaDeEdicionDePlanMaestro(proveedorDeTexto, planMaestro)
