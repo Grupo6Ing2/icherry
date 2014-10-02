@@ -10,7 +10,7 @@
 "MENU_ESTADO_PLANTA" : "Estado de Planta",
 "MENU_VER_PLAN_MAESTRO" : "Visualizar el Plan Maestro",
 "MENU_EDITAR_PLAN_MAESTRO" : "Editar el Plan Maestro",
-"MENU_PROGRAMA_SUMINISTROS" : "Programa de suministros",
+"MENU_PROGRAMA_SUMINISTROS" : "Programa de suministro",
 "MENU_CENTRAL_METEOROLOGICA" : "Central meteorologica",
 "MENU_HISTORIAL_SENSORES" : "Historial de sensores",
 "MENU_HISTORIAL_SUMINISTROS" : "Historial de suministros",
@@ -52,11 +52,12 @@
 "INPUT_FRUTAS_MADURAS": "Porcentaje de frutas maduras:",
 "INPUT_ESTADIO" : "Estadío de cultivo:",
 "PLAN_MAESTRO" : "Plan Maestro",
-"SPAN_RANGO" : "{} a {}",
+"SPAN_RANGO" : "{:.2f} a {:.2f}",
 "INPUT_TEMPERATURA_MIN" : "Temperatura mínima",
 "INPUT_TEMPERATURA_MAX" : "Temperatura máxima",
 "INPUT_HUMEDAD_MIN" : "Humedad mínima",
 "INPUT_HUMEDAD_MAX" : "Humedad máxima",
 "INPUT_ACIDEZ_MIN" : "Acidez mínima",
-"INPUT_ACIDEZ_MAX" : "Acidez máxima"
+"INPUT_ACIDEZ_MAX" : "Acidez máxima",
+"PROGRAMA_SUMINISTRO" : "Programa de suministro"
 }

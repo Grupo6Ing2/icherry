@@ -233,7 +233,7 @@ class ContructorDemo():
 
         return ui_ncurses.PantallaDeCentralMVC(proveedorDeTexto, centralMeteorologica)
 
-    def construirPantallaProgramaDeSuministro(self, proveedorDeTexto, programaDeSuministro ):
+    def construirPantallaProgramaDeSuministro(self, proveedorDeTexto, programaDeSuministro):
 
         return ui_ncurses.PantallaDeProgramaMVC(proveedorDeTexto, programaDeSuministro)
 
@@ -247,7 +247,7 @@ class ContructorDemo():
 
     def construirPantallaDeVisualizacionDePlanMaestro(self, proveedorDeTexto, planMaestro):
 
-        return ui_ncurses.PantallaDeVisualizacionDePlanMaestro(proveedorDeTexto, planMaestro)
+        return ui_ncurses.PantallaDeVisualizacionDePlanMaestroMVC(proveedorDeTexto, planMaestro)
 
     def construirPantallaDeEdicionDePlanMaestro(self, proveedorDeTexto, planMaestro):
 
