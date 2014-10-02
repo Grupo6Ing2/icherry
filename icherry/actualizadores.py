@@ -69,7 +69,7 @@ class ActualizadorDeCentralMeteorologica(ActualizadorDeObjectos):
     def _actualizar(self):
 
         fechaYHora = self._central.obtenerFechaYHora()
-        self._central.obtenerPronostico(fechaYHora, 25)
+        self._central.obtenerPronostico(fechaYHora, 28)
 
     def centralMeteorologica(self):
         return self._central

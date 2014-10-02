@@ -67,13 +67,13 @@ class GeneradorDeProgramaDeSuministroFijo24(GeneradorDeProgramaDeSuministro):
         self._centralMeteorologica = centralMeteorologica
         self._programaDeSuministro = programaDeSuministro
 
-    def ahora(self):
+    def _ahora(self):
         return self._centralMeteorologica.obtenerFechaYHora()
 
     # Esto es tal vez lo único interesante de todo esto. Necesitamos
     # este algoritmo para lograr independencia de la hora del día
     # reportada por la CM.
-    def shift(self, duracionRelativaCero, ahora):
+    def _shift(self, duracionRelativaCero, ahora):
         """computa una fechaYHora a partir de una duración relativa a las cero
         horas del día indicado por 'ahora', pero asegurando que
         si el resultado cayera el día anterior, se desplaza para la
@@ -87,29 +87,29 @@ class GeneradorDeProgramaDeSuministroFijo24(GeneradorDeProgramaDeSuministro):
         return ajustada
 
     def generar(self):
-        ahora = self.ahora()
+        ahora = self._ahora()
 
         programa = ProgramaDeSuministro(
             Rango(ahora, ahora.agregarDuracion(DuracionEnHoras(24))))
 
         # regar 100 mililitros una vez por hora
         for i in range(24):
-            programa.programarAccion(self.shift(DuracionEnHoras(i), ahora),
+            programa.programarAccion(self._shift(DuracionEnHoras(i), ahora),
                                      AccionRegado(LiquidoEnMililitros(100)))
 
         # poner la lámpara a 800 lux a las 5:15  y en 1000 lux a las 10:15
-        programa.programarAccion(self.shift(DuracionEnMinutos(60*5+15), ahora),
+        programa.programarAccion(self._shift(DuracionEnMinutos(60*5+15), ahora),
                                  AccionLuz(LuzEnLux(800)))
-        programa.programarAccion(self.shift(DuracionEnMinutos(60*10+15), ahora),
+        programa.programarAccion(self._shift(DuracionEnMinutos(60*10+15), ahora),
                                  AccionLuz(LuzEnLux(1000)))
 
         # aplicar fertilizante a cada 4 horas
         for i in range(6):
-            programa.programarAccion(self.shift(DuracionEnMinutos(60*i*4+25), ahora),
+            programa.programarAccion(self._shift(DuracionEnMinutos(60*i*4+25), ahora),
                                      AccionFertilizante(LiquidoEnMililitros(50)))
 
         # aplicar antibiótico a las 12
-        programa.programarAccion(self.shift(DuracionEnHoras(12), ahora),
+        programa.programarAccion(self._shift(DuracionEnHoras(12), ahora),
                                  AccionAntibiotico(LiquidoEnMililitros(10)))
 
         self._programaDeSuministro.copiar(programa)
@@ -119,7 +119,7 @@ class GeneradorDeProgramaDeSuministroFijo24(GeneradorDeProgramaDeSuministro):
 # ====================================================================
 # mini demo (para correr en la repl)
 
-# En esta demo probamos el algoritmo de shift del GPS "Fijo24"
+# En esta demo probamos el algoritmo de _shift del GPS "Fijo24"
 
 
 def demo():
