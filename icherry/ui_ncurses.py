@@ -240,12 +240,11 @@ class PantallaDeCentralMVC(npyscreen.Form):
 
     def _crearTablaPronostico(self):
 
-        cantHoras = 24
         fechaYHora = self._central.ultimaFechaYHora()
         pronostico = self._central.ultimoPronostico()
 
         tabla = []
-        for _ in range(cantHoras):
+        for _ in range(24):
             prediccion = pronostico.prediccionPara(fechaYHora)
             tabla.append([
                 self._obtenerTextoFechaYHora(prediccion.lapso().desde()),
