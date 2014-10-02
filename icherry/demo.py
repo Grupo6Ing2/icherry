@@ -25,7 +25,7 @@ actualizadores.append(actualizadorDeCentral)
 proveedorDeTexto = builder.construirProveedorDeTexto()
 
 # Plan Maestro
-planMaestro = None
+planMaestro = builder.construirPlanMaestro()
 
 # Estado de Planta
 estadoDePlanta = builder.construirEstadoDePlanta()
