@@ -9,14 +9,17 @@ class ICherryCurses(npyscreen.NPSAppManaged):
 class PantallaEnConstruccion(npyscreen.Form):
 
     def __init__(self, proveedorDeTexto, **kargs):
+
         self.proveedorDeTexto = proveedorDeTexto
         super(PantallaEnConstruccion, self).__init__(
             name=proveedorDeTexto.obtener("EN_CONSTRUCCION"), **kargs)
 
     def afterEditing(self):
+
         self.parentApp.setNextForm('MAIN')
 
     def create(self):
+
         self.add(npyscreen.Pager, values=[self.proveedorDeTexto.obtener(
             "EN_CONSTRUCCION")])
 
@@ -50,7 +53,7 @@ class PantallaDeInicio(npyscreen.FormWithMenus):
         self._agregarEntradaDeMenu(
             menu, 'MENU_SENSORES', 'SENSORES')
         self._agregarEntradaDeMenu(
-            menu, 'MENU_ESTADO_SALUD', 'SALUD')
+            menu, 'MENU_ESTADO_PLANTA', 'ESTADO')
         self._agregarEntradaDeMenu(
             menu, 'MENU_EDITAR_ESTADO_FENOLOGICO', 'EN_CONSTRUCCION')
         self._agregarEntradaDeMenu(
@@ -73,45 +76,63 @@ class PantallaDeInicio(npyscreen.FormWithMenus):
         self._crearMenu()
 
 
-class PantallaDeEstadoDeSalud(npyscreen.Form):
-    def __init__(self, proveedorDeTexto, estadoDeSalud, **kargs):
-        self.estadoDeSalud = estadoDeSalud
-        self.proveedorDeTexto = proveedorDeTexto
+class PantallaDeEstadoDePlantaMVC(npyscreen.Form):
 
-        super(PantallaDeEstadoDeSalud, self).__init__(
-            name=proveedorDeTexto.obtener("SALUD"), **kargs)
+    def __init__(self, proveedorDeTexto, estadoDePlanta, **kargs):
+
+        self._estadoDePlanta = estadoDePlanta
+        self._proveedorDeTexto = proveedorDeTexto
+
+        super(PantallaDeEstadoDePlantaMVC, self).__init__(
+            name=proveedorDeTexto.obtener("SCREEN_ESTADO_PLANTA"), **kargs)
+
+    def beforeEditing(self):
+
+        self._estadoDePlanta.registrarObserver(self)
 
     def afterEditing(self):
+
+        self._estadoDePlanta.eliminarObserver(self)
         self.parentApp.setNextForm('MAIN')
 
     def create(self):
-        self.add(npyscreen.Pager, values=self.render())
+
+        self._wPager = self.add(npyscreen.Pager)
+
+    def actualizar(self, unSensor):
+
+        self._wPager.values = self.render()
+        self.display()
 
     def render(self):
         return [
-            self.proveedorDeTexto.obtener('SENSORES') + ':',
+            self._proveedorDeTexto.obtener('ESTADO_SALUD') + ':',
             '',
-            self.proveedorDeTexto.obtener(
-                "SPAN_TEMPERATURA", self.estadoDeSalud.temperatura().valor()),
-            self.proveedorDeTexto.obtener(
-                "SPAN_HUMEDAD", self.estadoDeSalud.humedad().valor()),
-            self.proveedorDeTexto.obtener(
-                "SPAN_ACIDEZ", self.estadoDeSalud.acidez().valor()),
+            self._estadoDePlanta.estadoDeSalud().nombre(),
             '',
-            self.proveedorDeTexto.obtener("HEADER_ESTADO_FENOLOGICO"),
+            self._proveedorDeTexto.obtener('CONDICION_SALUD') + ':',
             '',
-            self.proveedorDeTexto.obtener("SPAN_ESTADIO",
-                self.estadoDeSalud.estadoFenologico().estadioDeCultivo().nombre()),
-            self.proveedorDeTexto.obtener("SPAN_ALTURA",
-                self.estadoDeSalud.estadoFenologico().altura()),
-            self.proveedorDeTexto.obtener("SPAN_CANT_BROTES",
-                self.estadoDeSalud.estadoFenologico().cantidadBrotes()),
-            self.proveedorDeTexto.obtener("SPAN_CANT_FLORES",
-                self.estadoDeSalud.estadoFenologico().cantidadFlores()),
-            self.proveedorDeTexto.obtener("SPAN_CANT_FRUTOS",
-                self.estadoDeSalud.estadoFenologico().cantidadFrutos()),
-            self.proveedorDeTexto.obtener("SPAN_PORCENTAJE_FRUTAS_MADURAS",
-                self.estadoDeSalud.estadoFenologico().porcentajeFrutasMaduras().valor()),
+            self._proveedorDeTexto.obtener(
+                "SPAN_TEMPERATURA", self._estadoDePlanta.temperatura().valor()),
+            self._proveedorDeTexto.obtener(
+                "SPAN_HUMEDAD", self._estadoDePlanta.humedad().valor().valor()),
+            self._proveedorDeTexto.obtener(
+                "SPAN_ACIDEZ", self._estadoDePlanta.acidez().valor()),
+            '',
+            self._proveedorDeTexto.obtener("HEADER_ESTADO_FENOLOGICO"),
+            '',
+            self._proveedorDeTexto.obtener("SPAN_ESTADIO",
+                self._estadoDePlanta.estadoFenologico().estadioDeCultivo().nombre()),
+            self._proveedorDeTexto.obtener("SPAN_ALTURA",
+                self._estadoDePlanta.estadoFenologico().altura()),
+            self._proveedorDeTexto.obtener("SPAN_CANT_BROTES",
+                self._estadoDePlanta.estadoFenologico().cantidadBrotes()),
+            self._proveedorDeTexto.obtener("SPAN_CANT_FLORES",
+                self._estadoDePlanta.estadoFenologico().cantidadFlores()),
+            self._proveedorDeTexto.obtener("SPAN_CANT_FRUTOS",
+                self._estadoDePlanta.estadoFenologico().cantidadFrutos()),
+            self._proveedorDeTexto.obtener("SPAN_PORCENTAJE_FRUTAS_MADURAS",
+                self._estadoDePlanta.estadoFenologico().porcentajeFrutasMaduras().valor()),
         ]
 
 
@@ -134,11 +155,13 @@ class PantallaDeSensoresMVC(npyscreen.Form):
             name=proveedorDeTexto.obtener("SCREEN_SENSORES"), **kargs)
 
     def beforeEditing(self):
+
         self._sensorDeTemperatura.registrarObserver(self)
         self._sensorDeHumedad.registrarObserver(self)
         self._sensorDeAcidez.registrarObserver(self)
 
     def afterEditing(self):
+
         self._sensorDeTemperatura.eliminarObserver(self)
         self._sensorDeHumedad.eliminarObserver(self)
         self._sensorDeAcidez.eliminarObserver(self)
@@ -146,9 +169,11 @@ class PantallaDeSensoresMVC(npyscreen.Form):
         self.parentApp.setNextForm('MAIN')
 
     def create(self):
+
         self._wPager = self.add(npyscreen.Pager)
 
     def actualizar(self, unSensor):
+
         self._wPager.values = self.render()
         self.display()
 
@@ -157,7 +182,7 @@ class PantallaDeSensoresMVC(npyscreen.Form):
             self._proveedorDeTexto.obtener(
                 "SPAN_TEMPERATURA", self._sensorDeTemperatura.ultimoValorSensado().valor()),
             self._proveedorDeTexto.obtener(
-                "SPAN_HUMEDAD", self._sensorDeHumedad.ultimoValorSensado().valor()),
+                "SPAN_HUMEDAD", self._sensorDeHumedad.ultimoValorSensado().valor().valor()),
             self._proveedorDeTexto.obtener(
                 "SPAN_ACIDEZ", self._sensorDeAcidez.ultimoValorSensado().valor()),
         ]
@@ -166,24 +191,29 @@ class PantallaDeSensoresMVC(npyscreen.Form):
 class PantallaDeCentralMVC(npyscreen.Form):
 
     def __init__(self, proveedorDeTexto, central, **kargs):
+
         self._proveedorDeTexto = proveedorDeTexto
         self._central = central
         super(PantallaDeCentralMVC, self).__init__(
             name=proveedorDeTexto.obtener('SCREEN_CENTRAL_METEOROLOGICA'), **kargs)
 
     def beforeEditing(self):
+
         self._central.registrarObserver(self)
         self._ultimoPronostico = None
 
     def afterEditing(self):
+
         self._central.eliminarObserver(self)
         self.parentApp.setNextForm('MAIN')
 
     def _obtenerTextoFechaYHora(self, fechaYHora):
+
         return self._proveedorDeTexto.obtener(
             'FORMAT_FECHAYHORA', fechaYHora.fecha(), fechaYHora.hora())
 
     def _crearTablaPronostico(self):
+
         cantHoras = 24
         proveedorDeTexto = self._proveedorDeTexto
 
@@ -226,72 +256,6 @@ class PantallaDeCentralMVC(npyscreen.Form):
         textos = []
 
         fechaYHora = self._central.ultimaFechaYHora()
-        textos.append(proveedorDeTexto.obtener(
-            'SPAN_FECHAYHORA_ACTUAL',
-            self._obtenerTextoFechaYHora(fechaYHora)))
-
-        textos.append('')
-        textos.append(proveedorDeTexto.obtener('SPAN_PRONOSTICO_24_HORAS'))
-        textos = textos + self._crearTablaPronostico().get_string().split("\n")
-        return textos
-
-
-
-
-
-
-
-
-class PantallaDeCentral(npyscreen.Form):
-
-    def __init__(self, proveedorDeTexto, central, **kargs):
-        self.proveedorDeTexto = proveedorDeTexto
-        self.central = central
-        super(PantallaDeCentral, self).__init__(name='Central', **kargs)
-
-    def afterEditing(self):
-        self.parentApp.setNextForm('MAIN')
-
-    def _obtenerTextoFechaYHora(self, fechaYHora):
-        return self.proveedorDeTexto.obtener(
-            'FORMAT_FECHAYHORA', fechaYHora.fecha(), fechaYHora.hora())
-
-    def _crearTablaPronostico(self):
-        cantHoras = 24
-        proveedorDeTexto = self.proveedorDeTexto
-
-        fechaYHora = self.central.obtenerFechaYHora()
-        pronostico = self.central.obtenerPronostico(fechaYHora, cantHoras)
-
-        tabla = prettytable.PrettyTable([
-            proveedorDeTexto.obtener("HEADER_FECHA"),
-            proveedorDeTexto.obtener("HEADER_TEMPERATURA"),
-            proveedorDeTexto.obtener("HEADER_HUMEDAD"),
-            proveedorDeTexto.obtener("HEADER_LLUVIA"),
-            proveedorDeTexto.obtener("HEADER_LUZ"),
-        ])
-
-        for _ in range(cantHoras):
-            prediccion = pronostico.prediccionPara(fechaYHora)
-            tabla.add_row([
-                self._obtenerTextoFechaYHora(prediccion.lapso().desde()),
-                prediccion.temperatura().valor(),
-                prediccion.humedad().valor().valor(),
-                prediccion.probabilidadDeLluvia().valor(),
-                prediccion.luzAmbiente().valor()
-            ])
-            fechaYHora = fechaYHora.agregarHoras(1)
-
-        return tabla
-
-    def create(self):
-        self.add(npyscreen.Pager, values=self.render())
-
-    def render(self):
-        proveedorDeTexto = self.proveedorDeTexto
-        textos = []
-
-        fechaYHora = self.central.obtenerFechaYHora()
         textos.append(proveedorDeTexto.obtener(
             'SPAN_FECHAYHORA_ACTUAL',
             self._obtenerTextoFechaYHora(fechaYHora)))

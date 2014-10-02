@@ -73,3 +73,42 @@ class ActualizadorDeCentralMeteorologica(ActualizadorDeObjectos):
 
     def centralMeteorologica(self):
         return self._central
+
+
+class ActualizadorDeEstadoDePlanta(ActualizadorDeObjectos):
+
+    def _inicializar(self, estadoPlanta, sensorDeTemperatura, sensorDeHumedad, sensorDeAcidez, planMaestro):
+
+        self._estadoPlanta = estadoPlanta
+        self._sensorDeTemperatura = sensorDeTemperatura
+        self._sensorDeHumedad = sensorDeHumedad
+        self._sensorDeAcidez = sensorDeAcidez
+        self._planMaestro = planMaestro
+
+    def estadoPlanta(self):
+
+        return self.estadoPlanta
+
+    def sensorDeTemperatura(self):
+
+        return self.sensorDeTemperatura
+
+    def sensorDeHumedad(self):
+
+        return self.sensorDeHumedad
+
+    def sensorDeAcidez(self):
+
+        return self.sensorDeAcidez
+
+    def planMaestro(self):
+
+        return self.planMaestro
+
+    def _actualizar(self):
+
+        # Actualizo los valores de los sensores
+        self._estadoPlanta.temperatura(self._sensorDeTemperatura.ultimoValorSensado())
+        self._estadoPlanta.humedad(self._sensorDeHumedad.ultimoValorSensado())
+        self._estadoPlanta.acidez(self._sensorDeAcidez.ultimoValorSensado())
+        self._estadoPlanta.notificarObservers()

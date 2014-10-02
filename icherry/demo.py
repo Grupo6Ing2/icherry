@@ -5,13 +5,14 @@ import icherry.builders as builders
 builder = builders.ContructorDemo()
 segundosDeActualizacionSensores = 1
 segundosDeActualizacionDeCentral = 1
+segundosDeActualizacionDePlanta = 1
 
 actualizadores = []
 
 # Construccion de sensores
-(sensorTemperatura, sensorHumedad, sensorAcidez) = builder.construirSensores()
+(sensorDeTemperatura, sensorDeHumedad, sensorDeAcidez) = builder.construirSensores()
 actualizadorDeSensores = builder.construirActualizadorDeSensores(
-    segundosDeActualizacionSensores, sensorTemperatura, sensorHumedad, sensorAcidez)
+    segundosDeActualizacionSensores, sensorDeTemperatura, sensorDeHumedad, sensorDeAcidez)
 actualizadores.append(actualizadorDeSensores)
 
 # Construccion de central
@@ -22,6 +23,15 @@ actualizadores.append(actualizadorDeCentral)
 
 # Proveedor de Texto
 proveedorDeTexto = builder.construirProveedorDeTexto()
+
+# Plan Maestro
+planMaestro = None
+
+# Estado de Planta
+estadoDePlanta = builder.construirEstadoDePlanta()
+actualizadorDeEstadoPlanta = builder.construirActualizadorDeEstadoDePlanta(
+    segundosDeActualizacionDePlanta, estadoDePlanta, sensorDeTemperatura, sensorDeHumedad, sensorDeAcidez, planMaestro)
+actualizadores.append(actualizadorDeEstadoPlanta)
 
 # Activo todos los timers
 for actualizador in actualizadores:
@@ -38,9 +48,9 @@ def main(*args):
     # Pantalla sensores
     pantallaSensor = builder.construirPantallaSensores(
         proveedorDeTexto,
-        sensorTemperatura,
-        sensorHumedad,
-        sensorAcidez
+        sensorDeTemperatura,
+        sensorDeHumedad,
+        sensorDeAcidez
     )
     aplicacion.registerForm('SENSORES', pantallaSensor)
 
@@ -58,6 +68,10 @@ def main(*args):
     # Pantalla en construccion
     pantallaEnConstruccion = builder.construirPantallaEnConstruccion(proveedorDeTexto)
     aplicacion.registerForm('EN_CONSTRUCCION', pantallaEnConstruccion)
+
+    # Pantalla de estado de planta
+    pantallaEstadoDePlanta = builder.construirPantallaEstadoDePlanta(proveedorDeTexto, estadoDePlanta)
+    aplicacion.registerForm('ESTADO', pantallaEstadoDePlanta)
 
     # Inicio la aplicacion ncurses
     aplicacion.run()

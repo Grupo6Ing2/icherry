@@ -8,6 +8,7 @@ import icherry.proveedor_texto as proveedor_texto
 import icherry.ui_ncurses as ui_ncurses
 import icherry.central_meteorologica as central_meteorologica
 import icherry.actualizadores as actualizadores
+import icherry.estado_planta as estado_planta
 
 
 class ContructorDemo():
@@ -48,6 +49,7 @@ class ContructorDemo():
         )
 
     def construirSensores(self):
+
         sensorTemperatura = self.construirSensorDeTemperatura()
         sensorAcidez = self.construirSensorDeAcidez()
         sensorHumedad = self.construirSensorDeHumedad()
@@ -55,6 +57,7 @@ class ContructorDemo():
         return (sensorTemperatura, sensorHumedad, sensorAcidez)
 
     def construirActualizadorDeSensores(self, segundosDeActualizacion, sensorTemperatura, sensorHumedad, sensorAcidez):
+
         return actualizadores.ActualizadorDeSensores(
             segundosDeActualizacion,
             sensorTemperatura,
@@ -80,7 +83,26 @@ class ContructorDemo():
         return central
 
     def construirActualizadorDeCentral(self, segundosDeActualizacion, centralMeteorologica):
+
         return actualizadores.ActualizadorDeCentralMeteorologica(segundosDeActualizacion, centralMeteorologica)
+
+    def construirEstadoDePlanta(self):
+
+        return estado_planta.EstadoDePlanta()
+
+    def construirActualizadorDeEstadoDePlanta(self, segundosDeActualizacion,
+            estadoPlanta,
+            sensorDeTemperatura,
+            sensorDeHumedad,
+            sensorDeAcidez,
+            planMaestro):
+
+        return actualizadores.ActualizadorDeEstadoDePlanta(segundosDeActualizacion,
+            estadoPlanta,
+            sensorDeTemperatura,
+            sensorDeHumedad,
+            sensorDeAcidez,
+            planMaestro)
 
     def construirAplicacion(self):
 
@@ -109,3 +131,7 @@ class ContructorDemo():
     def construirPantallaCentralMeteorologica(self, proveedorDeTexto, centralMeteorologica):
 
         return ui_ncurses.PantallaDeCentralMVC(proveedorDeTexto, centralMeteorologica)
+
+    def construirPantallaEstadoDePlanta(self, proveedorDeTexto, estadoDePlanta):
+
+        return ui_ncurses.PantallaDeEstadoDePlantaMVC(proveedorDeTexto, estadoDePlanta)

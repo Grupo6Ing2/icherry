@@ -29,6 +29,8 @@ from icherry.magnitudes import AcidezEnPH
 class EstadoDePlanta(Observable):
 
     def __init__(self):
+        super().__init__()
+
         self._estadoFenologico = EstadoFenologico()
         self._temperatura = TemperaturaEnCelsius(16)
         self._humedad = HumedadRelativa(Porcentaje(0))
@@ -45,10 +47,10 @@ class EstadoDePlanta(Observable):
     def estadoDeSalud(self, nuevoValor=None):
         """Retorna o modifica el estado de salud de la planta."""
         if nuevoValor is not None:
-            self._estadoSalud = nuevoValor
+            self._estadoDeSalud = nuevoValor
             return self
         else:
-            return self._estadoSalud
+            return self._estadoDeSalud
 
     # definimos ahora getters/setters para T/H/PH. Cada método puede
     # usarse tanto como getter (sin argumentos) o setter (con
