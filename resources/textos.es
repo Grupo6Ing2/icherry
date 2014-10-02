@@ -8,7 +8,8 @@
 "SPAN_ACIDEZ" : "Acidez: {0} ph",
 "MENU_SENSORES" : "Sensores",
 "MENU_ESTADO_PLANTA" : "Estado de Planta",
-"MENU_CONFIGURAR_PLAN_MAESTRO" : "Configurar el Plan Maestro",
+"MENU_VER_PLAN_MAESTRO" : "Visualizar el Plan Maestro",
+"MENU_EDITAR_PLAN_MAESTRO" : "Editar el Plan Maestro",
 "MENU_PROGRAMA_SUMINISTROS" : "Programa de suministros",
 "MENU_CENTRAL_METEOROLOGICA" : "Central meteorologica",
 "MENU_HISTORIAL_SENSORES" : "Historial de sensores",
@@ -18,6 +19,7 @@
 "SCREEN_SENSORES" : "Sensores",
 "SCREEN_ESTADO_PLANTA" : "Estado de la planta",
 "SCREEN_CENTRAL_METEOROLOGICA" : "Central Meteorologica",
+"SCREEN_VER_PLAN_MAESTRO" : "Plan Maestro",
 "FORMAT_FECHAYHORA" : "{0.day:02}/{0.month:02}/{0.year} {1.hour:02}:{1.minute:02}:{1.second:02}",
 "SPAN_FECHAYHORA_ACTUAL" : "Hora actual: {0}",
 "SPAN_PRONOSTICO_24_HORAS" : "Pronostico para las proximas 24 horas:",
@@ -25,7 +27,9 @@
 "HEADER_HUMEDAD" : "Humedad (%)",
 "HEADER_LUZ" : "Luz (Lux)",
 "HEADER_LLUVIA" : "Lluvia (%)",
+"HEADER_ACIDEZ" : "Acidez (ph)",
 "HEADER_FECHA" : "Fecha",
+"HEADER_ESTADIO_CULTIVO" : "Estadio de cultivo",
 "HEADER_ESTADO_FENOLOGICO": "Estado fenológico:",
 "SENSORES": "Sensores",
 "SPAN_CANT_BROTES": "Cantidad de brotes: {0}",
@@ -41,5 +45,7 @@
 "INPUT_CANT_FLORES": "Cantidad de flores:",
 "INPUT_CANT_FRUTOS": "Cantidad de frutos",
 "INPUT_FRUTAS_MADURAS": "Porcentaje de frutas maduras:",
-"INPUT_ESTADIO" : "Estadío de cultivo:"
+"INPUT_ESTADIO" : "Estadío de cultivo:",
+"PLAN_MAESTRO" : "Plan Maestro",
+"SPAN_RANGO" : "{} a {}"
 }

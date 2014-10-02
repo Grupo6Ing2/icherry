@@ -1,3 +1,4 @@
+import icherry.observer as observer
 # encoding: utf-8
 # ====================================================================
 #                            PLAN MAESTRO
@@ -9,7 +10,7 @@
 
 # ====================================================================
 # plan maestro
-class PlanMaestro():
+class PlanMaestro(observer.Observable):
     """Un plan maestro es un diccionario de estado fenológico en umbral
     óptimo de cultivo. Con el plan maestro sabemos en qué parámetros
     de T/H/PH se debe mantener la planta en el estadio actual. Para
@@ -19,6 +20,7 @@ class PlanMaestro():
 
     """
     def __init__(self, umbrales=None):
+        super().__init__()
         """Crea un nuevo plan maestro vacío, sin ningún umbral definido, o
         bien a partir de una lista de umbrales.
 

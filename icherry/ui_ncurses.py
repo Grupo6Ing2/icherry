@@ -1,7 +1,7 @@
 import npyscreen
-import prettytable
 import icherry.magnitudes as magnitudes
 import icherry.plan_maestro as plan_maestro
+
 
 class EstadoPantallaVisibilidad():
 
@@ -39,8 +39,9 @@ class PantallaEnConstruccion(npyscreen.Form):
 
     def create(self):
 
-        self.add(npyscreen.Pager, values=[self.proveedorDeTexto.obtener(
-            "EN_CONSTRUCCION")])
+        self.add(npyscreen.GridColTitles, values=[[1, 2], [3, 4]], col_titles=['a', 'b'])
+        # self.add(npyscreen.Pager, values=[self.proveedorDeTexto.obtener(
+        #     "EN_CONSTRUCCION")])
 
 
 class PantallaDeInicio(npyscreen.FormWithMenus):
@@ -76,7 +77,9 @@ class PantallaDeInicio(npyscreen.FormWithMenus):
         self._agregarEntradaDeMenu(
             menu, 'MENU_EDITAR_ESTADO_FENOLOGICO', 'EDICION_ESTADO_FENOLOGICO')
         self._agregarEntradaDeMenu(
-            menu, 'MENU_CONFIGURAR_PLAN_MAESTRO', 'EN_CONSTRUCCION')
+            menu, 'MENU_VER_PLAN_MAESTRO', 'VER_PLAN_MAESTRO')
+        self._agregarEntradaDeMenu(
+            menu, 'MENU_EDITAR_PLAN_MAESTRO', 'EN_CONSTRUCCION')
         self._agregarEntradaDeMenu(
             menu, 'MENU_PROGRAMA_SUMINISTROS', 'EN_CONSTRUCCION')
         self._agregarEntradaDeMenu(
@@ -239,22 +242,13 @@ class PantallaDeCentralMVC(npyscreen.Form):
     def _crearTablaPronostico(self):
 
         cantHoras = 24
-        proveedorDeTexto = self._proveedorDeTexto
-
         fechaYHora = self._central.ultimaFechaYHora()
         pronostico = self._central.ultimoPronostico()
 
-        tabla = prettytable.PrettyTable([
-            proveedorDeTexto.obtener("HEADER_FECHA"),
-            proveedorDeTexto.obtener("HEADER_TEMPERATURA"),
-            proveedorDeTexto.obtener("HEADER_HUMEDAD"),
-            proveedorDeTexto.obtener("HEADER_LLUVIA"),
-            proveedorDeTexto.obtener("HEADER_LUZ"),
-        ])
-
+        tabla = []
         for _ in range(cantHoras):
             prediccion = pronostico.prediccionPara(fechaYHora)
-            tabla.add_row([
+            tabla.append([
                 self._obtenerTextoFechaYHora(prediccion.lapso().desde()),
                 prediccion.temperatura().valor(),
                 prediccion.humedad().valor().valor(),
@@ -267,12 +261,28 @@ class PantallaDeCentralMVC(npyscreen.Form):
 
     def actualizar(self, unaCentalMeteorologica):
 
-        self._wPager.values = self.render()
+        self._wFecha.value = self._obtenerTextoFechaYHora(self._central.ultimaFechaYHora())
+        self._wPronostico.values = self._crearTablaPronostico()
+
         self._estadoVisibilidad.dibujar(self)
 
     def create(self):
 
-        self._wPager = self.add(npyscreen.Pager)
+        proveedorDeTexto = self._proveedorDeTexto
+
+        self._wFecha = self.add(npyscreen.TitleText,
+            name=proveedorDeTexto.obtener('HEADER_FECHA_ACTUAL'), editable=False)
+
+        self._wPronostico = self.add(npyscreen.GridColTitles,
+            name=proveedorDeTexto.obtener('PRONOSTICO'),
+            col_titles=[
+                proveedorDeTexto.obtener("HEADER_FECHA"),
+                proveedorDeTexto.obtener("HEADER_TEMPERATURA"),
+                proveedorDeTexto.obtener("HEADER_HUMEDAD"),
+                proveedorDeTexto.obtener("HEADER_LLUVIA"),
+                proveedorDeTexto.obtener("HEADER_LUZ"),
+            ]
+        )
 
     def render(self):
 
@@ -290,12 +300,70 @@ class PantallaDeCentralMVC(npyscreen.Form):
         return textos
 
 
-class PantallaDeEdicionDeEstadoFenologico(npyscreen.ActionForm):
+class PantallaDeVisualizacionDePlanMaestro(npyscreen.Form):
 
-    def __init__(self, proveedorDeTexto, estadoFenologico, **kargs):
+    def __init__(self, proveedorDeTexto, planMaestro, **kargs):
 
         self._proveedorDeTexto = proveedorDeTexto
-        self._estadoFenologico = estadoFenologico
+        self._planMaestro = planMaestro
+
+        self._estadoVisibilidad = EstadoPantallaOculta()
+        self._planMaestro.registrarObserver(self)
+
+        super(PantallaDeVisualizacionDePlanMaestro, self).__init__(
+            name=proveedorDeTexto.obtener('SCREEN_VER_PLAN_MAESTRO'), **kargs)
+
+    def beforeEditing(self):
+
+        self._estadoVisibilidad = EstadoPantallaVisible()
+
+    def afterEditing(self):
+
+        self._estadoVisibilidad = EstadoPantallaOculta()
+        self.parentApp.setNextForm('MAIN')
+
+    def actualizar(self, unPlanMaestro):
+
+        self._wPlanMaestro.values = self._crearTablaDePlanMaestro()
+        self._estadoVisibilidad.dibujar(self)
+
+    def create(self):
+
+        proveedorDeTexto = self._proveedorDeTexto
+        self._wPlanMaestro = self.add(npyscreen.GridColTitles, name=proveedorDeTexto.obtener('PLAN_MAESTRO'),
+            col_titles=[
+                proveedorDeTexto.obtener("HEADER_ESTADIO_CULTIVO"),
+                proveedorDeTexto.obtener("HEADER_TEMPERATURA"),
+                proveedorDeTexto.obtener("HEADER_HUMEDAD"),
+                proveedorDeTexto.obtener("HEADER_ACIDEZ"),
+            ]
+        )
+
+    def _crearTablaDePlanMaestro(self):
+        tabla = []
+        proveedorDeTexto = self._proveedorDeTexto
+
+        for umbral in self._planMaestro.umbrales():
+            tabla.append([
+                umbral.estadio().nombre(),
+                proveedorDeTexto.obtener('SPAN_RANGO',
+                    umbral.temperatura().desde().valor(), umbral.temperatura().hasta().valor()),
+                proveedorDeTexto.obtener('SPAN_RANGO',
+                    umbral.humedad().desde().valor().valor(), umbral.humedad().hasta().valor().valor()),
+                proveedorDeTexto.obtener('SPAN_RANGO',
+                    umbral.acidez().desde().valor(), umbral.acidez().hasta().valor())
+            ])
+
+        return tabla
+
+
+class PantallaDeEdicionDeEstadoFenologico(npyscreen.ActionForm):
+
+    def __init__(self, proveedorDeTexto, estadoDePlanta, **kargs):
+
+        self._proveedorDeTexto = proveedorDeTexto
+        self._estadoFenologico = estadoDePlanta.estadoFenologico()
+        self._estadoDePlanta = estadoDePlanta
 
         super(PantallaDeEdicionDeEstadoFenologico, self).__init__(
             name=proveedorDeTexto.obtener('SCREEN_EDICION_ESTADO'), **kargs)
@@ -327,6 +395,7 @@ class PantallaDeEdicionDeEstadoFenologico(npyscreen.ActionForm):
             npyscreen.notify_confirm("Error: {0}".format(err))
 
         else:
+            self._estadoDePlanta.notificarObservers()
             self.parentApp.setNextForm('MAIN')
 
     def create(self):

@@ -175,6 +175,13 @@ class ContructorDemo():
 
         return ui_ncurses.PantallaDeEstadoDePlantaMVC(proveedorDeTexto, estadoDePlanta)
 
-    def construirPantallaDeEdicionDeEstadoFenologico(self, proveedorDeTexto, estadoFenologico):
+    def construirPantallaDeEdicionDeEstadoFenologico(self, proveedorDeTexto, estadoDePlanta):
 
-        return ui_ncurses.PantallaDeEdicionDeEstadoFenologico(proveedorDeTexto, estadoFenologico)
+        return ui_ncurses.PantallaDeEdicionDeEstadoFenologico(proveedorDeTexto, estadoDePlanta)
+
+    def construirPantallaDeVisualizacionDePlanMaestro(self, proveedorDeTexto, planMaestro):
+
+        return ui_ncurses.PantallaDeVisualizacionDePlanMaestro(proveedorDeTexto, planMaestro)
+
+
+
