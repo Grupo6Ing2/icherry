@@ -108,10 +108,15 @@ class CentralMeteorologica(Observable):
         self.__proveedorDeTiempo = proveedorDeTiempo
         self.__predictorMeteorologico = predictorMeteorologico
         self.__ultimoPronostico = None
+        self.__ultimaHora = None
 
     def obtenerFechaYHora(self):
+        self.__ultimaHora = self.__proveedorDeTiempo.fechaYHoraActual()
         self.notificarObservers()
-        return self.__proveedorDeTiempo.fechaYHoraActual()
+        return self.__ultimaHora
+
+    def ultimaFechaYHora(self):
+        return self.__ultimaHora
 
     def obtenerPronostico(self, desdeFechaYHora, cantidadDeHs):
         predicciones = []
@@ -135,12 +140,12 @@ class CentralMeteorologica(Observable):
 class PredictorMeteorologicoPorArchivo(PredictorMeteorologico):
 
     def __init__(self, dispositivoDeLectura):
-        parser = icherry.parsers.ParserPronosticoMeteorologico()
-        pronostico = parser.parse(dispositivoDeLectura.leer())
-        self.__pronostico = pronostico
+        self.__dispositivo = dispositivoDeLectura
 
     def prediccionPara(self, unLapso):
-        return self.__pronostico.prediccionPara(unLapso.desde())
+        parser = icherry.parsers.ParserPronosticoMeteorologico()
+        pronostico = parser.parse(self.__dispositivo.leer())
+        return pronostico.prediccionPara(unLapso.desde())
 
 
 class ProveedorDeTiempoPorArchivo(ProveedorDeTiempo):

@@ -115,7 +115,7 @@ class PantallaDeEstadoDeSalud(npyscreen.Form):
         ]
 
 
-class PantallaDeSensores(npyscreen.Form):
+class PantallaDeSensoresMVC(npyscreen.Form):
 
     def __init__(self,
                  proveedorDeTexto,
@@ -123,28 +123,123 @@ class PantallaDeSensores(npyscreen.Form):
                  sensorDeHumedad,
                  sensorDeAcidez, **kargs):
 
-        self.sensorDeTemperatura = sensorDeTemperatura
-        self.sensorDeHumedad = sensorDeHumedad
-        self.sensorDeAcidez = sensorDeAcidez
-        self.proveedorDeTexto = proveedorDeTexto
-        super(PantallaDeSensores, self).__init__(
+        self._sensorDeTemperatura = sensorDeTemperatura
+        self._sensorDeHumedad = sensorDeHumedad
+        self._sensorDeAcidez = sensorDeAcidez
+        self._proveedorDeTexto = proveedorDeTexto
+
+        self.enPantalla = True
+
+        super(PantallaDeSensoresMVC, self).__init__(
             name=proveedorDeTexto.obtener("SCREEN_SENSORES"), **kargs)
 
+    def beforeEditing(self):
+        self._sensorDeTemperatura.registrarObserver(self)
+        self._sensorDeHumedad.registrarObserver(self)
+        self._sensorDeAcidez.registrarObserver(self)
+
     def afterEditing(self):
+        self._sensorDeTemperatura.eliminarObserver(self)
+        self._sensorDeHumedad.eliminarObserver(self)
+        self._sensorDeAcidez.eliminarObserver(self)
+
         self.parentApp.setNextForm('MAIN')
 
     def create(self):
-        self.add(npyscreen.Pager, values=self.render())
+        self._wPager = self.add(npyscreen.Pager)
+
+    def actualizar(self, unSensor):
+        self._wPager.values = self.render()
+        self.display()
 
     def render(self):
         return [
-            self.proveedorDeTexto.obtener(
-                "SPAN_TEMPERATURA", self.sensorDeTemperatura.sensar().valor()),
-            self.proveedorDeTexto.obtener(
-                "SPAN_HUMEDAD", self.sensorDeHumedad.sensar().valor().valor()),
-            self.proveedorDeTexto.obtener(
-                "SPAN_ACIDEZ", self.sensorDeAcidez.sensar().valor()),
+            self._proveedorDeTexto.obtener(
+                "SPAN_TEMPERATURA", self._sensorDeTemperatura.ultimoValorSensado().valor()),
+            self._proveedorDeTexto.obtener(
+                "SPAN_HUMEDAD", self._sensorDeHumedad.ultimoValorSensado().valor()),
+            self._proveedorDeTexto.obtener(
+                "SPAN_ACIDEZ", self._sensorDeAcidez.ultimoValorSensado().valor()),
         ]
+
+
+class PantallaDeCentralMVC(npyscreen.Form):
+
+    def __init__(self, proveedorDeTexto, central, **kargs):
+        self._proveedorDeTexto = proveedorDeTexto
+        self._central = central
+        super(PantallaDeCentralMVC, self).__init__(
+            name=proveedorDeTexto.obtener('SCREEN_CENTRAL_METEOROLOGICA'), **kargs)
+
+    def beforeEditing(self):
+        self._central.registrarObserver(self)
+        self._ultimoPronostico = None
+
+    def afterEditing(self):
+        self._central.eliminarObserver(self)
+        self.parentApp.setNextForm('MAIN')
+
+    def _obtenerTextoFechaYHora(self, fechaYHora):
+        return self._proveedorDeTexto.obtener(
+            'FORMAT_FECHAYHORA', fechaYHora.fecha(), fechaYHora.hora())
+
+    def _crearTablaPronostico(self):
+        cantHoras = 24
+        proveedorDeTexto = self._proveedorDeTexto
+
+        fechaYHora = self._central.ultimaFechaYHora()
+        pronostico = self._central.ultimoPronostico()
+
+        tabla = prettytable.PrettyTable([
+            proveedorDeTexto.obtener("HEADER_FECHA"),
+            proveedorDeTexto.obtener("HEADER_TEMPERATURA"),
+            proveedorDeTexto.obtener("HEADER_HUMEDAD"),
+            proveedorDeTexto.obtener("HEADER_LLUVIA"),
+            proveedorDeTexto.obtener("HEADER_LUZ"),
+        ])
+
+        for _ in range(cantHoras):
+            prediccion = pronostico.prediccionPara(fechaYHora)
+            tabla.add_row([
+                self._obtenerTextoFechaYHora(prediccion.lapso().desde()),
+                prediccion.temperatura().valor(),
+                prediccion.humedad().valor().valor(),
+                prediccion.probabilidadDeLluvia().valor(),
+                prediccion.luzAmbiente().valor()
+            ])
+            fechaYHora = fechaYHora.agregarHoras(1)
+
+        return tabla
+
+    def actualizar(self, unaCentalMeteorologica):
+
+        self._wPager.values = self.render()
+        self.display()
+
+    def create(self):
+
+        self._wPager = self.add(npyscreen.Pager)
+
+    def render(self):
+
+        proveedorDeTexto = self._proveedorDeTexto
+        textos = []
+
+        fechaYHora = self._central.ultimaFechaYHora()
+        textos.append(proveedorDeTexto.obtener(
+            'SPAN_FECHAYHORA_ACTUAL',
+            self._obtenerTextoFechaYHora(fechaYHora)))
+
+        textos.append('')
+        textos.append(proveedorDeTexto.obtener('SPAN_PRONOSTICO_24_HORAS'))
+        textos = textos + self._crearTablaPronostico().get_string().split("\n")
+        return textos
+
+
+
+
+
+
 
 
 class PantallaDeCentral(npyscreen.Form):

@@ -1,51 +1,71 @@
 # coding=utf-8
-import icherry.sensores as sensores
-import icherry.magnitudes as magnitudes
-import icherry.dispositivos as dispositivos
-import icherry.parsers as parsers
-import icherry.ui_ncurses as ui_ncurses
-import icherry.proveedor_texto as proveedor_texto
-import icherry.temporizador as temporizador
-import icherry.tiempo as tiempo
 import npyscreen
+import icherry.builders as builders
 
 
-# construcción de sensores
-def crearSensor(archivo, parser, magnitud):
-    sensor = sensores.Sensor(
-        dispositivos.DispositivoDeLecturaArchivo(archivo), parser, magnitud
-    )
-    sensor.sensar()
+builder = builders.ContructorDemo()
+segundosDeActualizacionSensores = 1
+segundosDeActualizacionDeCentral = 1
 
-    timer = temporizador.Temporizador()
-    timer.ejecutarCada(tiempo.DuracionEnSegundos(1), lambda: sensor.sensar())
-    timer.iniciarEjecucion()
+actualizadores = []
 
-    return (sensor, timer)
+# Construccion de sensores
+(sensorTemperatura, sensorHumedad, sensorAcidez) = builder.construirSensores()
+actualizadorDeSensores = builder.construirActualizadorDeSensores(
+    segundosDeActualizacionSensores, sensorTemperatura, sensorHumedad, sensorAcidez)
+actualizadores.append(actualizadorDeSensores)
+
+# Construccion de central
+centralMeteorologica = builder.construirCentralMeterologica()
+actualizadorDeCentral = builder.construirActualizadorDeCentral(
+    segundosDeActualizacionDeCentral, centralMeteorologica)
+actualizadores.append(actualizadorDeCentral)
+
+# Proveedor de Texto
+proveedorDeTexto = builder.construirProveedorDeTexto()
+
+# Activo todos los timers
+for actualizador in actualizadores:
+    actualizador.iniciarActualizacion()
 
 
-(sTemperatura, tTemperatura) = crearSensor('devices/sensor_temperatura', parsers.CadenaANumero(), magnitudes.TemperaturaEnCelsius)
-(sHumedad, tHumedad) = crearSensor('devices/sensor_humedad', parsers.CadenaAPorcentaje(), magnitudes.HumedadRelativa)
-(sAcidez, tAcidez) = crearSensor('devices/sensor_acidez', parsers.CadenaANumero(), magnitudes.AcidezEnPH)
-
-proveedorDeTexto = proveedor_texto.ProveedorDeTexto('resources/textos.es')
-
-
+# Funcion principal que va a correr en el entorno ncurses
 def main(*args):
-    app = ui_ncurses.ICherryCurses()
+    # Las pantallas tengo que construirlas con el enterno ncurses activo
 
-    pSensores = ui_ncurses.PantallaDeSensoresMVC(proveedorDeTexto, sTemperatura, sHumedad, sAcidez)
-    app.registerForm('SENSORES', pSensores)
+    # Aplicacion principal
+    aplicacion = builder.construirAplicacion()
 
-    app.addFormClass('MAIN', ui_ncurses.PantallaDeInicio, proveedorDeTexto,
-                    archivoFondoAscii='resources/main_background_pic.txt')
+    # Pantalla sensores
+    pantallaSensor = builder.construirPantallaSensores(
+        proveedorDeTexto,
+        sensorTemperatura,
+        sensorHumedad,
+        sensorAcidez
+    )
+    aplicacion.registerForm('SENSORES', pantallaSensor)
 
-    app.addFormClass('EN_CONSTRUCCION', ui_ncurses.PantallaEnConstruccion, proveedorDeTexto)
+    # Pantalla de la central meteorologica
+    pantallaCentralMeteorologica = builder.construirPantallaCentralMeteorologica(
+        proveedorDeTexto,
+        centralMeteorologica
+    )
+    aplicacion.registerForm('CENTRAL', pantallaCentralMeteorologica)
 
-    app.run()
+    # Pantalla inicio
+    pantallaInicio = builder.contruirPantallaInicio(proveedorDeTexto)
+    aplicacion.registerForm('MAIN', pantallaInicio)
 
+    # Pantalla en construccion
+    pantallaEnConstruccion = builder.construirPantallaEnConstruccion(proveedorDeTexto)
+    aplicacion.registerForm('EN_CONSTRUCCION', pantallaEnConstruccion)
+
+    # Inicio la aplicacion ncurses
+    aplicacion.run()
+
+# Inicio el entorno ncurses
 npyscreen.wrapper_basic(main)
 
-tTemperatura.detener()
-tHumedad.detener()
-tAcidez.detener()
+# Detengo todos los temporizadores
+for actualizador in actualizadores:
+    actualizador.detenerActualizacion()

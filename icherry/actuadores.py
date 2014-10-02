@@ -1,3 +1,5 @@
+# coding=utf-8
+
 import icherry.dispositivos as dispositivos
 import icherry.parsers as parsers
 from icherry.observer import Observable
