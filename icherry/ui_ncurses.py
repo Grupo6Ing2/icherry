@@ -105,7 +105,6 @@ class PantallaDeEstadoDePlantaMVC(npyscreen.Form):
         self._proveedorDeTexto = proveedorDeTexto
 
         self._estadoVisibilidad = EstadoPantallaOculta()
-        self._estadoDePlanta.registrarObserver(self)
 
         super(PantallaDeEstadoDePlantaMVC, self).__init__(
             name=proveedorDeTexto.obtener("SCREEN_ESTADO_PLANTA"), **kargs)
@@ -122,6 +121,7 @@ class PantallaDeEstadoDePlantaMVC(npyscreen.Form):
     def create(self):
 
         self._wPager = self.add(npyscreen.Pager)
+        self._estadoDePlanta.registrarObserver(self)
 
     def actualizar(self, unSensor):
 
@@ -175,10 +175,6 @@ class PantallaDeSensoresMVC(npyscreen.Form):
 
         self._estadoVisibilidad = EstadoPantallaOculta()
 
-        self._sensorDeTemperatura.registrarObserver(self)
-        self._sensorDeHumedad.registrarObserver(self)
-        self._sensorDeAcidez.registrarObserver(self)
-
         super(PantallaDeSensoresMVC, self).__init__(
             name=proveedorDeTexto.obtener("SCREEN_SENSORES"), **kargs)
 
@@ -194,6 +190,9 @@ class PantallaDeSensoresMVC(npyscreen.Form):
     def create(self):
 
         self._wPager = self.add(npyscreen.Pager)
+        self._sensorDeTemperatura.registrarObserver(self)
+        self._sensorDeHumedad.registrarObserver(self)
+        self._sensorDeAcidez.registrarObserver(self)
 
     def actualizar(self, unSensor):
 
@@ -219,7 +218,6 @@ class PantallaDeCentralMVC(npyscreen.Form):
         self._central = central
 
         self._estadoVisibilidad = EstadoPantallaOculta()
-        self._central.registrarObserver(self)
 
         super(PantallaDeCentralMVC, self).__init__(
             name=proveedorDeTexto.obtener('SCREEN_CENTRAL_METEOROLOGICA'), **kargs)
@@ -281,6 +279,7 @@ class PantallaDeCentralMVC(npyscreen.Form):
                 proveedorDeTexto.obtener("HEADER_LUZ"),
             ]
         )
+        self._central.registrarObserver(self)
 
 
 class PantallaDeProgramaMVC(npyscreen.Form):
@@ -291,7 +290,6 @@ class PantallaDeProgramaMVC(npyscreen.Form):
         self._programa = programa
 
         self._estadoVisibilidad = EstadoPantallaOculta()
-        self._programa.registrarObserver(self)
 
         super(PantallaDeProgramaMVC, self).__init__(
             name=proveedorDeTexto.obtener('SCREEN_PROGRAMA_SUMINISTRO'), **kargs)
@@ -340,6 +338,7 @@ class PantallaDeProgramaMVC(npyscreen.Form):
             values=[["programa vacío"]]
         )
         self.actualizar(self._programa)
+        self._programa.registrarObserver(self)
 
 
 class PantallaDeVisualizacionDePlanMaestroMVC(npyscreen.Form):
@@ -350,7 +349,6 @@ class PantallaDeVisualizacionDePlanMaestroMVC(npyscreen.Form):
         self._planMaestro = planMaestro
 
         self._estadoVisibilidad = EstadoPantallaOculta()
-        self._planMaestro.registrarObserver(self)
 
         super(PantallaDeVisualizacionDePlanMaestroMVC, self).__init__(
             name=proveedorDeTexto.obtener('SCREEN_VER_PLAN_MAESTRO'), **kargs)
@@ -380,6 +378,7 @@ class PantallaDeVisualizacionDePlanMaestroMVC(npyscreen.Form):
                 proveedorDeTexto.obtener("HEADER_ACIDEZ"),
             ]
         )
+        self._planMaestro.registrarObserver(self)
 
     def _crearTablaDePlanMaestro(self):
         tabla = []
