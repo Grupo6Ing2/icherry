@@ -1,16 +1,16 @@
 import icherry.temporizador as temporizador
-import icherry.tiempo as tiempo
 import icherry.observer as observer
 import icherry.estado_planta as planta
 
+
 class ActualizadorDeObjectos(observer.Observable):
 
-    def __init__(self, segundosDeActualizacion, *args, **kargs):
+    def __init__(self, duracionDeActualizacion, *args, **kargs):
         super().__init__()
 
         self._timer = temporizador.Temporizador()
         self._timer.ejecutarCada(
-            tiempo.DuracionEnSegundos(segundosDeActualizacion),
+            duracionDeActualizacion,
             lambda: self.actualizar()
         )
 

@@ -4,11 +4,11 @@ import icherry.builders as builders
 import icherry.tiempo as tiempo
 
 builder = builders.ContructorDemo()
-segundosDeActualizacionSensores = 1
-segundosDeActualizacionDeCentral = 1
-segundosDeActualizacionDePlanta = 1
-segundosDeActualizacionGenerador = 10
-segundosDeActualizacionEjecucion = 5
+duracionDeActualizacionSensores = tiempo.DuracionEnSegundos(1)
+duracionDeActualizacionDeCentral = tiempo.DuracionEnSegundos(1)
+duracionDeActualizacionDePlanta = tiempo.DuracionEnSegundos(1)
+duracionDeActualizacionGenerador = tiempo.DuracionEnSegundos(10)
+duracionDeActualizacionEjecucion = tiempo.DuracionEnSegundos(5)
 duracionDePlanificacion = tiempo.DuracionEnHoras(1)
 
 actualizadores = []
@@ -16,13 +16,13 @@ actualizadores = []
 # Construccion de sensores
 (sensorDeTemperatura, sensorDeHumedad, sensorDeAcidez) = builder.construirSensores()
 actualizadorDeSensores = builder.construirActualizadorDeSensores(
-    segundosDeActualizacionSensores, sensorDeTemperatura, sensorDeHumedad, sensorDeAcidez)
+    duracionDeActualizacionSensores, sensorDeTemperatura, sensorDeHumedad, sensorDeAcidez)
 actualizadores.append(actualizadorDeSensores)
 
 # Construccion de central meteorológica
 centralMeteorologica = builder.construirCentralMeterologica()
 actualizadorDeCentral = builder.construirActualizadorDeCentral(
-    segundosDeActualizacionDeCentral, centralMeteorologica)
+    duracionDeActualizacionDeCentral, centralMeteorologica)
 actualizadores.append(actualizadorDeCentral)
 
 # Proveedor de Texto
@@ -34,7 +34,8 @@ planMaestro = builder.construirPlanMaestro()
 # Estado de Planta
 estadoDePlanta = builder.construirEstadoDePlanta()
 actualizadorDeEstadoPlanta = builder.construirActualizadorDeEstadoDePlanta(
-    segundosDeActualizacionDePlanta, estadoDePlanta, sensorDeTemperatura, sensorDeHumedad, sensorDeAcidez, planMaestro)
+    duracionDeActualizacionDePlanta, estadoDePlanta,
+    sensorDeTemperatura, sensorDeHumedad, sensorDeAcidez, planMaestro)
 actualizadores.append(actualizadorDeEstadoPlanta)
 
 # Programa de Suministro (PS). Notar que estará vacío.
@@ -44,35 +45,27 @@ programaDeSuministro = builder.construirProgramaDeSuministro(centralMeteorologic
 generadorDePrograma = builder.construirGeneradorDeProgramaDeSuministro(
     planMaestro, estadoDePlanta, centralMeteorologica, programaDeSuministro)
 
-# NOTICE: Poblamos el Programa de Suministro (si no, hay que esperar
-# hasta el primer heartbeat del APS para que haya algo en el PS)
-generadorDePrograma.generar()  # anda esto?
-
 # Actualizador de Programa de Suministro (APS)
-actualizadorDeProgramaDeSuministro = \
-builder.construirActualizadorDeProgramaDeSuministro(
-    segundosDeActualizacionGenerador, generadorDePrograma)
+actualizadorDeProgramaDeSuministro \
+    = builder.construirActualizadorDeProgramaDeSuministro(
+        duracionDeActualizacionGenerador, generadorDePrograma)
 actualizadores.append(actualizadorDeProgramaDeSuministro)
 
 # Construcción de actuadores (R,A,L,F)
 (actuadorRegado, actuadorAntibiotico,
- actuadorLuz, actuadorFertilizante ) = builder.construirActuadores()
+ actuadorLuz, actuadorFertilizante) = builder.construirActuadores()
 
 # Actualizador de Ejecución
 actualizadorDeEjecucion = builder.construirActualizadorDeEjecucion(
-    segundosDeActualizacionEjecucion,
+    duracionDeActualizacionEjecucion,
     duracionDePlanificacion, centralMeteorologica, programaDeSuministro,
     actuadorRegado, actuadorAntibiotico, actuadorLuz, actuadorFertilizante)
 actualizadores.append(actualizadorDeEjecucion)
 
 
-# Activo todos los timers
-for actualizador in actualizadores:
-    actualizador.iniciarActualizacion()
-
-# Función principal que va a correr en el entorno ncurses
-def main(*args):
-    # Las pantallas tengo que construirlas con el enterno ncurses activo
+# Función principal que va a correr en el entorno npyscreen
+def npyscreen_main(*args):
+    # Las pantallas tengo que construirlas con el entorno npyscreen activo
 
     # Aplicación principal
     aplicacion = builder.construirAplicacion()
@@ -128,12 +121,29 @@ def main(*args):
         proveedorDeTexto, planMaestro)
     aplicacion.registerForm('EDITAR_PLAN_MAESTRO', pantallaDeEdicionDePlanMaestro)
 
-    # Inicio la aplicación ncurses
+    # Inicio la aplicación npyscreen
     aplicacion.run()
 
-# Inicio el entorno ncurses
-npyscreen.wrapper_basic(main)
 
-# Detengo todos los temporizadores
-for actualizador in actualizadores:
-    actualizador.detenerActualizacion()
+# ====================================================================
+# Función principal de la demo. Ejecuta todos los actualizadores y la
+# interfaz gráfica.
+
+def demo():
+
+    # Poblamos el Programa de Suministro
+    generadorDePrograma.generar()
+
+    # Activamos todos los actualizadores
+    for actualizador in actualizadores:
+        actualizador.iniciarActualizacion()
+
+    # Iniciamos el entorno npyscreen
+    npyscreen.wrapper_basic(npyscreen_main)
+
+    # Detenemos todos los actualizadores
+    for actualizador in actualizadores:
+        actualizador.detenerActualizacion()
+
+if __name__ == "__main__":
+    demo()

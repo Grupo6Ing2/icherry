@@ -62,10 +62,11 @@ class ContructorDemo():
 
         return (sensorTemperatura, sensorHumedad, sensorAcidez)
 
-    def construirActualizadorDeSensores(self, segundosDeActualizacion, sensorTemperatura, sensorHumedad, sensorAcidez):
+    def construirActualizadorDeSensores(self, duracionDeActualizacion,
+                                        sensorTemperatura, sensorHumedad, sensorAcidez):
 
         return actualizadores.ActualizadorDeSensores(
-            segundosDeActualizacion,
+            duracionDeActualizacion,
             sensorTemperatura,
             sensorHumedad,
             sensorAcidez
@@ -89,10 +90,10 @@ class ContructorDemo():
 
         return central
 
-    def construirActualizadorDeCentral(self, segundosDeActualizacion, centralMeteorologica):
+    def construirActualizadorDeCentral(self, duracionDeActualizacion, centralMeteorologica):
 
         return actualizadores.ActualizadorDeCentralMeteorologica(
-            segundosDeActualizacion, centralMeteorologica)
+            duracionDeActualizacion, centralMeteorologica)
 
     def construirPlanMaestro(self):
 
@@ -136,14 +137,17 @@ class ContructorDemo():
 
         return estado_planta.EstadoDePlanta()
 
-    def construirActualizadorDeEstadoDePlanta(self, segundosDeActualizacion,
+    def construirActualizadorDeEstadoDePlanta(
+            self,
+            duracionDeActualizacion,
             estadoPlanta,
             sensorDeTemperatura,
             sensorDeHumedad,
             sensorDeAcidez,
             planMaestro):
 
-        return actualizadores.ActualizadorDeEstadoDePlanta(segundosDeActualizacion,
+        return actualizadores.ActualizadorDeEstadoDePlanta(
+            duracionDeActualizacion,
             estadoPlanta,
             sensorDeTemperatura,
             sensorDeHumedad,
@@ -165,10 +169,10 @@ class ContructorDemo():
             planMaestro, estadoDePlanta, centralMeteorologica, programaDeSuministro)
 
     def construirActualizadorDeProgramaDeSuministro(
-            self, segundosDeActualizacion, generadorDeProgramaDeSuministro):
+            self, duracionDeActualizacion, generadorDeProgramaDeSuministro):
 
         return actualizadores.ActualizadorDeProgramaDeSuministro(
-            segundosDeActualizacion, generadorDeProgramaDeSuministro)
+            duracionDeActualizacion, generadorDeProgramaDeSuministro)
 
     def construirActuadorRegado(self):
         return actuadores.ConstructorDeActuadorEnArchivo().crear("devices/actuador_agua")
@@ -188,7 +192,7 @@ class ContructorDemo():
                 self.construirActuadorLuz(), self.construirActuadorFertilizante())
 
     def construirActualizadorDeEjecucion(
-            self, segundosDeActualizacion, duracionDePlanificacion,
+            self, duracionDeActualizacion, duracionDePlanificacion,
             centralMeteorologica, programaDeSuministro,
             actuadorRegado, actuadorAntibiotico, actuadorLuz, actuadorFertilizante):
 
@@ -202,7 +206,7 @@ class ContructorDemo():
 
         # el actualizador requiere (además del tiempo de temporizado), una CM y un PE
         return actualizadores.ActualizadorDeEjecucion(
-            segundosDeActualizacion, centralMeteorologica, planificador)
+            duracionDeActualizacion, centralMeteorologica, planificador)
 
     def construirAplicacion(self):
 
