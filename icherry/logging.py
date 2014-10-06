@@ -1,5 +1,6 @@
 from icherry.observer import Observer
 
+
 # Clase abstracta, no instanciar.
 class Log(Observer):
     def __init__(self, unDispositivoDeEscritura):

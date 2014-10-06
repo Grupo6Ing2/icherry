@@ -7,6 +7,7 @@ from icherry.plan_maestro import CicloDeVida
 from icherry.plan_maestro import UmbralOptimoDeCultivo, PlanMaestro
 from icherry.plan_maestro import EstadioGerminacion, EstadioDesarrollo
 
+
 class TestPlanMaestro(unittest.TestCase):
 
     def setUp(self):
@@ -16,7 +17,7 @@ class TestPlanMaestro(unittest.TestCase):
         self.estadios = CicloDeVida.estadios()
 
         # argumentos para ensamblar los umbrales. Modificar a gusto.
-        args = [[10, 30, 40, 50, 6.5, 7.5]] + [[12, 20, 40, 70, 6.0, 7.5]]*7
+        args = [[10, 30, 40, 50, 6.5, 7.5]] + [[12, 20, 40, 70, 6.0, 7.5]] * 7
         x = [10, 30, 40, 50, 6.5, 7.5]
 
         # armamos los umbrales para cada estadio a partir de las
@@ -62,11 +63,11 @@ class TestPlanMaestro(unittest.TestCase):
 
         uGerminacion1 = "umbral germinación 1"
         plan[EstadioGerminacion] = uGerminacion1
-        self.assertEqual(plan[EstadioGerminacion], uGerminacion1 )
+        self.assertEqual(plan[EstadioGerminacion], uGerminacion1)
 
         uGerminacion2 = "umbral germinación 2"
         plan[EstadioGerminacion] = uGerminacion2
-        self.assertEqual(plan[EstadioGerminacion], uGerminacion2 )
+        self.assertEqual(plan[EstadioGerminacion], uGerminacion2)
 
         self.assertIsNone(plan[EstadioDesarrollo])
         uDesarrollo = "umbral desarrollo"

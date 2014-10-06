@@ -3,7 +3,7 @@
 # ====================================================================
 
 # Se definen todas las clases relacionadas con el programa de
-# suministro: Accion, AccionProgramada (y subclases) y
+# suministro: Accion (y subclases), AccionProgramada y
 # ProgramaDeSuministro.
 
 # ====================================================================
@@ -106,16 +106,12 @@ class AccionLuz(Accion):
 # ====================================================================
 # Accion programada
 
-# NOTICE: Esta clase es más bien de uso interno del programa de
-# suministro. En esta versión se expone bastante de esto hacia afuera,
-# pero lo ideal tal vez sería que el usuario no cree instancias de
-# esta clase y que simplemente se limite a usar 'accionProgramada()'
-# de ProgramaDeSuministro, proyevendo el horario y la acción (el
-# programa de suministro se encargará de ensamblarlas internamente).
-# Si se sigue este consejo, tampoco debería usarse el constructor de
-# lista. Por ahora queda a discresión del usuario.
-
 class AccionProgramada:
+    """Una acción programada es un par <FechaYHora, Accion> glorificado,
+    con métodos de acceso. El programa de suministro tiene
+    internamente una lista de instancias de esta clase.
+
+    """
     def __init__(self, fechaYHora, accion):
         """Crea una acción programada a partir de un horario y una acción.
 
@@ -166,7 +162,7 @@ class ProgramaDeSuministro(Observable):
     """
 
     def __init__(self, lapso):
-        """Crea un programa de suministros abarcando el lapso dado. El
+        """Crea un programa de suministro abarcando el lapso dado. El
         programa está inicialmente vacío, y deberán programarse las
         tareas una por una.
 
@@ -189,7 +185,7 @@ class ProgramaDeSuministro(Observable):
     def programar(self, accionProgramada):
         """Agrega una acción programada a la lista de acciones programadas. La
         fecha y hora de la acción programada debe estar en el lapso
-        del programa de suministros.
+        del programa de suministro.
 
         """
         assert(self.lapso().contiene(accionProgramada.fechaYHora()))
@@ -221,7 +217,7 @@ class ProgramaDeSuministro(Observable):
 
         """
         acciones = [aP.accion() for aP in self.accionesProgramadas()
-            if lapso.contiene(aP.fechaYHora())]
+                    if lapso.contiene(aP.fechaYHora())]
 
         return acciones
 
@@ -235,6 +231,6 @@ class ProgramaDeSuministro(Observable):
 
         accionesEnHorario = self.accionesEnHorario(lapso)
         self._accionesProgramadas = [aP for aP in self._accionesProgramadas
-             if aP.accion() not in accionesEnHorario]
+                                     if aP.accion() not in accionesEnHorario]
 
         return accionesEnHorario

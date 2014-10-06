@@ -20,17 +20,22 @@ class Deposito:
         self._depo[item] = valor
 
     def reset(self):
-        self._depo = {'luz':0, 'agua':0, 'antibiotico':0, 'fertilizante':0}
+        self._depo = {'luz': 0, 'agua': 0, 'antibiotico': 0, 'fertilizante': 0}
+
 
 class ActuadorMock(Actuador):
+
     def __init__(self, deposito, tipo):
         super().__init__()
         self._deposito = deposito
         self._tipo = tipo
+
     def aplicar(self, magnitud):
         self._deposito[self._tipo] += magnitud.valor()
 
+
 class KitEjecucion():
+
     def __init__(self):
         self.depo = Deposito()
         self.actuadorLuz = ActuadorMock(self.depo, 'luz')
@@ -48,12 +53,16 @@ class KitEjecucion():
     # planos, no magnitudes. Así que atenti con qué fruta metés.
     def agua(self):
         return self.depo['agua']
+
     def antibiotico(self):
         return self.depo['antibiotico']
+
     def luz(self):
         return self.depo['luz']
+
     def fertilizante(self):
         return self.depo['fertilizante']
+
 
 class TestEjecutorDeAccion(unittest.TestCase):
 
@@ -81,29 +90,29 @@ class TestEjecutorDeAccion(unittest.TestCase):
         kit.ejecutar(accionRegado)
         self.assertEqual(kit.agua(), cantidadAgua)
         kit.ejecutar(accionRegado)
-        self.assertEqual(kit.agua(), 2*cantidadAgua)
+        self.assertEqual(kit.agua(), 2 * cantidadAgua)
 
         self.assertEqual(kit.luz(), 0)
         kit.ejecutar(accionLuz)
         self.assertEqual(kit.luz(), cantidadLuz)
         kit.ejecutar(accionLuz)
-        self.assertEqual(kit.luz(), 2*cantidadLuz)
+        self.assertEqual(kit.luz(), 2 * cantidadLuz)
 
         self.assertEqual(kit.fertilizante(), 0)
         kit.ejecutar(accionFertilizante)
         self.assertEqual(kit.fertilizante(), cantidadFertilizante)
         kit.ejecutar(accionFertilizante)
-        self.assertEqual(kit.fertilizante(), 2*cantidadFertilizante)
+        self.assertEqual(kit.fertilizante(), 2 * cantidadFertilizante)
 
         self.assertEqual(kit.antibiotico(), 0)
         kit.ejecutar(accionAntibiotico)
         self.assertEqual(kit.antibiotico(), cantidadAntibiotico)
         kit.ejecutar(accionAntibiotico)
-        self.assertEqual(kit.antibiotico(), 2*cantidadAntibiotico)
+        self.assertEqual(kit.antibiotico(), 2 * cantidadAntibiotico)
 
-        self.assertEqual(kit.fertilizante(), 2*cantidadFertilizante)
-        self.assertEqual(kit.luz(), 2*cantidadLuz)
-        self.assertEqual(kit.agua(), 2*cantidadAgua)
+        self.assertEqual(kit.fertilizante(), 2 * cantidadFertilizante)
+        self.assertEqual(kit.luz(), 2 * cantidadLuz)
+        self.assertEqual(kit.agua(), 2 * cantidadAgua)
 
 
 class TestPlanificadorDeEjecucion(unittest.TestCase):
@@ -115,7 +124,7 @@ class TestPlanificadorDeEjecucion(unittest.TestCase):
         pass
 
     def test_planificador_planifica_ejecucion_hora_por_hora(self):
-        hora = FechaYHora(date(1998,7,10), time(17,0,0))
+        hora = FechaYHora(date(1998, 7, 10), time(17, 0, 0))
         kit = KitEjecucion()
 
         # inicializamos un programa de suministro vacío
@@ -167,20 +176,20 @@ class TestPlanificadorDeEjecucion(unittest.TestCase):
         # ejecutamos la segunda hora
         cuantasAntes = len(programa.accionesProgramadas())
         planificador.planificarAcciones(hora.agregarDuracion(DuracionEnHoras(1)))
-        self.assertEqual(kit.fertilizante(), 100+0)
-        self.assertEqual(kit.luz(), 800+500)
-        self.assertEqual(kit.agua(), 220+100)
-        self.assertEqual(kit.antibiotico(), 10+0)
+        self.assertEqual(kit.fertilizante(), 100 + 0)
+        self.assertEqual(kit.luz(), 800 + 500)
+        self.assertEqual(kit.agua(), 220 + 100)
+        self.assertEqual(kit.antibiotico(), 10 + 0)
         cuantasDespues = len(programa.accionesProgramadas())
         self.assertEqual(cuantasAntes - cuantasDespues, 2)
 
         # ejecutamos la tercer hora
         cuantasAntes = len(programa.accionesProgramadas())
         planificador.planificarAcciones(hora.agregarDuracion(DuracionEnHoras(2)))
-        self.assertEqual(kit.fertilizante(), 100+0+0)
-        self.assertEqual(kit.luz(), 800+500+0)
-        self.assertEqual(kit.agua(), 220+100+0)
-        self.assertEqual(kit.antibiotico(), 10+0+10)
+        self.assertEqual(kit.fertilizante(), 100 + 0 + 0)
+        self.assertEqual(kit.luz(), 800 + 500 + 0)
+        self.assertEqual(kit.agua(), 220 + 100 + 0)
+        self.assertEqual(kit.antibiotico(), 10 + 0 + 10)
         cuantasDespues = len(programa.accionesProgramadas())
         self.assertEqual(cuantasAntes - cuantasDespues, 1)
 

@@ -53,7 +53,7 @@ def main(argv):
             p = pronostico.prediccionPara(t)
             print(('El pronóstico para {4} es: \n'
                    'Temperatura: {0}, Humedad: {1}, '
-                  'Prob. de lluvia: {2}, Luz ambiente: {3}')
+                   'Prob. de lluvia: {2}, Luz ambiente: {3}')
                   .format(p.temperatura(),
                           p.humedad(),
                           p.probabilidadDeLluvia(),

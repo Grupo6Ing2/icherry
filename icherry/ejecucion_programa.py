@@ -31,14 +31,6 @@ from icherry.magnitudes import Rango
 # período de heartbeat del generador del plan de suministro.
 
 class PlanificadorDeEjecucion:
-    # NOTICE: hay muchas combinaciones posibles para armar el
-    # planificador. Al planificador lo despierta un temporizador
-    # externo, o el temporizador es interno? Requiere realmente
-    # consultar la hora a la central meteorológica, o simplemente
-    # podemos aprovechar que la hora de despierte es la hora previa de
-    # despierte más el delta de heartbeat? Hay mucho para decidir, y
-    # por lo tanto mucho que puede variar acá. Por ahora considerar
-    # esto en un estado muy inmaduro!
 
     def __init__(self, duracionDePlanificacion, programaDeSuministro, ejecutorDeAccion):
         self._programaDeSuministro = programaDeSuministro
@@ -46,6 +38,14 @@ class PlanificadorDeEjecucion:
         self._ejecutor = ejecutorDeAccion
 
     def planificarAcciones(self, fechaYHora):
+        """Ejecuta todas las acciones del programa de suministro que recaigan
+        en el lapso que comienza en la fechaYHora parámetro y dura
+        tanto como se haya especificado en la duración de
+        planificación (i.e. el lapso [f,f+δ] donde 'δ' es la duración
+        y 'f' el parámetro fechaYHora). Todas estas acciones son
+        retiradas del programa de suministro.
+
+        """
         desde = fechaYHora
         hasta = fechaYHora.agregarDuracion(self._duracionDePlanificacion)
         lapso = Rango(desde, hasta)

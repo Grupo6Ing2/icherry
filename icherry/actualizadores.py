@@ -117,8 +117,8 @@ class ActualizadorDeEstadoDePlanta(ActualizadorDeObjectos):
         estadio = self.estadoPlanta().estadoFenologico().estadioDeCultivo()
         umbral = self.planMaestro()[estadio]
 
-        # # Actualizamos el estado de salud, según el umbral óptimo de
-        # # cultivo para el estadio de cultivo actual
+        # Actualizamos el estado de salud, según el umbral óptimo de
+        # cultivo para el estadio de cultivo actual
         estadoDeSalud = planta.EstadoDeSaludBueno
         if not umbral.temperatura().contiene(temperatura):
             estadoDeSalud = planta.EstadoDeSaludMalo
@@ -137,6 +137,7 @@ class ActualizadorDeEstadoDePlanta(ActualizadorDeObjectos):
         self._estadoPlanta.acidez(acidez)
         self._estadoPlanta.notificarObservers()
 
+
 # este bicho es casi trivial porque el GPS hace todo el laburo
 class ActualizadorDeProgramaDeSuministro(ActualizadorDeObjectos):
 
@@ -145,6 +146,7 @@ class ActualizadorDeProgramaDeSuministro(ActualizadorDeObjectos):
 
     def _actualizar(self):
         self._GPS.generar()
+
 
 class ActualizadorDeEjecucion(ActualizadorDeObjectos):
     def _inicializar(self, centralMeteorologica, planificadorEjecucion):

@@ -1,5 +1,5 @@
 import icherry.observer as observer
-# encoding: utf-8
+# coding=utf-8
 # ====================================================================
 #                            PLAN MAESTRO
 # ====================================================================
@@ -11,7 +11,7 @@ import icherry.observer as observer
 # ====================================================================
 # plan maestro
 class PlanMaestro(observer.Observable):
-    """Un plan maestro es un diccionario de estado fenológico en umbral
+    """Un plan maestro es un diccionario de estadio de cultivo en umbral
     óptimo de cultivo. Con el plan maestro sabemos en qué parámetros
     de T/H/PH se debe mantener la planta en el estadio actual. Para
     construirse, requiere una lista de umbrales óptimos de cultivo
@@ -47,7 +47,8 @@ class PlanMaestro(observer.Observable):
 
     def definirUmbralParaEstadio(self, claseEstadio, umbral):
         """Define el umbral para el estadio de cultivo indicado. El argumento
-        'claseEstadio' funciona como en 'umbralParaEstadio'
+        'claseEstadio' funciona como en 'umbralParaEstadio. Esta
+        operación notifica a los observadores.'
 
         """
         result = claseEstadio.umbral(self, umbral)
@@ -245,13 +246,13 @@ class CicloDeVida():
 
 class UmbralOptimoDeCultivo:
     """Un umbral óptimo de cultivo básicamente es una tripla de rangos
-    aceptables de T/H/PH para un estadio fenológico dado, que indica
-    los umbrales óptimos para estos tres parámetros de la planta
-    cuando ésta se encuentra en el estadio fenológico dado. Para
-    construirse, requiere un estadio fenológico (una instancia de
-    'EstadioFenologico') y tres rangos (instancias de 'Rango'), todos
-    estos valores pueden reobtenerse con los métodos estadio(),
-    temperatura(), humedad() y acidez().
+    aceptables de T/H/PH para un estadio de cultivo dado (EC), que
+    indica los umbrales óptimos para estos tres parámetros de la
+    planta cuando ésta se encuentra en el EC dado. Para construirse,
+    requiere un EC (una instancia de 'EstadioDeCultivo') y tres
+    rangos (instancias de 'Rango'), todos estos valores pueden
+    reobtenerse con los métodos estadio(), temperatura(), humedad() y
+    acidez().
 
     """
     def __init__(self, estadio, rangoTemperatura, rangoHumedad, rangoAcidez):
@@ -309,7 +310,7 @@ def demo():
     assert(plan[estadio0] == umbral0)
     assert(plan[estadio1] == umbral1)
 
-    print("los estadios fenologicos definidos son:")
+    print("los estadios de cultivo definidos son:")
     for estadio in CicloDeVida.estadios():
         print("{}".format(estadio.nombre()))
 

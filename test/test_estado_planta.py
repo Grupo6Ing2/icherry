@@ -6,6 +6,7 @@ from icherry.magnitudes import TemperaturaEnCelsius, HumedadRelativa
 
 import unittest
 
+
 class TestEstadoFenologico(unittest.TestCase):
     def test_estadoFenologico_se_inicializa_en_cero_y_estadio_germinacion(self):
         """Inicializa un estado fenológico, deberían estar todos los
@@ -40,6 +41,7 @@ class TestEstadoFenologico(unittest.TestCase):
         x.altura(LongitudEnCentimetros(20))
         self.assertEqual(x.altura(), LongitudEnCentimetros(20))
 
+
 class TestPlanta(unittest.TestCase):
     def test_planta_puede_modificarse_correctamente(self):
         x = EstadoDePlanta()
@@ -50,17 +52,21 @@ class TestPlanta(unittest.TestCase):
         x.acidez(AcidezEnPH(6.66))
         self.assertEqual(x.acidez(), AcidezEnPH(6.66))
 
+
 class TestEstadoSalud(unittest.TestCase):
     def test_estadoSalud_notifica_correctamente(self):
+
         class NotificadoMock():
             def __init__(self):
                 self.estado = 'BUENO'
+
             def notificarseEstadoBueno(self):
                 self.estado = 'BUENO'
+
             def notificarseEstadoMalo(self):
                 self.estado = 'MALO'
 
         n = NotificadoMock()
-        for e in [EstadoDeSaludBueno,EstadoDeSaludMalo]:
+        for e in [EstadoDeSaludBueno, EstadoDeSaludMalo]:
             e.notificarEstadoA(n)
             self.assertEqual(n.estado, e.nombre())

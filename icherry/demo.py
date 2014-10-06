@@ -13,13 +13,13 @@ duracionDePlanificacion = tiempo.DuracionEnHoras(1)
 
 actualizadores = []
 
-# Construccion de sensores
+# Construcción de sensores
 (sensorDeTemperatura, sensorDeHumedad, sensorDeAcidez) = builder.construirSensores()
 actualizadorDeSensores = builder.construirActualizadorDeSensores(
     duracionDeActualizacionSensores, sensorDeTemperatura, sensorDeHumedad, sensorDeAcidez)
 actualizadores.append(actualizadorDeSensores)
 
-# Construccion de central meteorológica
+# Construcción de central meteorológica
 centralMeteorologica = builder.construirCentralMeterologica()
 actualizadorDeCentral = builder.construirActualizadorDeCentral(
     duracionDeActualizacionDeCentral, centralMeteorologica)
@@ -102,10 +102,11 @@ def npyscreen_main(*args):
     aplicacion.registerForm('EN_CONSTRUCCION', pantallaEnConstruccion)
 
     # Pantalla de estado de planta
-    pantallaEstadoDePlanta = builder.construirPantallaEstadoDePlanta(proveedorDeTexto, estadoDePlanta)
+    pantallaEstadoDePlanta = builder.construirPantallaEstadoDePlanta(
+        proveedorDeTexto, estadoDePlanta)
     aplicacion.registerForm('ESTADO', pantallaEstadoDePlanta)
 
-    # Pantalla de edicion de estado fenológico
+    # Pantalla de edición de estado fenológico
     pantallaDeEdicionDeEstadoFenologico = builder.construirPantallaDeEdicionDeEstadoFenologico(
         proveedorDeTexto, estadoDePlanta)
     aplicacion.registerForm('EDICION_ESTADO_FENOLOGICO', pantallaDeEdicionDeEstadoFenologico)
@@ -116,7 +117,7 @@ def npyscreen_main(*args):
     aplicacion.registerForm('VER_PLAN_MAESTRO', pantallaDeVisualizacionDePlanMaestro)
     planMaestro.notificarObservers()
 
-    # Pantalla de edicion de plan maestro
+    # Pantalla de edición de plan maestro
     pantallaDeEdicionDePlanMaestro = builder.construirPantallaDeEdicionDePlanMaestro(
         proveedorDeTexto, planMaestro)
     aplicacion.registerForm('EDITAR_PLAN_MAESTRO', pantallaDeEdicionDePlanMaestro)

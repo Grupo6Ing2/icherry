@@ -3,6 +3,7 @@ import unittest
 
 from icherry.observer import Observer, Observable
 
+
 class ObservableMock(Observable):
     def __init__(self):
         super().__init__()

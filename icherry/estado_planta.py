@@ -164,7 +164,7 @@ class NotificablePorEstadoDeSalud:
 class EstadoFenologico:
 
     def __init__(self):
-        """inicializa un estado fenologico a partir de valores por defecto
+        """inicializa un estado fenológico a partir de valores por defecto
         (todos cero).
         """
 

@@ -36,6 +36,7 @@ class TestDispositivoDeLecturaArchivo(TestDispositivoArchivo):
         dispositivo = DispositivoDeLecturaArchivo(nombreArchivo)
         self.assertEqual(textoEsperado, dispositivo.leer())
 
+
 class TestDispositivoDeEscrituraArchivo(TestDispositivoArchivo):
 
     def test_se_genera_una_excepcion_si_el_archivo_no_existe(self):

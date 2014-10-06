@@ -11,8 +11,9 @@ import unittest
 # La primera versión directamente usaba números en lugar de
 # 'FechaYHora' como "horario" para las acciones programadas.
 
-_dia0 = date(666,11,10)         # \m/ Jason está cerca.
-_hora = time(0,0,0)
+_dia0 = date(666, 11, 10)         # \m/ Jason está cerca.
+_hora = time(0, 0, 0)
+
 
 # con esta función nos desligamos de las FechaYHora y simplemente
 # pensamos en términos de un índice (0 es el '_día0').
@@ -35,22 +36,23 @@ _lista = [(diaN(0), 'primera'),
 
 # el lapso en el que trabajamos (alcanza con que abarque a los
 # horarios de la lista, puede tener exceso).
-_lapso = Rango(diaN(-2),diaN(8))
+_lapso = Rango(diaN(-2), diaN(8))
 
-class TestProgramaDeSuministros(unittest.TestCase):
+
+class TestProgramaDeSuministro(unittest.TestCase):
     # def sortAccionesProgramadas(self, lista):
     #     return sorted(lista)
 
     def accionesProgramadas2tuplas(self, lista):
-        return [(aP.fechaYHora(),aP.accion()) for aP in lista]
+        return [(aP.fechaYHora(), aP.accion()) for aP in lista]
 
     def chk_accionesProgramadas(self, programa, lista1):
         """verifica que la lista de acciones programadas, ordenadas por
         horario, es igual que la lista pasada como argumento.
 
         """
-        lista2 = [(aP.fechaYHora(),aP.accion()) for aP in
-             programa.accionesProgramadas()]
+        lista2 = [(aP.fechaYHora(), aP.accion()) for aP in
+                  programa.accionesProgramadas()]
         self.assertEqual(lista1, lista2)
 
     def test_inicializacion(self):
@@ -63,29 +65,32 @@ class TestProgramaDeSuministros(unittest.TestCase):
         l = _lista
         for x in l:
             p.programar(AccionProgramada(*x))
-        self.chk_accionesProgramadas(p,l)
+        self.chk_accionesProgramadas(p, l)
 
         # segunda ('programarAccion')
         p = ProgramaDeSuministro(_lapso)
         for x in l:
             p.programarAccion(*x)
-        self.chk_accionesProgramadas(p,l)
+        self.chk_accionesProgramadas(p, l)
 
     def test_acciones_en_horario(self):
         def lapso(desde, hasta):
-            return Rango(diaN(desde),diaN(hasta))
+            return Rango(diaN(desde), diaN(hasta))
 
         def acciones(desde, hasta):
             # el 'hasta' está incluído
             n = len(_lista)
-            if hasta < 0 or desde >= n : return set()
-            if desde < 0  : desde = 0
-            if hasta >= n : hasta = n - 1
-            return set([aP[1] for aP in _lista[desde:hasta+1]])
+            if hasta < 0 or desde >= n:
+                return set()
+            if desde < 0:
+                desde = 0
+            if hasta >= n:
+                hasta = n - 1
+            return set([aP[1] for aP in _lista[desde:hasta + 1]])
 
-        def chk_acciones(p,desde,hasta):
-            s = set(p.accionesEnHorario(lapso(desde,hasta)))
-            self.assertEqual(s, acciones(desde,hasta))
+        def chk_acciones(p, desde, hasta):
+            s = set(p.accionesEnHorario(lapso(desde, hasta)))
+            self.assertEqual(s, acciones(desde, hasta))
 
         # ahora sí, iniciamos una pequeña batería de tests
         p = ProgramaDeSuministro(_lapso)
@@ -94,12 +99,12 @@ class TestProgramaDeSuministros(unittest.TestCase):
             p.programarAccion(*fecha_accion)
 
         s = set(p.accionesEnHorario(p.lapso()))
-        self.assertEqual(s, acciones(0, len(_lista)-1))
+        self.assertEqual(s, acciones(0, len(_lista) - 1))
 
-        chk_acciones(p,0,2)
-        chk_acciones(p,4,20)
-        chk_acciones(p,-1,2)
-        chk_acciones(p,-2,-1)
+        chk_acciones(p, 0, 2)
+        chk_acciones(p, 4, 20)
+        chk_acciones(p, -1, 2)
+        chk_acciones(p, -2, -1)
 
     def test_acciones_removidas(self):
         # en este test verificamos que las acciones sean correctamente
@@ -107,9 +112,9 @@ class TestProgramaDeSuministros(unittest.TestCase):
         # fruta como los datos del programa de suministro porque no
         # interesa ya demasiado el tema de las fechas y hora (eso ya
         # lo probamos antes).
-        p = ProgramaDeSuministro(Rango(1,10))
-        for i in range(1,7):
-            p.programarAccion(i,str(i))
+        p = ProgramaDeSuministro(Rango(1, 10))
+        for i in range(1, 7):
+            p.programarAccion(i, str(i))
 
         # pequeño sanity check antes de empezar
         self.assertEqual(set(p.accionesEnHorario(p.lapso())),
@@ -126,18 +131,18 @@ class TestProgramaDeSuministros(unittest.TestCase):
                              accionesRemovidas)
 
             self.assertEqual(
-                set([ aP.accion() for aP in p.accionesProgramadas() ]),
+                set([aP.accion() for aP in p.accionesProgramadas()]),
                 accionesRestantes
             )
 
         # removemos '3' y '4'
-        chk_remove(Rango(3,4), {'3','4'}, {'1', '2', '5', '6'})
+        chk_remove(Rango(3, 4), {'3', '4'}, {'1', '2', '5', '6'})
 
         # removemos '6,'
-        chk_remove(Rango(5.5,100), {'6'}, {'1', '2', '5'})
+        chk_remove(Rango(5.5, 100), {'6'}, {'1', '2', '5'})
 
         # removemos '1' y '2,'
-        chk_remove(Rango(-10,2.8), {'1','2'}, {'5'})
+        chk_remove(Rango(-10, 2.8), {'1', '2'}, {'5'})
 
         # removemos '5', queda vacío
-        chk_remove(Rango(-10,10), {'5'}, set())
+        chk_remove(Rango(-10, 10), {'5'}, set())

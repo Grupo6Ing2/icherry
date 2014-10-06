@@ -118,6 +118,7 @@ class Temporizador:
         """
         self.timer.start()
 
+
 # ====================================================================
 # mini demo (para correr en la repl)
 

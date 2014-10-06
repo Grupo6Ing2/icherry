@@ -9,6 +9,15 @@
 # sólamente las relacionadas a T/H/PH (a modo de ejemplo), pero otros
 # archivos podrían definir sus propias magnitudes.
 
+# Las magnitudes son básicamente cantidades escalares con una unidad
+# implícita. Por ejemplo una instancia de líquido en litros puede
+# tener como valor '100' (representando 100 litros), y la unidad
+# (litros) está implícita en la instancia. Las magnitudes retornan su
+# valor interno como respuesta al mensaje 'valor'. En esta versión
+# todas las magnitudes tienen como valor un número, excepto por la
+# magnitud 'HumedadRelativa', que se espera tenga como valor una
+# magnitud de tipo 'Ratio'.
+
 # En general se cuenta con una clase abstracta para cada magnitud, y
 # una implementación concreta (podría haber más de una), en general
 # son todas muy sencillas y más bien la idea es contar con un
@@ -38,8 +47,9 @@
 class Magnitud:
 
     """Una magnitud es algo que responde al mensaje 'valor' retornando un
-    número, y que soporta comparación aritmética (como facilidad
-    adicional) con otros objetos compatibles.
+    valor interno (por lo general un número), y que soporta
+    comparación aritmética (como facilidad adicional) con otros
+    objetos compatibles.
 
     """
 

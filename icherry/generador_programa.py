@@ -18,29 +18,31 @@ from datetime import date, time
 # planta, el umbral óptimo de cultivo según el plan maestro, etcétera.
 
 class GeneradorDeProgramaDeSuministro():
-    def __init__(self, unPlanMaestro, recomendacionesDeCultivo):
-        self.__planMaestro = unPlanMaestro
+    def __init__(self, planMaestro, recomendacionesDeCultivo):
+        self.__planMaestro = planMaestro
         self.__recomendaciones = recomendacionesDeCultivo
 
     # Modifica el ProgramaDeSuministro
-    def generar(self, unaPlanta, unaCentralMeteorologica):
-        programaDeSuministro = self.__generarProgramaInicial(unaPlanta,
-                                                             unaCentralMeteorologica)
-        self.__aplicarRecomendacionesDeCultivo(programaDeSuministro, unaPlanta,
-                                               unaCentralMeteorologica)
+    def generar(self, estadoDePlanta, centralMeteorologica):
+        programaDeSuministro = self.__generarProgramaInicial(
+            estadoDePlanta, centralMeteorologica)
+        self.__aplicarRecomendacionesDeCultivo(
+            programaDeSuministro, estadoDePlanta, centralMeteorologica)
 
         return programaDeSuministro
 
-    # Modifica unProgramaDeSuministros en base a todos los parámetros:
-    def __generarProgramaInicial(self, unaPlanta, unaCentralMeteorologica):
+    # Modifica el programa de suministro en base a todos los parámetros:
+    def __generarProgramaInicial(self, estadoDePlanta, centralMeteorologica):
         # TODO: aca es donde se produce la magia de generación de un programa.
         pass
 
-    def __aplicarRecomendacionesDeCultivo(self, unProgramaDeSuministros, unaPlanta,
-                                          unaCentralMeteorologica):
+    def __aplicarRecomendacionesDeCultivo(
+            self, programaDeSuministro, estadoDePlanta, centralMeteorologica):
         for recomendacion in self.__recomendaciones:
             recomendacion.realizarAjustes(
-                self.__planMaestro, unaPlanta, unaCentralMeteorologica, unProgramaDeSuministros)
+                self.__planMaestro, estadoDePlanta,
+                centralMeteorologica, programaDeSuministro)
+
 
 # ====================================================================
 # GeneradorDeProgramaDeSuministroEjemploFijo24
@@ -80,9 +82,9 @@ class GeneradorDeProgramaDeSuministroFijo24(GeneradorDeProgramaDeSuministro):
         misma hora pero del día siguiente.
 
         """
-        cero = FechaYHora(ahora.fecha(), time(0,0,0))
+        cero = FechaYHora(ahora.fecha(), time(0, 0, 0))
         ajustada = cero.agregarDuracion(duracionRelativaCero)
-        if ajustada < ahora :
+        if ajustada < ahora:
             ajustada = ajustada.agregarDuracion(DuracionEnHoras(24))
         return ajustada
 
@@ -98,14 +100,14 @@ class GeneradorDeProgramaDeSuministroFijo24(GeneradorDeProgramaDeSuministro):
                                      AccionRegado(LiquidoEnMililitros(100)))
 
         # poner la lámpara a 800 lux a las 5:15  y en 1000 lux a las 10:15
-        programa.programarAccion(self._shift(DuracionEnMinutos(60*5+15), ahora),
+        programa.programarAccion(self._shift(DuracionEnMinutos(60 * 5 + 15), ahora),
                                  AccionLuz(LuzEnLux(800)))
-        programa.programarAccion(self._shift(DuracionEnMinutos(60*10+15), ahora),
+        programa.programarAccion(self._shift(DuracionEnMinutos(60 * 10 + 15), ahora),
                                  AccionLuz(LuzEnLux(1000)))
 
         # aplicar fertilizante a cada 4 horas
         for i in range(6):
-            programa.programarAccion(self._shift(DuracionEnMinutos(60*i*4+25), ahora),
+            programa.programarAccion(self._shift(DuracionEnMinutos(60 * i * 4 + 25), ahora),
                                      AccionFertilizante(LiquidoEnMililitros(50)))
 
         # aplicar antibiótico a las 12
@@ -123,13 +125,16 @@ class GeneradorDeProgramaDeSuministroFijo24(GeneradorDeProgramaDeSuministro):
 
 
 def demo():
-    ahora = FechaYHora(date(1998,7,10), time(17,0,0)) # modificar a gusto!
+    ahora = FechaYHora(date(1998, 7, 10), time(17, 0, 0))  # modificar a gusto!
 
     class CentralMeteorologicaMock:
+
         def __init__(self, fechaYHora=ahora):
             self.redefinirFechaYHora(fechaYHora)
+
         def redefinirFechaYHora(self, FechaYHora):
             self._ahora = FechaYHora
+
         def obtenerFechaYHora(self):
             return self._ahora
 
@@ -154,7 +159,7 @@ def demo():
 
     gps.generar()
     mostrar(gps, cm)
-    cm.redefinirFechaYHora(ahora.agregarDuracion(DuracionEnMinutos(60*10+15)))
+    cm.redefinirFechaYHora(ahora.agregarDuracion(DuracionEnMinutos(60 * 10 + 15)))
     gps.generar()
     mostrar(gps, cm)
 

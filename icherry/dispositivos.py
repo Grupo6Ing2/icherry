@@ -23,6 +23,7 @@ class DispositivoDeLecturaArchivo(DispositivoDeLectura):
             lectura = archivo.read()
         return lectura
 
+
 class DispositivoDeEscritura():
 
     def __init__(self):

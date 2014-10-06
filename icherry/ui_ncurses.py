@@ -80,13 +80,13 @@ class PantallaDeInicio(npyscreen.FormWithMenus):
         self._agregarEntradaDeMenu(
             menu, 'MENU_EDITAR_PLAN_MAESTRO', 'EDITAR_PLAN_MAESTRO')
         self._agregarEntradaDeMenu(
-            menu, 'MENU_PROGRAMA_SUMINISTROS', 'PROGRAMA')
+            menu, 'MENU_PROGRAMA_SUMINISTRO', 'PROGRAMA')
         self._agregarEntradaDeMenu(
             menu, 'MENU_CENTRAL_METEOROLOGICA', 'CENTRAL')
         self._agregarEntradaDeMenu(
             menu, 'MENU_HISTORIAL_SENSORES', 'EN_CONSTRUCCION')
         self._agregarEntradaDeMenu(
-            menu, 'MENU_HISTORIAL_SUMINISTROS', 'EN_CONSTRUCCION')
+            menu, 'MENU_HISTORIAL_SUMINISTRO', 'EN_CONSTRUCCION')
         self._agregarSeparacionDeMenu(menu)
         self._agregarEntradaDeMenu(
             menu, 'MENU_SALIR', None)
@@ -145,17 +145,23 @@ class PantallaDeEstadoDePlantaMVC(npyscreen.Form):
             '',
             self._proveedorDeTexto.obtener("HEADER_ESTADO_FENOLOGICO"),
             '',
-            self._proveedorDeTexto.obtener("SPAN_ESTADIO",
+            self._proveedorDeTexto.obtener(
+                "SPAN_ESTADIO",
                 self._estadoDePlanta.estadoFenologico().estadioDeCultivo().nombre()),
-            self._proveedorDeTexto.obtener("SPAN_ALTURA",
+            self._proveedorDeTexto.obtener(
+                "SPAN_ALTURA",
                 self._estadoDePlanta.estadoFenologico().altura()),
-            self._proveedorDeTexto.obtener("SPAN_CANT_BROTES",
+            self._proveedorDeTexto.obtener(
+                "SPAN_CANT_BROTES",
                 self._estadoDePlanta.estadoFenologico().cantidadBrotes()),
-            self._proveedorDeTexto.obtener("SPAN_CANT_FLORES",
+            self._proveedorDeTexto.obtener(
+                "SPAN_CANT_FLORES",
                 self._estadoDePlanta.estadoFenologico().cantidadFlores()),
-            self._proveedorDeTexto.obtener("SPAN_CANT_FRUTOS",
+            self._proveedorDeTexto.obtener(
+                "SPAN_CANT_FRUTOS",
                 self._estadoDePlanta.estadoFenologico().cantidadFrutos()),
-            self._proveedorDeTexto.obtener("SPAN_PORCENTAJE_FRUTAS_MADURAS",
+            self._proveedorDeTexto.obtener(
+                "SPAN_PORCENTAJE_FRUTAS_MADURAS",
                 self._estadoDePlanta.estadoFenologico().porcentajeFrutasMaduras().valor()),
         ]
 
@@ -266,10 +272,12 @@ class PantallaDeCentralMVC(npyscreen.Form):
 
         proveedorDeTexto = self._proveedorDeTexto
 
-        self._wFecha = self.add(npyscreen.TitleText,
+        self._wFecha = self.add(
+            npyscreen.TitleText,
             name=proveedorDeTexto.obtener('HEADER_FECHA_ACTUAL'), editable=False)
 
-        self._wPronostico = self.add(npyscreen.GridColTitles,
+        self._wPronostico = self.add(
+            npyscreen.GridColTitles,
             name=proveedorDeTexto.obtener('PRONOSTICO'),
             col_titles=[
                 proveedorDeTexto.obtener("HEADER_FECHA"),
@@ -320,7 +328,7 @@ class PantallaDeProgramaMVC(npyscreen.Form):
 
         return tabla
 
-    def actualizar(self, unProgramaDeSuministros):
+    def actualizar(self, unProgramaDeSuministro):
         self._wPrograma.values = self._crearTablaPrograma()
         self._estadoVisibilidad.dibujar(self)
 
@@ -328,7 +336,8 @@ class PantallaDeProgramaMVC(npyscreen.Form):
 
         proveedorDeTexto = self._proveedorDeTexto
 
-        self._wPrograma = self.add(npyscreen.GridColTitles,
+        self._wPrograma = self.add(
+            npyscreen.GridColTitles,
             name=proveedorDeTexto.obtener('PROGRAMA_SUMINISTRO'),
             col_titles=[
                 proveedorDeTexto.obtener("HEADER_FECHA"),
@@ -370,7 +379,9 @@ class PantallaDeVisualizacionDePlanMaestroMVC(npyscreen.Form):
     def create(self):
 
         proveedorDeTexto = self._proveedorDeTexto
-        self._wPlanMaestro = self.add(npyscreen.GridColTitles, name=proveedorDeTexto.obtener('PLAN_MAESTRO'),
+        self._wPlanMaestro = self.add(
+            npyscreen.GridColTitles,
+            name=proveedorDeTexto.obtener('PLAN_MAESTRO'),
             col_titles=[
                 proveedorDeTexto.obtener("HEADER_ESTADIO_CULTIVO"),
                 proveedorDeTexto.obtener("HEADER_TEMPERATURA"),
@@ -388,11 +399,14 @@ class PantallaDeVisualizacionDePlanMaestroMVC(npyscreen.Form):
             tabla.append([
                 umbral.estadio().nombre(),
                 proveedorDeTexto.obtener('SPAN_RANGO',
-                    umbral.temperatura().desde().valor(), umbral.temperatura().hasta().valor()),
+                                         umbral.temperatura().desde().valor(),
+                                         umbral.temperatura().hasta().valor()),
                 proveedorDeTexto.obtener('SPAN_RANGO',
-                    umbral.humedad().desde().valor().valor(), umbral.humedad().hasta().valor().valor()),
+                                         umbral.humedad().desde().valor().valor(),
+                                         umbral.humedad().hasta().valor().valor()),
                 proveedorDeTexto.obtener('SPAN_RANGO',
-                    umbral.acidez().desde().valor(), umbral.acidez().hasta().valor())
+                                         umbral.acidez().desde().valor(),
+                                         umbral.acidez().hasta().valor())
             ])
 
         return tabla
@@ -411,7 +425,8 @@ class PantallaDeEdicionDeEstadoFenologico(npyscreen.ActionForm):
 
     def beforeEditing(self):
 
-        self._wEstadio.value = plan_maestro.CicloDeVida.estadios().index(self._estadoFenologico.estadioDeCultivo())
+        self._wEstadio.value = plan_maestro.CicloDeVida.estadios().index(
+            self._estadoFenologico.estadioDeCultivo())
         self._wAltura.value = str(self._estadoFenologico.altura().valor())
         self._wBrotes.value = str(self._estadoFenologico.cantidadBrotes())
         self._wFlores.value = str(self._estadoFenologico.cantidadFlores())
@@ -425,12 +440,15 @@ class PantallaDeEdicionDeEstadoFenologico(npyscreen.ActionForm):
     def on_ok(self):
 
         try:
-            self._estadoFenologico.estadioDeCultivo(plan_maestro.CicloDeVida.estadios()[self._wEstadio.value])
-            self._estadoFenologico.altura(magnitudes.LongitudEnCentimetros(int(self._wAltura.value)))
+            self._estadoFenologico.estadioDeCultivo(
+                plan_maestro.CicloDeVida.estadios()[self._wEstadio.value])
+            self._estadoFenologico.altura(magnitudes.LongitudEnCentimetros(
+                int(self._wAltura.value)))
             self._estadoFenologico.cantidadBrotes(int(self._wBrotes.value))
             self._estadoFenologico.cantidadFlores(int(self._wFlores.value))
             self._estadoFenologico.cantidadFrutos(int(self._wFrutos.value))
-            self._estadoFenologico.porcentajeFrutasMaduras(magnitudes.Porcentaje(int(self._wMaduras.value)))
+            self._estadoFenologico.porcentajeFrutasMaduras(magnitudes.Porcentaje(
+                int(self._wMaduras.value)))
 
         except Exception as err:
             npyscreen.notify_confirm("Error: {0}".format(err))
@@ -449,11 +467,16 @@ class PantallaDeEdicionDeEstadoFenologico(npyscreen.ActionForm):
             name=proveedorDeTexto.obtener("INPUT_ESTADIO"),
             values=[e.nombre() for e in plan_maestro.CicloDeVida.estadios()])
 
-        self._wAltura = self.add(npyscreen.TitleText, name=proveedorDeTexto.obtener("INPUT_ALTURA"))
-        self._wBrotes = self.add(npyscreen.TitleText, name=proveedorDeTexto.obtener("INPUT_CANT_BROTES"))
-        self._wFlores = self.add(npyscreen.TitleText, name=proveedorDeTexto.obtener("INPUT_CANT_FLORES"))
-        self._wFrutos = self.add(npyscreen.TitleText, name=proveedorDeTexto.obtener("INPUT_CANT_FRUTOS"))
-        self._wMaduras = self.add(npyscreen.TitleText, name=proveedorDeTexto.obtener("INPUT_FRUTAS_MADURAS"))
+        self._wAltura = self.add(npyscreen.TitleText,
+                                 name=proveedorDeTexto.obtener("INPUT_ALTURA"))
+        self._wBrotes = self.add(npyscreen.TitleText,
+                                 name=proveedorDeTexto.obtener("INPUT_CANT_BROTES"))
+        self._wFlores = self.add(npyscreen.TitleText,
+                                 name=proveedorDeTexto.obtener("INPUT_CANT_FLORES"))
+        self._wFrutos = self.add(npyscreen.TitleText,
+                                 name=proveedorDeTexto.obtener("INPUT_CANT_FRUTOS"))
+        self._wMaduras = self.add(npyscreen.TitleText,
+                                  name=proveedorDeTexto.obtener("INPUT_FRUTAS_MADURAS"))
 
 
 class PantallaDeEdicionDePlanMaestro(npyscreen.ActionForm):
@@ -489,9 +512,10 @@ class PantallaDeEdicionDePlanMaestro(npyscreen.ActionForm):
             )
 
             estadio = plan_maestro.CicloDeVida.estadios()[self._wEstadio.value]
-            nuevoUmbral = plan_maestro.UmbralOptimoDeCultivo(estadio, rangoTemperatura, rangoHumedad, rangoAcidez)
+            nuevoUmbral = plan_maestro.UmbralOptimoDeCultivo(
+                estadio, rangoTemperatura, rangoHumedad, rangoAcidez)
 
-            self._planMaestro.definirUmbralParaEstadio(estadio, nuevoUmbral)
+            self._planMaestro[estadio] = nuevoUmbral
 
         except Exception as err:
             npyscreen.notify_confirm("Error: {0}".format(err))
@@ -509,11 +533,21 @@ class PantallaDeEdicionDePlanMaestro(npyscreen.ActionForm):
             name=proveedorDeTexto.obtener("INPUT_ESTADIO"),
             values=[e.nombre() for e in plan_maestro.CicloDeVida.estadios()])
 
-        self._wTemperaturaMin = self.add(npyscreen.TitleText,
+        self._wTemperaturaMin = self.add(
+            npyscreen.TitleText,
             name=proveedorDeTexto.obtener("INPUT_TEMPERATURA_MIN"), value='0')
-        self._wTemperaturaMax = self.add(npyscreen.TitleText,
+        self._wTemperaturaMax = self.add(
+            npyscreen.TitleText,
             name=proveedorDeTexto.obtener("INPUT_TEMPERATURA_MAX"), value='0')
-        self._wHumedadMin = self.add(npyscreen.TitleText, name=proveedorDeTexto.obtener("INPUT_HUMEDAD_MIN"), value='0')
-        self._wHumedadMax = self.add(npyscreen.TitleText, name=proveedorDeTexto.obtener("INPUT_HUMEDAD_MAX"), value='0')
-        self._wAcidezMin = self.add(npyscreen.TitleText, name=proveedorDeTexto.obtener("INPUT_ACIDEZ_MIN"), value='0')
-        self._wAcidezMax = self.add(npyscreen.TitleText, name=proveedorDeTexto.obtener("INPUT_ACIDEZ_MAX"), value='0')
+        self._wHumedadMin = self.add(
+            npyscreen.TitleText,
+            name=proveedorDeTexto.obtener("INPUT_HUMEDAD_MIN"), value='0')
+        self._wHumedadMax = self.add(
+            npyscreen.TitleText,
+            name=proveedorDeTexto.obtener("INPUT_HUMEDAD_MAX"), value='0')
+        self._wAcidezMin = self.add(
+            npyscreen.TitleText,
+            name=proveedorDeTexto.obtener("INPUT_ACIDEZ_MIN"), value='0')
+        self._wAcidezMax = self.add(
+            npyscreen.TitleText,
+            name=proveedorDeTexto.obtener("INPUT_ACIDEZ_MAX"), value='0')
