@@ -52,6 +52,7 @@ class PlanificadorDeEjecucion:
         accionesAEjecutar = self._programaDeSuministro.retirarAccionesEnHorario(lapso)
         for accion in accionesAEjecutar:
             self._ejecutor.ejecutarAccion(accion)
+        self._programaDeSuministro.notificarObservers()
 
 # ====================================================================
 # EjecutorDeAccion

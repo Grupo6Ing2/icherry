@@ -145,7 +145,7 @@ class ActualizadorDeProgramaDeSuministro(ActualizadorDeObjectos):
         self._GPS = generadorDeProgramaDeSuministro
 
     def _actualizar(self):
-        self._GPS.generar()
+        self._GPS.generar()     # esto notifica a los observadores
 
 
 class ActualizadorDeEjecucion(ActualizadorDeObjectos):
@@ -155,4 +155,4 @@ class ActualizadorDeEjecucion(ActualizadorDeObjectos):
 
     def _actualizar(self):
         ahora = self._CM.obtenerFechaYHora()
-        self._PE.planificarAcciones(ahora)
+        self._PE.planificarAcciones(ahora)  # esto notifica a los observadores
