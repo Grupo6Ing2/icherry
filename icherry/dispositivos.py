@@ -36,13 +36,13 @@ class DispositivoDeEscritura():
 class DispositivoDeEscrituraArchivo(DispositivoDeEscritura):
 
     def __init__(self, unNombreArchivo):
-        self._archivo = open(unNombreArchivo, 'w')
+        if not os.path.exists(unNombreArchivo):
+            raise IOError("El archivo {0} no existe".format(unNombreArchivo))
+        self._nombreArchivo = unNombreArchivo
 
     def escribir(self, unaCadena):
-        self._archivo.write(unaCadena)
-        self._archivo.flush()
-        os.fsync(self._archivo.fileno())
+        with open(self._nombreArchivo, 'w') as archivo:
+            archivo.write(unaCadena)
+            archivo.flush()
+            os.fsync(archivo.fileno())
         return self
-
-    def cerrar(self):
-        self._archivo.close()

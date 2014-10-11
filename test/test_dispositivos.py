@@ -2,16 +2,25 @@ from icherry.dispositivos import DispositivoDeEscrituraArchivo
 from icherry.dispositivos import DispositivoDeLecturaArchivo
 
 import unittest
-from random import random
+import os
+from tempfile import NamedTemporaryFile
 
 
 class TestDispositivoArchivo(unittest.TestCase):
 
-    def generarNombreArchivo(self):
-        return '/tmp/test_' + self.id()
+    def generarArchivo(self):
+        """Crea un archivo de nombre aleatorio (se garantiza que el
+        archivo no existía previamente), y retorna su nombre. El
+        nombre es relativo al directorio actual.
+
+        """
+        prefijo = 'test_' + self.id()
+        archivo = NamedTemporaryFile(delete=False, dir=".", prefix=prefijo)
+        archivo.close()
+        return archivo.name
 
     def escribirArchivo(self, texto):
-        nombreArchivo = self.generarNombreArchivo()
+        nombreArchivo = self.generarArchivo()
         with open(nombreArchivo, 'w') as archivo:
             archivo.write(texto)
         return nombreArchivo
@@ -25,9 +34,12 @@ class TestDispositivoArchivo(unittest.TestCase):
 class TestDispositivoDeLecturaArchivo(TestDispositivoArchivo):
 
     def test_se_genera_una_excepcion_si_el_archivo_no_existe(self):
+        nombreArchivoInexistente = self.generarArchivo()
+        os.unlink(nombreArchivoInexistente)
+        # asumimos que no ocurrirá que _justo_ ahora alguien cree un
+        # archivo con ese nombre (race condition).
         with self.assertRaises(IOError):
-            DispositivoDeLecturaArchivo(
-                '/tmp/archivo_inexistente' + str(random()))
+            DispositivoDeLecturaArchivo(nombreArchivoInexistente)
 
     def test_se_lee_correctamente_el_archivo(self):
         textoEsperado = '10'
@@ -36,18 +48,25 @@ class TestDispositivoDeLecturaArchivo(TestDispositivoArchivo):
         dispositivo = DispositivoDeLecturaArchivo(nombreArchivo)
         self.assertEqual(textoEsperado, dispositivo.leer())
 
+        os.unlink(nombreArchivo)
+
 
 class TestDispositivoDeEscrituraArchivo(TestDispositivoArchivo):
 
     def test_se_genera_una_excepcion_si_el_archivo_no_existe(self):
+        nombreArchivoInexistente = self.generarArchivo()
+        os.unlink(nombreArchivoInexistente)
+        # asumimos que no ocurrirá que _justo_ ahora alguien cree un
+        # archivo con ese nombre (race condition).
         with self.assertRaises(IOError):
-            DispositivoDeLecturaArchivo(
-                '/tmp/archivo_inexistente' + str(random()))
+            DispositivoDeEscrituraArchivo(nombreArchivoInexistente)
 
     def test_se_escribe_correctamente_el_archivo(self):
         texto = 'texto de ejemplo'
-        nombreArchivo = self.generarNombreArchivo()
+        nombreArchivo = self.generarArchivo()
+
         dispositivo = DispositivoDeEscrituraArchivo(nombreArchivo)
         dispositivo.escribir(texto)
         self.assertEqual(texto, self.leerArchivo(nombreArchivo))
-        dispositivo.cerrar()
+
+        os.unlink(nombreArchivo)
